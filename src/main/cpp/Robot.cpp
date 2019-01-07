@@ -1,69 +1,74 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
+/* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
 #include "Robot.h"
+#include <SmartDashboard>
 
-#include <iostream>
+static void Robot::CameraPeriodic(){
+    CameraServer server;
+    grip::GripPipeline pipeline;
 
-#include <SmartDashboard/SmartDashboard.h>
+    cs::UsbCamera camera;
+    cv::Mat image;
+    cv::Mat image_temp;
+    cv::Mat hsl_output;
+    int g_frame = 0;
+
+    cs::CvSink sink;
+    cs::CvSource outputStream;
+
+    server = *CameraServer::GetInstance();
+
+    camera = server.StartAutomaticCapture();
+    camera.SetResolution(320,240);
+
+    sink = server.GetVideo();
+    outputStream = server.PutVideo("Processed", 320, 240);
+
+    while(1) {
+        bool working = sink.GrabFrame(image_temp);
+        SmartDashboard::PutBoolean("working", working);
+
+        if (working) {
+            g_frame++;
+            image = image_temp;
+        }
+        if (g_frame < 1) {
+            continue;
+        }
+
+        pipeline.Process(image);
+        //outputStream.PutFrame(*pipeline.gethslThresholdOutput());
+        outputStream.PutFrame(image);
+    }
+}
 
 void Robot::RobotInit() {
-  m_chooser.AddDefault(kAutoNameDefault, kAutoNameDefault);
-  m_chooser.AddObject(kAutoNameCustom, kAutoNameCustom);
-  frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+    std:thread visionThread(CameraPeriodic);
+    visionThread.detach();
 }
 
-/**
- * This function is called every robot packet, no matter the mode. Use
- * this for items like diagnostics that you want ran during disabled,
- * autonomous, teleoperated and test.
- *
- * <p> This runs after the mode specific periodic functions, but before
- * LiveWindow and SmartDashboard integrated updating.
- */
 void Robot::RobotPeriodic() {}
+//Called Whilst Robot is on
 
-/**
- * This autonomous (along with the chooser code above) shows how to select
- * between different autonomous modes using the dashboard. The sendable chooser
- * code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
- * remove all of the chooser code and uncomment the GetString line to get the
- * auto name from the text box below the Gyro.
- *
- * You can add additional auto modes by adding additional comparisons to the
- * if-else structure below with additional strings. If using the SendableChooser
- * make sure to add them to the chooser code above as well.
- */
-void Robot::AutonomousInit() {
-  m_autoSelected = m_chooser.GetSelected();
-  // m_autoSelected = SmartDashboard::GetString("Auto Selector",
-  //     kAutoNameDefault);
-  std::cout << "Auto selected: " << m_autoSelected << std::endl;
+void Robot::AutonomousInit() {}
+//Called Initially on Autonomous Start
 
-  if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
-  } else {
-    // Default Auto goes here
-  }
-}
-
-void Robot::AutonomousPeriodic() {
-  if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
-  } else {
-    // Default Auto goes here
-  }
-}
+void Robot::AutonomousPeriodic() {}
+//Called During Autonomous
 
 void Robot::TeleopInit() {}
+//Called Initially on Teleop Start
 
 void Robot::TeleopPeriodic() {}
+//Called During Teleop
 
 void Robot::TestPeriodic() {}
+//Called During Test
 
 #ifndef RUNNING_FRC_TESTS
 START_ROBOT_CLASS(Robot)
