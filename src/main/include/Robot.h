@@ -10,7 +10,7 @@ class Robot : public frc::TimedRobot {
 public:
 	void RobotInit() override;
 	void RobotPeriodic() override;
-	void AutonomousInit() erride;
+	void AutonomousInit() override;
 	void AutonomousPeriodicov() override;
 	void TeleopInit() override;
 	void TeleopPeriodic() override;
@@ -29,5 +29,5 @@ private:
   //Differential Drive!
   
 
- UsbCamera  
+ UsbCamera webcamfront {}
 };
