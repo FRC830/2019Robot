@@ -5,14 +5,13 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-#include "Robot.h"
-#include <SmartDashboard>
+#include <Robot.h>
 
-static void Robot::CameraPeriodic(){
-    CameraServer server;
-    grip::GripPipeline pipeline;
+void Robot::CameraLoop(){
+    CameraServer &server = *CameraServer::GetInstance();
+    GripPipeline pipeline;
+  	cs::UsbCamera webcamfront {"Front Camera", 1};
 
-    cs::UsbCamera camera;
     cv::Mat image;
     cv::Mat image_temp;
     cv::Mat hsl_output;
@@ -21,10 +20,8 @@ static void Robot::CameraPeriodic(){
     cs::CvSink sink;
     cs::CvSource outputStream;
 
-    server = *CameraServer::GetInstance();
-
-    camera = server.StartAutomaticCapture();
-    camera.SetResolution(320,240);
+    webcamfront = server.StartAutomaticCapture();
+    webcamfront.SetResolution(320,240);
 
     sink = server.GetVideo();
     outputStream = server.PutVideo("Processed", 320, 240);
@@ -43,12 +40,13 @@ static void Robot::CameraPeriodic(){
 
         pipeline.Process(image);
         //outputStream.PutFrame(*pipeline.gethslThresholdOutput());
-        outputStream.PutFrame(image);
+        outputStream.PutFrame(pipeline.resizeImageOutput);
+
     }
 }
 
 void Robot::RobotInit() {
-    std:thread visionThread(CameraPeriodic);
+    std::thread visionThread(CameraLoop);
     visionThread.detach();
 }
 

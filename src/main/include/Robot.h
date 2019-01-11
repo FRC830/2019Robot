@@ -5,17 +5,20 @@
 #include <SmartDashboard/SendableChooser.h>
 #include <TimedRobot.h>
 #include <thread>
+#include <opencv2/core/core.hpp>
+#include "GripPipeline.h"
+
 
 class Robot : public frc::TimedRobot {
 public:
 	void RobotInit() override;
 	void RobotPeriodic() override;
 	void AutonomousInit() override;
-	void AutonomousPeriodicov() override;
+	void AutonomousPeriodic() override;
 	void TeleopInit() override;
 	void TeleopPeriodic() override;
 	void TestPeriodic() override;
-	static void CameraPeriodic();
+	static void CameraLoop();
 
 private:
 	static const int RIGHT = 0; //PLACEHOLDER!!!
@@ -26,8 +29,5 @@ private:
 
 	DifferentialDrive drivetrain {left, right};			
 		
-  //Differential Drive!
-  
-
- UsbCamera webcamfront {}
+  	//Differential Drive!
 };
