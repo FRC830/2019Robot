@@ -28,6 +28,13 @@ private:
 	VictorSP left {LEFT};
 
 	DifferentialDrive drivetrain {left, right};			
+
+	XboxController pilot {0};
+
+	static const GenericHID::JoystickHand LEFTSIDE = GenericHID::kLeftHand;
+	static const GenericHID::JoystickHand RIGHTSIDE = GenericHID::kRightHand;
+	static const int TICKS_TO_ACCEL = 10;
+	double prev_speed = 0;
 		
   	//Differential Drive!
 };

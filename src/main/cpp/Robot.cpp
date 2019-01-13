@@ -62,7 +62,14 @@ void Robot::AutonomousPeriodic() {}
 void Robot::TeleopInit() {}
 //Called Initially on Teleop Start
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+
+    double speed = Lib830::accel(prev_speed, pilot.GetY(LEFTSIDE), TICKS_TO_ACCEL);
+	prev_speed = speed;
+    
+    drivetrain.CurvatureDrive(speed, pilot.GetX(RIGHTSIDE), std::fabs(speed) < 0.05);
+
+}
 //Called During Teleop
 
 void Robot::TestPeriodic() {}
