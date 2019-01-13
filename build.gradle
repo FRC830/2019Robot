@@ -40,6 +40,8 @@ model {
             sources.cpp {
                 source {
                     srcDir 'src/main/cpp'
+                    srcDir 'src/Lib830'
+                    include '**/*.cpp'
                 }
                 exportedHeaders {
                     srcDir 'src/main/include'
