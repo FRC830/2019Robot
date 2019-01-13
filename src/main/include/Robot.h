@@ -23,11 +23,12 @@ public:
 private:
 	static const int RIGHT = 0; //PLACEHOLDER!!!
 	static const int LEFT = 1; //PLACEHOLDER!!!
+	static const int ANALOG_GYRO = 0; //PLACEHOLDER!!!
 
 	VictorSP right {RIGHT};
 	VictorSP left {LEFT};
 
 	DifferentialDrive drivetrain {left, right};			
-		
+	AnalogGyro gyro {ANALOG_GYRO};
   	//Differential Drive!
 };

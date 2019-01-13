@@ -38,6 +38,8 @@ class GripPipeline : public frc::VisionPipeline {
 		cv::Mat maskOutput;
 		std::vector<std::vector<cv::Point> > findContoursOutput;
 		std::vector<std::vector<cv::Point> > filterContoursOutput;
+		std::vector<cv::Rect> rectangles;
+
 
 };
 

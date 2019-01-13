@@ -1,9 +1,17 @@
 #include "GripPipeline.h"
+#include <SmartDashboard/SmartDashboard.h>
 /**
 * Initializes a GripPipeline.
 */
 
-GripPipeline::GripPipeline() {}
+GripPipeline::GripPipeline() {
+	SmartDashboard::PutNumber("Ratio min", 1);
+	SmartDashboard::PutNumber("Ratio max", 3);
+	// SmartDashboard::PutNumber("Saturation Min", 0);
+	// SmartDashboard::PutNumber("Saturation Max", 255);
+	// SmartDashboard::PutNumber("Value Min", 100);
+	// SmartDashboard::PutNumber("Value Max", 255);
+}
 /**
 * Runs an iteration of the Pipeline and updates outputs.
 *
@@ -21,9 +29,9 @@ void GripPipeline::Process(cv::Mat &source){
 	//Step HSV_Threshold0:
 	//input
 	cv::Mat hsvThresholdInput = resizeImageOutput;
-	double hsvThresholdHue[] = {0.0, 98.60068259385666};
-	double hsvThresholdSaturation[] = {0.0, 255.0};
-	double hsvThresholdValue[] = {243.07553956834528, 255.0};
+	double hsvThresholdHue[] = {50,150};
+	double hsvThresholdSaturation[] = {200,255};
+	double hsvThresholdValue[] = {100,255};
 	hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, this->hsvThresholdOutput);
 	//Step CV_erode0:
 	//input
@@ -34,11 +42,6 @@ void GripPipeline::Process(cv::Mat &source){
     int cvErodeBordertype = cv::BORDER_CONSTANT;
 	cv::Scalar cvErodeBordervalue(-1);
 	cvErode(cvErodeSrc, cvErodeKernel, cvErodeAnchor, cvErodeIterations, cvErodeBordertype, cvErodeBordervalue, this->cvErodeOutput);
-	//Step Mask0:
-	//input
-	cv::Mat maskInput = resizeImageOutput;
-	cv::Mat maskMask = cvErodeOutput;
-	mask(maskInput, maskMask, this->maskOutput);
 	//Step Find_Contours0:
 	//input
 	cv::Mat findContoursInput = cvErodeOutput;
@@ -46,20 +49,25 @@ void GripPipeline::Process(cv::Mat &source){
 	findContours(findContoursInput, findContoursExternalOnly, this->findContoursOutput);
 	//Step Filter_Contours0:
 	//input
-	std::vector<std::vector<cv::Point> > filterContoursContours = findContoursOutput;
-	double filterContoursMinArea = 0;  // default Double
-	double filterContoursMinPerimeter = 0;  // default Double
-	double filterContoursMinWidth = 0;  // default Double
-	double filterContoursMaxWidth = 1000;  // default Double
-	double filterContoursMinHeight = 0;  // default Double
-	double filterContoursMaxHeight = 1000.0;  // default Double
-	double filterContoursSolidity[] = {0, 100};
-	double filterContoursMaxVertices = 1000000.0;  // default Double
-	double filterContoursMinVertices = 0;  // default Double
-	double filterContoursMinRatio = 0.2;  // default Double
-	double filterContoursMaxRatio = 1.0;  // default Double
-	filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, this->filterContoursOutput);
+	// cv::drawContours(source, findContoursOutput, -1, {0,255,255}, 2);
 	
+	for (auto i : findContoursOutput){
+		cv::Rect temp = cv::boundingRect(cv::Mat(i));
+		double ratio = temp.height/static_cast<double>(temp.width);
+		if (ratio > SmartDashboard::GetNumber("Ratio min", 1) && ratio < SmartDashboard::GetNumber("Ratio max", 3)){
+			rectangles.push_back(temp);
+			cv::rectangle(source, temp, {0,255,255}, 2);
+			
+		}
+		SmartDashboard::PutNumber("Ratio", ratio);
+	}
+	
+
+	
+}
+
+static bool compareRectAreas(cv::Rect a, cv::Rect b){
+	return static_cast<double>(a.area()) > static_cast<double>(b.area());
 }
 
 /**
@@ -104,19 +112,6 @@ void GripPipeline::cvErode(cv::Mat &src, cv::Mat &kernel, cv::Point &anchor, dou
 }
 
 /**
- * Filter out an area of an image using a binary mask.
- *
- * @param input The image on which the mask filters.
- * @param mask The binary image that is used to filter.
- * @param output The image in which to store the output.
- */
-void GripPipeline::mask(cv::Mat &input, cv::Mat &mask, cv::Mat &output) {
-	mask.convertTo(mask, CV_8UC1);
-	cv::bitwise_xor(output, output, output);
-	input.copyTo(output, mask);
-}
-
-/**
  * Finds contours in an image.
  *
  * @param input The image to find contours in.
@@ -129,42 +124,5 @@ void GripPipeline::findContours(cv::Mat &input, bool externalOnly, std::vector<s
 	int mode = externalOnly ? cv::RETR_EXTERNAL : cv::RETR_LIST;
 	int method = cv::CHAIN_APPROX_SIMPLE;
 	cv::findContours(input, contours, hierarchy, mode, method);
-}
-
-
-/**
- * Filters through contours.
- * @param inputContours is the input vector of contours.
- * @param minArea is the minimum area of a contour that will be kept.
- * @param minPerimeter is the minimum perimeter of a contour that will be kept.
- * @param minWidth minimum width of a contour.
- * @param maxWidth maximum width.
- * @param minHeight minimum height.
- * @param maxHeight  maximimum height.
- * @param solidity the minimum and maximum solidity of a contour.
- * @param minVertexCount minimum vertex Count of the contours.
- * @param maxVertexCount maximum vertex Count.
- * @param minRatio minimum ratio of width to height.
- * @param maxRatio maximum ratio of width to height.
- * @param output vector of filtered contours.
- */
-void GripPipeline::filterContours(std::vector<std::vector<cv::Point> > &inputContours, double minArea, double minPerimeter, double minWidth, double maxWidth, double minHeight, double maxHeight, double solidity[], double maxVertexCount, double minVertexCount, double minRatio, double maxRatio, std::vector<std::vector<cv::Point> > &output) {
-	std::vector<cv::Point> hull;
-	output.clear();
-	for (std::vector<cv::Point> contour: inputContours) {
-		cv::Rect bb = boundingRect(contour);
-		if (bb.width < minWidth || bb.width > maxWidth) continue;
-		if (bb.height < minHeight || bb.height > maxHeight) continue;
-		double area = cv::contourArea(contour);
-		if (area < minArea) continue;
-		if (arcLength(contour, true) < minPerimeter) continue;
-		cv::convexHull(cv::Mat(contour, true), hull);
-		double solid = 100 * area / cv::contourArea(hull);
-		if (solid < solidity[0] || solid > solidity[1]) continue;
-		if (contour.size() < minVertexCount || contour.size() > maxVertexCount)	continue;
-		double ratio = bb.width / bb.height;
-		if (ratio < minRatio || ratio > maxRatio) continue;
-		output.push_back(contour);
-	}
 }
 

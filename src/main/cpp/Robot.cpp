@@ -10,7 +10,7 @@
 void Robot::CameraLoop(){
     CameraServer &server = *CameraServer::GetInstance();
     GripPipeline pipeline;
-  	cs::UsbCamera webcamfront {"Front Camera", 1};
+  	// cs::UsbCamera webcamfront {"Front Camera", 1};
 
     cv::Mat image;
     cv::Mat image_temp;
@@ -20,8 +20,10 @@ void Robot::CameraLoop(){
     cs::CvSink sink;
     cs::CvSource outputStream;
 
-    webcamfront = server.StartAutomaticCapture();
-    webcamfront.SetResolution(320,240);
+    cs::UsbCamera webcamFront = server.StartAutomaticCapture();
+    webcamFront.SetResolution(320,240);
+    webcamFront.SetExposureManual(20);
+    webcamFront.SetFPS(30);
 
     sink = server.GetVideo();
     outputStream = server.PutVideo("Processed", 320, 240);
@@ -39,8 +41,8 @@ void Robot::CameraLoop(){
         }
 
         pipeline.Process(image);
-        //outputStream.PutFrame(*pipeline.gethslThresholdOutput());
-        outputStream.PutFrame(pipeline.resizeImageOutput);
+        // outputStream.PutFrame(*pipeline.gethslThresholdOutput());
+        outputStream.PutFrame(image);
 
     }
 }
@@ -48,6 +50,7 @@ void Robot::CameraLoop(){
 void Robot::RobotInit() {
     std::thread visionThread(CameraLoop);
     visionThread.detach();
+    gyro.Reset();
 }
 
 void Robot::RobotPeriodic() {}
@@ -62,7 +65,9 @@ void Robot::AutonomousPeriodic() {}
 void Robot::TeleopInit() {}
 //Called Initially on Teleop Start
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+    SmartDashboard::PutNumber("Gyro",gyro.GetAngle());
+}
 //Called During Teleop
 
 void Robot::TestPeriodic() {}
