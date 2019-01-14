@@ -2,12 +2,10 @@
 
 #include <string>
 #include <Lib830.h>
-#include <SmartDashboard/SendableChooser.h>
-#include <TimedRobot.h>
+#include <frc/WPILib.h>
 #include <thread>
 #include <opencv2/core/core.hpp>
 #include "GripPipeline.h"
-
 
 class Robot : public frc::TimedRobot {
 public:
@@ -25,10 +23,10 @@ private:
 	static const int LEFT = 1; //PLACEHOLDER!!!
 	static const int ANALOG_GYRO = 0; //PLACEHOLDER!!!
 
-	VictorSP right {RIGHT};
-	VictorSP left {LEFT};
+	frc::VictorSP right {RIGHT};
+	frc::VictorSP left {LEFT};
 
-	DifferentialDrive drivetrain {left, right};			
-	AnalogGyro gyro {ANALOG_GYRO};
+	frc::DifferentialDrive drivetrain {left, right};			
+	frc::AnalogGyro gyro {ANALOG_GYRO};
   	//Differential Drive!
 };

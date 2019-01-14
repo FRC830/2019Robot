@@ -1,9 +1,9 @@
 #include "GripPipeline.h"
-#include <SmartDashboard/SmartDashboard.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 /**
 * Initializes a GripPipeline.
 */
-
+using namespace frc;
 GripPipeline::GripPipeline() {
 	SmartDashboard::PutNumber("Ratio min", 1);
 	SmartDashboard::PutNumber("Ratio max", 3);

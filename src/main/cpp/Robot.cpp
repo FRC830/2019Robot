@@ -7,6 +7,8 @@
 
 #include <Robot.h>
 
+using namespace frc;
+
 void Robot::CameraLoop(){
     CameraServer &server = *CameraServer::GetInstance();
     GripPipeline pipeline;
@@ -30,7 +32,7 @@ void Robot::CameraLoop(){
 
     while(1) {
         bool working = sink.GrabFrame(image_temp);
-        SmartDashboard::PutBoolean("working", working);
+        frc::SmartDashboard::PutBoolean("working", working);
 
         if (working) {
             g_frame++;
@@ -66,7 +68,7 @@ void Robot::TeleopInit() {}
 //Called Initially on Teleop Start
 
 void Robot::TeleopPeriodic() {
-    SmartDashboard::PutNumber("Gyro",gyro.GetAngle());
+    frc::SmartDashboard::PutNumber("Gyro",gyro.GetAngle());
 }
 //Called During Teleop
 
@@ -74,5 +76,7 @@ void Robot::TestPeriodic() {}
 //Called During Test
 
 #ifndef RUNNING_FRC_TESTS
-START_ROBOT_CLASS(Robot)
+int main(){
+    frc::StartRobot<Robot>();
+}
 #endif
