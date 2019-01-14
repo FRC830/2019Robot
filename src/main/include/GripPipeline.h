@@ -27,6 +27,7 @@ class GripPipeline : public frc::VisionPipeline {
 		void mask(cv::Mat &, cv::Mat &, cv::Mat &);
 		void findContours(cv::Mat &, bool , std::vector<std::vector<cv::Point> > &);
 		void filterContours(std::vector<std::vector<cv::Point> > &, double , double , double , double , double , double , double [], double , double , double , double , std::vector<std::vector<cv::Point> > &);
+		static bool compareRectAreas(cv::Rect a, cv::Rect b);
 
 	public:
 		GripPipeline();

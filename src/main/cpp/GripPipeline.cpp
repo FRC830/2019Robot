@@ -62,11 +62,12 @@ void GripPipeline::Process(cv::Mat &source){
 		SmartDashboard::PutNumber("Ratio", ratio);
 	}
 	
+	std::sort(rectangles.begin(),rectangles.end(),compareRectAreas);
 
 	
 }
 
-static bool compareRectAreas(cv::Rect a, cv::Rect b){
+bool GripPipeline::compareRectAreas(cv::Rect a, cv::Rect b){
 	return static_cast<double>(a.area()) > static_cast<double>(b.area());
 }
 
