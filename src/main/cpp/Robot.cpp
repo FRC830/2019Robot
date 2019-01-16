@@ -46,8 +46,14 @@ void Robot::CameraLoop(){
 }
 
 void Robot::RobotInit() {
+    //setup camera tools
     std::thread visionThread(CameraLoop);
     visionThread.detach();
+
+    //start gyro
+    gyro.Calibrate();
+    gyro.Reset();
+    prevAngle = gyro.GetAngle();
 }
 
 void Robot::RobotPeriodic() {}
@@ -63,14 +69,21 @@ void Robot::TeleopInit() {}
 //Called Initially on Teleop Start
 
 void Robot::TeleopPeriodic() {
+    //Called During Teleop Period
 
-    double speed = Lib830::accel(prev_speed, pilot.GetY(LEFTSIDE), TICKS_TO_ACCEL);
-	prev_speed = speed;
-    
-    drivetrain.CurvatureDrive(speed, pilot.GetX(RIGHTSIDE), std::fabs(speed) < 0.05);
+    double speed = Lib830::accel(prevSpeed, pilot.GetY(LEFTSIDE), TICKS_TO_ACCEL);
+	prevSpeed = speed;
+
+    if(pilot.GetX(RIGHTSIDE) != 0){
+        drivetrain.CurvatureDrive(speed, pilot.GetX(RIGHTSIDE), std::fabs(speed) < 0.05);
+        prevAngle = gyro.GetAngle();
+    }
+    else{
+        drivetrain.CurvatureDrive(speed, (prevAngle-gyro.GetAngle())/(-90.0), std::fabs(speed) < 0.05);
+    }
+
 
 }
-//Called During Teleop
 
 void Robot::TestPeriodic() {}
 //Called During Test

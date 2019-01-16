@@ -21,20 +21,28 @@ public:
 	static void CameraLoop();
 
 private:
-	static const int RIGHT = 0; //PLACEHOLDER!!!
-	static const int LEFT = 1; //PLACEHOLDER!!!
+	//port and tool declarations
+	static const int RIGHT = 0; 
+	static const int LEFT = 1; 
+	static const int ANALOG_GYRO_PORT = 0;
+	static const int TICKS_TO_ACCEL = 10;
+	double prevAngle = 0; 
+	double prevSpeed = 0;
 
+	
+	//drivetrain declarations
 	VictorSP right {RIGHT};
 	VictorSP left {LEFT};
 
 	DifferentialDrive drivetrain {left, right};			
 
+	//control scheme declarations
 	XboxController pilot {0};
 
 	static const GenericHID::JoystickHand LEFTSIDE = GenericHID::kLeftHand;
 	static const GenericHID::JoystickHand RIGHTSIDE = GenericHID::kRightHand;
-	static const int TICKS_TO_ACCEL = 10;
-	double prev_speed = 0;
-		
-  	//Differential Drive!
+
+	//misc component declarations
+	frc::AnalogGyro gyro {ANALOG_GYRO_PORT};
+
 };
