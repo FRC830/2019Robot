@@ -7,10 +7,12 @@
 
 #include <Robot.h>
 
+using namespace frc;
+
 void Robot::CameraLoop(){
     CameraServer &server = *CameraServer::GetInstance();
     GripPipeline pipeline;
-  	cs::UsbCamera webcamfront {"Front Camera", 1};
+  	// cs::UsbCamera webcamfront {"Front Camera", 1};
 
     cv::Mat image;
     cv::Mat image_temp;
@@ -20,15 +22,17 @@ void Robot::CameraLoop(){
     cs::CvSink sink;
     cs::CvSource outputStream;
 
-    webcamfront = server.StartAutomaticCapture();
-    webcamfront.SetResolution(320,240);
+    cs::UsbCamera webcamFront = server.StartAutomaticCapture();
+    webcamFront.SetResolution(320,240);
+    webcamFront.SetExposureManual(20);
+    webcamFront.SetFPS(30);
 
     sink = server.GetVideo();
     outputStream = server.PutVideo("Processed", 320, 240);
 
     while(1) {
         bool working = sink.GrabFrame(image_temp);
-        SmartDashboard::PutBoolean("working", working);
+        frc::SmartDashboard::PutBoolean("working", working);
 
         if (working) {
             g_frame++;
@@ -39,8 +43,8 @@ void Robot::CameraLoop(){
         }
 
         pipeline.Process(image);
-        //outputStream.PutFrame(*pipeline.gethslThresholdOutput());
-        outputStream.PutFrame(pipeline.resizeImageOutput);
+        // outputStream.PutFrame(*pipeline.gethslThresholdOutput());
+        outputStream.PutFrame(image);
 
     }
 }
@@ -54,6 +58,7 @@ void Robot::RobotInit() {
     gyro.Calibrate();
     gyro.Reset();
     prevAngle = gyro.GetAngle();
+
 }
 
 void Robot::RobotPeriodic() {}
@@ -69,6 +74,7 @@ void Robot::TeleopInit() {}
 //Called Initially on Teleop Start
 
 void Robot::TeleopPeriodic() {
+
     //Called During Teleop Period
 
     double speed = Lib830::accel(prevSpeed, pilot.GetY(LEFTSIDE), TICKS_TO_ACCEL);
@@ -82,12 +88,15 @@ void Robot::TeleopPeriodic() {
         drivetrain.CurvatureDrive(speed, (prevAngle-gyro.GetAngle())/(-90.0), std::fabs(speed) < 0.05);
     }
 
-
+    frc::SmartDashboard::PutNumber("Gyro",gyro.GetAngle());
+    
 }
 
 void Robot::TestPeriodic() {}
 //Called During Test
 
 #ifndef RUNNING_FRC_TESTS
-START_ROBOT_CLASS(Robot)
+int main(){
+    frc::StartRobot<Robot>();
+}
 #endif

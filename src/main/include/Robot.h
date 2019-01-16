@@ -2,12 +2,10 @@
 
 #include <string>
 #include <Lib830.h>
-#include <SmartDashboard/SendableChooser.h>
-#include <TimedRobot.h>
+#include <frc/WPILib.h>
 #include <thread>
 #include <opencv2/core/core.hpp>
 #include "GripPipeline.h"
-
 
 class Robot : public frc::TimedRobot {
 public:
@@ -21,6 +19,7 @@ public:
 	static void CameraLoop();
 
 private:
+
 	//port and tool declarations
 	static const int RIGHT = 0; 
 	static const int LEFT = 1; 
@@ -31,16 +30,16 @@ private:
 
 	
 	//drivetrain declarations
-	VictorSP right {RIGHT};
-	VictorSP left {LEFT};
+	frc::VictorSP right {RIGHT};
+	frc::VictorSP left {LEFT};
 
-	DifferentialDrive drivetrain {left, right};			
+	frc::DifferentialDrive drivetrain {left, right};			
 
 	//control scheme declarations
-	XboxController pilot {0};
+	frc::XboxController pilot {0};
 
-	static const GenericHID::JoystickHand LEFTSIDE = GenericHID::kLeftHand;
-	static const GenericHID::JoystickHand RIGHTSIDE = GenericHID::kRightHand;
+	static const frc::GenericHID::JoystickHand LEFTSIDE = frc::GenericHID::kLeftHand;
+	static const frc::GenericHID::JoystickHand RIGHTSIDE = frc::GenericHID::kRightHand;
 
 	//misc component declarations
 	frc::AnalogGyro gyro {ANALOG_GYRO_PORT};
