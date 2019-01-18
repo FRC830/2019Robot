@@ -78,9 +78,9 @@ void Robot::TeleopPeriodic() {
     //Called During Teleop Period
 
     speed = Lib830::accel(prevSpeed, pilot.GetY(LEFTSIDE), TICKS_TO_ACCEL);
-	prevSpeed = speed;
+    prevSpeed = speed;
 
-    if(pilot.GetX(RIGHTSIDE) != 0){
+    if(std::fabs(pilot.GetX(RIGHTSIDE)) > 0.05){
         drivetrain.CurvatureDrive(speed, pilot.GetX(RIGHTSIDE), std::fabs(speed) < 0.05);
         prevAngle = gyro.GetAngle();
     }
