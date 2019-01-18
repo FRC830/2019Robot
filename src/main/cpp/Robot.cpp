@@ -77,7 +77,7 @@ void Robot::TeleopPeriodic() {
 
     //Called During Teleop Period
 
-    double speed = Lib830::accel(prevSpeed, pilot.GetY(LEFTSIDE), TICKS_TO_ACCEL);
+    speed = Lib830::accel(prevSpeed, pilot.GetY(LEFTSIDE), TICKS_TO_ACCEL);
 	prevSpeed = speed;
 
     if(pilot.GetX(RIGHTSIDE) != 0){
@@ -88,7 +88,7 @@ void Robot::TeleopPeriodic() {
         drivetrain.CurvatureDrive(speed, (prevAngle-gyro.GetAngle())/(-90.0), std::fabs(speed) < 0.05);
     }
 
-    frc::SmartDashboard::PutNumber("Gyro",gyro.GetAngle());
+    frc::SmartDashboard::PutNumber("Gyro: ",gyro.GetAngle());
     
 }
 

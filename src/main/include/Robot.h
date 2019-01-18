@@ -21,17 +21,18 @@ public:
 private:
 
 	//port and tool declarations
-	static const int RIGHT = 0; 
-	static const int LEFT = 1; 
+	static const int RIGHT_MOTOR_PORT = 0; 
+	static const int LEFT_MOTOR_PORT = 1; 
 	static const int ANALOG_GYRO_PORT = 0;
 	static const int TICKS_TO_ACCEL = 10;
 	double prevAngle = 0; 
 	double prevSpeed = 0;
+	double speed = 0;
 
 	
 	//drivetrain declarations
-	frc::VictorSP right {RIGHT};
-	frc::VictorSP left {LEFT};
+	frc::VictorSP right {RIGHT_MOTOR_PORT};
+	frc::VictorSP left {LEFT_MOTOR_PORT};
 
 	frc::DifferentialDrive drivetrain {left, right};			
 
