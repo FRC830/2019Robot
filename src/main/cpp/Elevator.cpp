@@ -1,30 +1,25 @@
 #include <Elevator.h>
-
+using namespace frc;
 // Initilized the Elevator Arm with a motor and encoder
-ElevatorArm::ElevatorArm(VictorSP &elevatorMotor, Encoder &elevatorEncoder) : elevMotor(elevatorMotor), elevEncoder(elevatorEncoder) {
-    elevatorEncoder.SetDistancePerPulse(ENCODER_TICK_DISTANCE);
+Elevator::Elevator(VictorSP &elevatorMotor, Encoder &elevatorEncoder) : elevMotor(elevatorMotor), elevEncoder(elevatorEncoder) {
 }
 
 // Raises the elevator to the specified height
-ElevatorArm::setHeight(double height) {
-    int motorDirection = 1; // Raise Elevator
+void Elevator::setHeight(double height) {
     double threshold = 1.0;
     double currentHeight = getHeight();
 
-    if (height < currentHeight) { // Lower Elevator
-        motorDirection = -1;
+    if (std::fabs(height - currentHeight) < threshold) {
+        elevMotor.Set(0);
+    } else if (height < currentHeight) {
+        elevMotor.Set(1);
+    } else if (height > currentHeight) {
+        elevMotor.Set(-1);
     }
-
-    if (std::fabs(height - currentHeight) < threshold) { // Stop Elevator
-        motorDirection = 0;
-    }
-    
-    elevatorMotor.Set(motorDirection);
 }
 // 1024 ticks per revolutions
 // Returns the current height of the elevator
-ElevatorArm::getHeight()
-{
+double Elevator::getHeight() {
     // multiply
     return elevEncoder.GetDistance();
 }

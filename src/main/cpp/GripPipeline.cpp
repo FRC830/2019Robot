@@ -53,7 +53,7 @@ void GripPipeline::Process(cv::Mat &source){
 	
 	for (auto i : findContoursOutput){
 		cv::Rect temp = cv::boundingRect(cv::Mat(i));
-		double ratio = t emp.height/static_cast<double>(temp.width);
+		double ratio = temp.height/static_cast<double>(temp.width);
 		if (ratio > SmartDashboard::GetNumber("Ratio min", 1) && ratio < SmartDashboard::GetNumber("Ratio max", 3)){
 			rectangles.push_back(temp);
 			cv::rectangle(source, temp, {0,255,255}, 2);

@@ -1,27 +1,34 @@
 #include <Arm.h>
-
+using namespace frc;
 // Initializes an Arm
-Arm(VictorSP &armMotor, AnalogPotentiometer &armPotentiometer, VictorSP &flywheelMotor): 
-flywheel(flywheelMotor), arm(armMotor), armPot(armPotentiometer) {
-
+Arm::Arm(VictorSP &armMotor, VictorSP &flywheelMotor, AnalogPotentiometer &armPotentiometer) : flywheel(flywheelMotor), arm(armMotor), armPot(armPotentiometer)
+{
 }
 // Turns the intake flywheels on or off
-Arm::setIntake(Mode mode) {
+void Arm::setIntake(bool mode) {
 
 }
 
 // Pushes the intake pistons out and retracts
-Arm::releasePistons() {
+void Arm::releasePistons() {
 
 }
 
 // Moves the arm to the specified angle
-Arm::setAngle(float angle) {
+void Arm::setAngle(double angle) {
     double currentAngle = getAngle();
-    
+    double threshold = 5.0;
+    if (std::fabs(angle - currentAngle) < threshold) {
+        arm.Set(0);
+    } else if (angle > currentAngle) {
+        arm.Set(-1);
+    } else if (angle < currentAngle) {
+        arm.Set(1);
+    }
+
 }
 
 // Returns the current angle of the Arm
-Arm::getAngle() {
+double Arm::getAngle() {
     return armPot.Get();
 }

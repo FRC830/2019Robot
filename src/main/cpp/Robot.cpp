@@ -59,7 +59,7 @@ void Robot::RobotInit() {
     gyro.Calibrate();
     gyro.Reset();
     prevAngle = gyro.GetAngle();
-
+    elevEncoder.SetDistancePerPulse(ENCODER_TICK_DISTANCE);
 }
 
 void Robot::RobotPeriodic() {}

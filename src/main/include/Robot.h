@@ -60,4 +60,14 @@ private:
 	//misc component declarations
 	frc::AnalogGyro gyro {ANALOG_GYRO_PORT};
 
+	frc::VictorSP arm{WINCH_MOTOR_PORT};
+	frc::VictorSP flywheel{FLYWHEEL_MOTOR_PORT};
+	frc::AnalogPotentiometer armPot{POTENTIOMETER_ANALOG_PORT};
+	static const int ENCODER_TICKS = 1024;
+	static constexpr float PI = 3.1415927;
+	static const int WINCH_DIAMETER = 6; // PLACEHOOLDER;
+	static const int ENCODER_TICK_DISTANCE = 6 * PI / ENCODER_TICKS;
+
+	frc::VictorSP elevMotor{ELEVATOR_MOTOR_PORT};
+	frc::Encoder elevEncoder{ELEVATOR_ENCODER_DIO_ONE, ELEVATOR_ENCODER_DIO_TWO};
 };
