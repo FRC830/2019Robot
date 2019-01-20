@@ -9,6 +9,7 @@
 
 using namespace frc;
 
+// BAG Motor with encoders
 void Robot::CameraLoop(){
     CameraServer &server = *CameraServer::GetInstance();
     GripPipeline pipeline;
@@ -50,11 +51,11 @@ void Robot::CameraLoop(){
 }
 
 void Robot::RobotInit() {
-    //setup camera tools
+    //Setup camera tools
     std::thread visionThread(CameraLoop);
     visionThread.detach();
 
-    //start gyro
+    //Start gyro
     gyro.Calibrate();
     gyro.Reset();
     prevAngle = gyro.GetAngle();
