@@ -6,6 +6,9 @@
 #include <thread>
 #include <opencv2/core/core.hpp>
 #include "GripPipeline.h"
+#include "Elevator.h"
+#include "Arm.h"
+#include <vector>
 
 class Robot : public frc::TimedRobot {
 public:
@@ -16,18 +19,28 @@ public:
 	void TeleopInit() override;
 	void TeleopPeriodic() override;
 	void TestPeriodic() override;
+	void handleJoint();
+	void handleDrivetrain();
+	void handleFlywheel();
+	void handlePistons();
+	void handleElevator();
 	static void CameraLoop();
 
-private:
-
+  private:
 	// Motor Pins
-	static const int RIGHT_MOTOR_PORT = 0; 
-	static const int LEFT_MOTOR_PORT = 0; 
-	static const int ANALOG_GYRO_PORT = 0;
-	static const int POTENTIOMETER_ANALOG_PORT = 0;
-	static const int WINCH_MOTOR_PORT = 0;
-	static const int FLYWHEEL_MOTOR_PORT = 0;
-	static const int ELEVATOR_MOTOR_PORT = 0;
+	static const int RIGHT_MOTOR_PIN = 0; 
+	static const int LEFT_MOTOR_PIN = 0; 
+	static const int ANALOG_GYRO_PIN = 0;
+	static const int POTENTIOMETER_ANALOG_PIN = 0;
+	static const int WINCH_MOTOR_PIN = 0;
+	static const int FLYWHEEL_MOTOR_PIN = 0;
+	static const int ELEVATOR_MOTOR_PIN = 0;
+	static const int SOLENOID_PIN = 0;
+	// Encoder Stuff
+	static const int ENCODER_TICKS = 1024;
+	static constexpr float PI = 3.1415927;
+	static const int WINCH_DIAMETER = 6; // PLACEHOOLDER;
+	static const int ENCODER_TICK_DISTANCE = 6 * PI / ENCODER_TICKS;
 	// Encoder Pins
 	static const int ELEVATOR_ENCODER_DIO_ONE = 999;
 	static const int ELEVATOR_ENCODER_DIO_TWO = 998;
@@ -35,39 +48,35 @@ private:
 	static const int DRIVETRAIN_ENCODER_LEFT_DIO_TWO = 992;
 	static const int DRIVETRAIN_ENCODER_RIGHT_DIO_ONE = 993;
 	static const int DRIVETRAIN_ENCODER_RIGHT_DIO_TWO = 994;
-	
-
 	// Constants
 	static const int TICKS_TO_ACCEL = 10;
+	static constexpr double FLYWHEEL_THRESHOLD = 0.05;
 	// Variables
-
 	double prevAngle = 0; 
 	double prevSpeed = 0;
 	double speed = 0;
+	bool bumperPressed = false;	
 	
 	// Drivetrain declarations
-	frc::VictorSP right {RIGHT_MOTOR_PORT};
-	frc::VictorSP left {LEFT_MOTOR_PORT};
-
+	frc::VictorSP right {RIGHT_MOTOR_PIN};
+	frc::VictorSP left {LEFT_MOTOR_PIN};
 	frc::DifferentialDrive drivetrain {left, right};			
-
-	//control scheme declarations
-	frc::XboxController pilot {0};
-
-	static const frc::GenericHID::JoystickHand LEFTSIDE = frc::GenericHID::kLeftHand;
-	static const frc::GenericHID::JoystickHand RIGHTSIDE = frc::GenericHID::kRightHand;
-
+	// Control declarations
+	Lib830::GamepadF310 pilot {0};
+	Lib830::GamepadF310 copilot {1};
 	//misc component declarations
-	frc::AnalogGyro gyro {ANALOG_GYRO_PORT};
+	frc::AnalogGyro gyro {ANALOG_GYRO_PIN};
+	// Arm Declarations
 
-	frc::VictorSP arm{WINCH_MOTOR_PORT};
-	frc::VictorSP flywheel{FLYWHEEL_MOTOR_PORT};
-	frc::AnalogPotentiometer armPot{POTENTIOMETER_ANALOG_PORT};
-	static const int ENCODER_TICKS = 1024;
-	static constexpr float PI = 3.1415927;
-	static const int WINCH_DIAMETER = 6; // PLACEHOOLDER;
-	static const int ENCODER_TICK_DISTANCE = 6 * PI / ENCODER_TICKS;
-
-	frc::VictorSP elevMotor{ELEVATOR_MOTOR_PORT};
-	frc::Encoder elevEncoder{ELEVATOR_ENCODER_DIO_ONE, ELEVATOR_ENCODER_DIO_TWO};
+	frc::VictorSP joint{WINCH_MOTOR_PIN};
+	frc::VictorSP flywheel{FLYWHEEL_MOTOR_PIN};
+	frc::AnalogPotentiometer pot{POTENTIOMETER_ANALOG_PIN};
+	frc::Solenoid piston{SOLENOID_PIN};
+	Arm arm{joint, flywheel, pot, piston};
+	std::vector<double> heights = {10.0, 20.0, 30.0, 40.0, 50.0, 60.0};
+	double currentHeight = heights[0];
+	// Elevator Declarations
+	frc::VictorSP winch{ELEVATOR_MOTOR_PIN};
+	frc::Encoder elevatorEncoder{ELEVATOR_ENCODER_DIO_ONE, ELEVATOR_ENCODER_DIO_TWO};
+	Elevator elevator{winch, elevatorEncoder};
 };

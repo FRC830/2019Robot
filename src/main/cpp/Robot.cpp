@@ -8,9 +8,9 @@
 #include <Robot.h>
 
 using namespace frc;
-
+using namespace Lib830;
 // BAG Motor with encoders
-void Robot::CameraLoop(){
+void Robot::CameraLoop() {
     CameraServer &server = *CameraServer::GetInstance();
     GripPipeline pipeline;
   	// cs::UsbCamera webcamfront {"Front Camera", 1};
@@ -33,7 +33,6 @@ void Robot::CameraLoop(){
 
     while(1) {
         bool working = sink.GrabFrame(image_temp);
-        frc::SmartDashboard::PutBoolean("working", working);
 
         if (working) {
             g_frame++;
@@ -59,10 +58,12 @@ void Robot::RobotInit() {
     gyro.Calibrate();
     gyro.Reset();
     prevAngle = gyro.GetAngle();
-    elevEncoder.SetDistancePerPulse(ENCODER_TICK_DISTANCE);
+    elevatorEncoder.SetDistancePerPulse(ENCODER_TICK_DISTANCE);
 }
 
-void Robot::RobotPeriodic() {}
+void Robot::RobotPeriodic() {
+    frc::SmartDashboard::PutNumber("Height: ", heights[currentHeight]);
+}
 //Called Whilst Robot is on
 
 void Robot::AutonomousInit() {}
@@ -75,26 +76,67 @@ void Robot::TeleopInit() {}
 //Called Initially on Teleop Start
 
 void Robot::TeleopPeriodic() {
+    handleDrivetrain();
+    handleElevator();
+    handlePistons();
+    handleJoint();
+    handleFlywheel();
 
-    //Called During Teleop Period
-
-    speed = Lib830::accel(prevSpeed, pilot.GetY(LEFTSIDE), TICKS_TO_ACCEL);
-    prevSpeed = speed;
-
-    if(std::fabs(pilot.GetX(RIGHTSIDE)) > 0.05){
-        drivetrain.CurvatureDrive(speed, pilot.GetX(RIGHTSIDE), std::fabs(speed) < 0.05);
-        prevAngle = gyro.GetAngle();
-    }
-    else{
-        drivetrain.CurvatureDrive(speed, (prevAngle-gyro.GetAngle())/(-90.0), std::fabs(speed) < 0.05);
-    }
-
-    frc::SmartDashboard::PutNumber("Gyro: ",gyro.GetAngle());
-    
 }
-
+void Robot::handleFlywheel() {
+    if (copilot.LeftY() > FLYWHEEL_THRESHOLD)
+    {
+        arm.setMode(Arm::OUTTAKE);
+    }
+    else if (copilot.LeftY() < -(FLYWHEEL_THRESHOLD))
+    {
+        arm.setMode(Arm::INTAKE);
+    }
+}
+void Robot::handlePistons() {
+    if (copilot.ButtonState(GamepadF310::BUTTON_A)) {
+        arm.releasePistons();
+    }
+    arm.update();
+}
+void Robot::handleDrivetrain() {
+    speed = Lib830::accel(prevSpeed, pilot.LeftY(), TICKS_TO_ACCEL);
+    prevSpeed = speed;
+    speed = Lib830::accel(prevSpeed, pilot.LeftY(), TICKS_TO_ACCEL);
+    prevSpeed = speed;
+    // Activates gyro correct on straight driving
+    double controller_threshold = 0.05;
+    if (std::fabs(pilot.RightX()) > controller_threshold) {
+        drivetrain.CurvatureDrive(speed, pilot.RightX(), std::fabs(speed) < controller_threshold);
+        prevAngle = gyro.GetAngle();
+    } else {
+        drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), std::fabs(speed) < controller_threshold);
+    }
+}
+void Robot::handleElevator() {
+    if (copilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER) &&
+        !copilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER) && currentHeight != heights.size() - 1) {
+        if (!bumperPressed) {
+            elevator.setHeight(heights[currentHeight -= 1]);
+        }
+        bumperPressed = true;
+    } else if (copilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER) &&
+             !copilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER) && currentHeight != 0) {
+        if (!bumperPressed) {
+            elevator.setHeight(heights[currentHeight += 1]);
+        }
+        bumperPressed = true;
+    } else {
+        bumperPressed = false;
+    }
+}
+void Robot::handleJoint() {
+    if (copilot.DPadY() != 0) {
+        arm.setAngle(arm.getAngle() + copilot.DPadY());
+    }
+}
 void Robot::TestPeriodic() {}
-//Called During Test
+        //Called During Test
 
 #ifndef RUNNING_FRC_TESTS
 int main(){
