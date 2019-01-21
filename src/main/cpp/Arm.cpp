@@ -13,6 +13,8 @@ void Arm::setMode(Mode mode) {
         flywheel.Set(1);
     } else if (mode == INTAKE) {
         flywheel.Set(-1);
+    } else if (mode == OFF) {
+        flywheel.Set(0);
     }
 }
 

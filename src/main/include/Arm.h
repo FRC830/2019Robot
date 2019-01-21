@@ -3,7 +3,7 @@
 
 class Arm {
     public:
-      enum Mode { OUTTAKE, INTAKE };
+      enum Mode { OFF, OUTTAKE, INTAKE };
       Arm(frc::VictorSP &joint, frc::VictorSP &flywheel, frc::AnalogPotentiometer &pot, frc::Solenoid &piston);
       void setMode(Mode mode);
       void releasePistons();

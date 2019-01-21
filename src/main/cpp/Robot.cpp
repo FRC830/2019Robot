@@ -91,13 +91,12 @@ void Robot::CameraLoop() {
 
 // Copilot: Handles controller input use with flywheel
 void Robot::handleFlywheel() {
-    if (copilot.LeftY() > FLYWHEEL_THRESHOLD)
-    {
+    if (copilot.LeftY() > FLYWHEEL_THRESHOLD) {
         arm.setMode(Arm::OUTTAKE);
-    }
-    else if (copilot.LeftY() < -(FLYWHEEL_THRESHOLD))
-    {
+    } else if (copilot.LeftY() < -(FLYWHEEL_THRESHOLD)) {
         arm.setMode(Arm::INTAKE);
+    } else {
+        arm.setMode(Arm::OFF);
     }
 }
 
