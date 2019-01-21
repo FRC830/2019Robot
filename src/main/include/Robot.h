@@ -38,11 +38,13 @@ public:
 	static const int FLYWHEEL_MOTOR_PIN = 0;
 	static const int ELEVATOR_MOTOR_PIN = 0;
 	static const int SOLENOID_PIN = 0;
-	// Encoder Stuff
+
+	// Encoder Values
 	static const int ENCODER_TICKS = 1024;
-	static constexpr float PI = 3.1415927;
+	static constexpr double PI = 3.1415927;
 	static const int WINCH_DIAMETER = 6; // PLACEHOOLDER;
 	static const int ENCODER_TICK_DISTANCE = 6 * PI / ENCODER_TICKS;
+
 	// Encoder Pins
 	static const int ELEVATOR_ENCODER_DIO_ONE = 999;
 	static const int ELEVATOR_ENCODER_DIO_TWO = 998;
@@ -50,15 +52,17 @@ public:
 	static const int DRIVETRAIN_ENCODER_LEFT_DIO_TWO = 992;
 	static const int DRIVETRAIN_ENCODER_RIGHT_DIO_ONE = 993;
 	static const int DRIVETRAIN_ENCODER_RIGHT_DIO_TWO = 994;
-	// Constants
+
+	// Misc
 	static const int TICKS_TO_ACCEL = 10;
 	static constexpr double FLYWHEEL_THRESHOLD = 0.05;
-	// Variables
 	double prevAngle = 0; 
 	double prevSpeed = 0;
 	double speed = 0;
-	bool bumperPressed = false;	
-	
+	bool bumperPressed = false;
+	std::vector<double> heights = {10.0, 20.0, 30.0, 40.0, 50.0, 60.0};
+	double currentHeight = heights[0];
+
 	// Drivetrain declarations
 	frc::VictorSP rightFront {RIGHT_FRONT_MOTOR_PIN};
 	frc::VictorSP leftFront {LEFT_FRONT_MOTOR_PIN};
@@ -66,21 +70,22 @@ public:
 	frc::VictorSP leftBack {LEFT_BACK_MOTOR_PIN};
 	frc::SpeedControllerGroup left {leftFront, leftBack};
 	frc::SpeedControllerGroup right {rightFront, rightBack};
-	frc::DifferentialDrive drivetrain {left, right};	
+	frc::DifferentialDrive drivetrain {left, right};
+
 	// Control declarations
 	Lib830::GamepadF310 pilot {0};
 	Lib830::GamepadF310 copilot {1};
-	//misc component declarations
-	frc::AnalogGyro gyro {ANALOG_GYRO_PIN};
-	// Arm Declarations
 
+	// Misc component declarations
+	frc::AnalogGyro gyro {ANALOG_GYRO_PIN};
+
+	// Arm Declarations
 	frc::VictorSP joint{WINCH_MOTOR_PIN};
 	frc::VictorSP flywheel{FLYWHEEL_MOTOR_PIN};
 	frc::AnalogPotentiometer pot{POTENTIOMETER_ANALOG_PIN};
 	frc::Solenoid piston{SOLENOID_PIN};
 	Arm arm{joint, flywheel, pot, piston};
-	std::vector<double> heights = {10.0, 20.0, 30.0, 40.0, 50.0, 60.0};
-	double currentHeight = heights[0];
+
 	// Elevator Declarations
 	frc::VictorSP winch{ELEVATOR_MOTOR_PIN};
 	frc::Encoder elevatorEncoder{ELEVATOR_ENCODER_DIO_ONE, ELEVATOR_ENCODER_DIO_TWO};

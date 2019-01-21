@@ -9,11 +9,52 @@
 
 using namespace frc;
 using namespace Lib830;
-// BAG Motor with encoders
+
+// Called Initially on Robot Start
+void Robot::RobotInit() {
+
+    // Setup camera tools
+    std::thread visionThread(CameraLoop);
+    visionThread.detach();
+
+    // Setup Gyro
+    gyro.Calibrate();
+    gyro.Reset();
+    prevAngle = gyro.GetAngle();
+
+    // Setup Encoder
+    elevatorEncoder.SetDistancePerPulse(ENCODER_TICK_DISTANCE);
+}
+
+//Called Whilst Robot is on
+void Robot::RobotPeriodic() {
+    frc::SmartDashboard::PutNumber("Height: ", heights[currentHeight]);
+}
+
+//Called Initially on Autonomous Start
+void Robot::AutonomousInit() {}
+
+//Called During Autonomous
+void Robot::AutonomousPeriodic() {}
+
+//Called Initially on Teleop Start
+void Robot::TeleopInit() {}
+
+// Called During Periodic
+void Robot::TeleopPeriodic() {
+    handleDrivetrain();
+    handleElevator();
+    handlePistons();
+    handleJoint();
+    handleFlywheel();
+
+}
+
+// Seperate Thread For Camera Processing
 void Robot::CameraLoop() {
     CameraServer &server = *CameraServer::GetInstance();
     GripPipeline pipeline;
-  	// cs::UsbCamera webcamfront {"Front Camera", 1};
+    // cs::UsbCamera webcamfront {"Front Camera", 1};
 
     cv::Mat image;
     cv::Mat image_temp;
@@ -24,14 +65,14 @@ void Robot::CameraLoop() {
     cs::CvSource outputStream;
 
     cs::UsbCamera webcamFront = server.StartAutomaticCapture();
-    webcamFront.SetResolution(320,240);
+    webcamFront.SetResolution(320, 240);
     webcamFront.SetExposureManual(20);
     webcamFront.SetFPS(30);
 
     sink = server.GetVideo();
     outputStream = server.PutVideo("Processed", 320, 240);
 
-    while(1) {
+    while (1) {
         bool working = sink.GrabFrame(image_temp);
 
         if (working) {
@@ -45,44 +86,10 @@ void Robot::CameraLoop() {
         pipeline.Process(image);
         // outputStream.PutFrame(*pipeline.gethslThresholdOutput());
         outputStream.PutFrame(image);
-
     }
 }
 
-void Robot::RobotInit() {
-    //Setup camera tools
-    std::thread visionThread(CameraLoop);
-    visionThread.detach();
-
-    //Start gyro
-    gyro.Calibrate();
-    gyro.Reset();
-    prevAngle = gyro.GetAngle();
-    elevatorEncoder.SetDistancePerPulse(ENCODER_TICK_DISTANCE);
-}
-
-void Robot::RobotPeriodic() {
-    frc::SmartDashboard::PutNumber("Height: ", heights[currentHeight]);
-}
-//Called Whilst Robot is on
-
-void Robot::AutonomousInit() {}
-//Called Initially on Autonomous Start
-
-void Robot::AutonomousPeriodic() {}
-//Called During Autonomous
-
-void Robot::TeleopInit() {}
-//Called Initially on Teleop Start
-
-void Robot::TeleopPeriodic() {
-    handleDrivetrain();
-    handleElevator();
-    handlePistons();
-    handleJoint();
-    handleFlywheel();
-
-}
+// Copilot: Handles controller input use with flywheel
 void Robot::handleFlywheel() {
     if (copilot.LeftY() > FLYWHEEL_THRESHOLD)
     {
@@ -93,12 +100,16 @@ void Robot::handleFlywheel() {
         arm.setMode(Arm::INTAKE);
     }
 }
+
+// Copilot: Handles controller input with pistons
 void Robot::handlePistons() {
     if (copilot.ButtonState(GamepadF310::BUTTON_A)) {
         arm.releasePistons();
     }
     arm.update();
 }
+
+// Pilot: Handles controller input for movement
 void Robot::handleDrivetrain() {
     speed = Lib830::accel(prevSpeed, pilot.LeftY(), TICKS_TO_ACCEL);
     prevSpeed = speed;
@@ -113,6 +124,9 @@ void Robot::handleDrivetrain() {
         drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), std::fabs(speed) < controller_threshold);
     }
 }
+
+// Copilot: Handles controller input with elevator
+// TODO FIX THIS
 void Robot::handleElevator() {
     if (copilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER) &&
         !copilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER) && currentHeight != heights.size() - 1) {
@@ -130,11 +144,14 @@ void Robot::handleElevator() {
         bumperPressed = false;
     }
 }
+
+// Copilot: Handles controller input with rotating arm
 void Robot::handleJoint() {
     if (copilot.DPadY() != 0) {
         arm.setAngle(arm.getAngle() + copilot.DPadY());
     }
 }
+
 void Robot::TestPeriodic() {}
         //Called During Test
 

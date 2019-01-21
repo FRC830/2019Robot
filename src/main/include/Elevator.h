@@ -1,7 +1,6 @@
 #include <Lib830.h>
 #include <frc/WPILib.h>
 
-// This class controls the movement of the 3-stage cascade elevator
 class Elevator {
     public:
     Elevator(frc::VictorSP &winch, frc::Encoder &elevatorEncoder);
@@ -10,4 +9,5 @@ class Elevator {
     private:
     frc::VictorSP &winch;
     frc::Encoder &elevatorEncoder;
+    static constexpr double HEIGHT_THRESHOLD = 1.0;
 };
