@@ -28,8 +28,10 @@ public:
 
   private:
 	// Motor Pins
-	static const int RIGHT_MOTOR_PIN = 0; 
-	static const int LEFT_MOTOR_PIN = 0; 
+	static const int RIGHT_FRONT_MOTOR_PIN = 0; 
+	static const int LEFT_FRONT_MOTOR_PIN = 0; 
+	static const int RIGHT_BACK_MOTOR_PIN = 0; 
+	static const int LEFT_BACK_MOTOR_PIN = 0; 
 	static const int ANALOG_GYRO_PIN = 0;
 	static const int POTENTIOMETER_ANALOG_PIN = 0;
 	static const int WINCH_MOTOR_PIN = 0;
@@ -58,9 +60,13 @@ public:
 	bool bumperPressed = false;	
 	
 	// Drivetrain declarations
-	frc::VictorSP right {RIGHT_MOTOR_PIN};
-	frc::VictorSP left {LEFT_MOTOR_PIN};
-	frc::DifferentialDrive drivetrain {left, right};			
+	frc::VictorSP rightFront {RIGHT_FRONT_MOTOR_PIN};
+	frc::VictorSP leftFront {LEFT_FRONT_MOTOR_PIN};
+	frc::VictorSP rightBack {RIGHT_BACK_MOTOR_PIN};
+	frc::VictorSP leftBack {LEFT_BACK_MOTOR_PIN};
+	frc::SpeedControllerGroup left {leftFront, leftBack};
+	frc::SpeedControllerGroup right {rightFront, rightBack};
+	frc::DifferentialDrive drivetrain {left, right};	
 	// Control declarations
 	Lib830::GamepadF310 pilot {0};
 	Lib830::GamepadF310 copilot {1};
