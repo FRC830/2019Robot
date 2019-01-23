@@ -114,12 +114,11 @@ void Robot::handleDrivetrain() {
     prevSpeed = speed;
 
     // Activates gyro correct on straight driving
-    double controller_threshold = 0.05;
-    if (std::fabs(pilot.RightX()) > controller_threshold) {
-        drivetrain.CurvatureDrive(speed, pilot.RightX(), std::fabs(speed) < controller_threshold);
+    if (std::fabs(pilot.RightX()) > CONTROLLER_GYRO_THRESHOLD) {
+        drivetrain.CurvatureDrive(speed, pilot.RightX(), std::fabs(speed) < CONTROLLER_GYRO_THRESHOLD);
         prevAngle = gyro.GetAngle();
     } else {
-        drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), std::fabs(speed) < controller_threshold);
+        drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), std::fabs(speed) < CONTROLLER_GYRO_THRESHOLD);
     }
 }
 
@@ -146,7 +145,7 @@ void Robot::handleElevator() {
 // Copilot: Handles controller input with rotating arm
 void Robot::handleJoint() {
     if (copilot.DPadY() != 0) {
-        arm.setAngle(arm.getAngle() + copilot.DPadY());
+        arm.setAngle(arm.getAngle() + copilot.DPadY() * JOINT_MOVEMENT_SPEED);
     }
 }
 

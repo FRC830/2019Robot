@@ -58,6 +58,8 @@ public:
 	// Misc
 	static const int TICKS_TO_ACCEL = 10;
 	static constexpr double FLYWHEEL_THRESHOLD = 0.05;
+	static constexpr double JOINT_MOVEMENT_SPEED = 2.0;
+	static constexpr double CONTROLLER_GYRO_THRESHOLD = 0.05;
 	double prevAngle = 0; 
 	double prevSpeed = 0;
 	double speed = 0;
