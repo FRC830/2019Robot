@@ -2,7 +2,7 @@
 using namespace frc;
 
 // Initilized the Elevator Arm with a motor and encoder
-Elevator::Elevator(VictorSP &winch, Encoder &elevatorEncoder) : winch(winch), elevatorEncoder(elevatorEncoder) {
+Elevator::Elevator(WPI_VictorSPX &winch, Encoder &elevatorEncoder) : winch(winch), elevatorEncoder(elevatorEncoder) {
 
 }
 

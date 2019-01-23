@@ -112,8 +112,7 @@ void Robot::handlePistons() {
 void Robot::handleDrivetrain() {
     speed = Lib830::accel(prevSpeed, pilot.LeftY(), TICKS_TO_ACCEL);
     prevSpeed = speed;
-    speed = Lib830::accel(prevSpeed, pilot.LeftY(), TICKS_TO_ACCEL);
-    prevSpeed = speed;
+
     // Activates gyro correct on straight driving
     double controller_threshold = 0.05;
     if (std::fabs(pilot.RightX()) > controller_threshold) {

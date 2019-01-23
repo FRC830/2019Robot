@@ -3,6 +3,7 @@
 #include <string>
 #include <Lib830.h>
 #include <frc/WPILib.h>
+#include <ctre/Phoenix.h>
 #include <thread>
 #include <opencv2/core/core.hpp>
 #include "GripPipeline.h"
@@ -27,17 +28,18 @@ public:
 	static void CameraLoop();
 
   private:
-	// Motor Pins
-	static const int RIGHT_FRONT_MOTOR_PIN = 0; 
-	static const int LEFT_FRONT_MOTOR_PIN = 0; 
-	static const int RIGHT_BACK_MOTOR_PIN = 0; 
-	static const int LEFT_BACK_MOTOR_PIN = 0; 
+	// Motor IDs
+	static const int RIGHT_FRONT_MOTOR_ID = 1; 
+	static const int LEFT_FRONT_MOTOR_ID = 2; 
+	static const int RIGHT_BACK_MOTOR_ID = 3; 
+	static const int LEFT_BACK_MOTOR_ID = 4; 
 	static const int ANALOG_GYRO_PIN = 0;
 	static const int POTENTIOMETER_ANALOG_PIN = 0;
-	static const int WINCH_MOTOR_PIN = 0;
-	static const int FLYWHEEL_MOTOR_PIN = 0;
-	static const int ELEVATOR_MOTOR_PIN = 0;
-	static const int SOLENOID_PIN = 0;
+	static const int WINCH_MOTOR_ID = 0;
+	static const int FLYWHEEL_MOTOR_ID = 0;
+	static const int ELEVATOR_MOTOR_ID = 0;
+	static const int PUNCHER_SOLENOID_PIN = 4;
+	static const int GEARSHIFT_SOLENOID_PIN = 5;
 
 	// Encoder Values
 	static const int ENCODER_TICKS = 1024;
@@ -64,10 +66,10 @@ public:
 	double currentHeight = heights[0];
 
 	// Drivetrain declarations
-	frc::VictorSP rightFront {RIGHT_FRONT_MOTOR_PIN};
-	frc::VictorSP leftFront {LEFT_FRONT_MOTOR_PIN};
-	frc::VictorSP rightBack {RIGHT_BACK_MOTOR_PIN};
-	frc::VictorSP leftBack {LEFT_BACK_MOTOR_PIN};
+	WPI_VictorSPX rightFront {RIGHT_FRONT_MOTOR_ID};
+	WPI_VictorSPX leftFront {LEFT_FRONT_MOTOR_ID};
+	WPI_TalonSRX rightBack {RIGHT_BACK_MOTOR_ID};
+	WPI_TalonSRX leftBack {LEFT_BACK_MOTOR_ID};
 	frc::SpeedControllerGroup left {leftFront, leftBack};
 	frc::SpeedControllerGroup right {rightFront, rightBack};
 	frc::DifferentialDrive drivetrain {left, right};
@@ -80,14 +82,15 @@ public:
 	frc::AnalogGyro gyro {ANALOG_GYRO_PIN};
 
 	// Arm Declarations
-	frc::VictorSP joint{WINCH_MOTOR_PIN};
-	frc::VictorSP flywheel{FLYWHEEL_MOTOR_PIN};
+	WPI_VictorSPX joint{WINCH_MOTOR_ID};
+	WPI_VictorSPX flywheel{FLYWHEEL_MOTOR_ID};
 	frc::AnalogPotentiometer pot{POTENTIOMETER_ANALOG_PIN};
-	frc::Solenoid piston{SOLENOID_PIN};
-	Arm arm{joint, flywheel, pot, piston};
+	frc::Solenoid gearshifter{GEARSHIFT_SOLENOID_PIN};
+	frc::Solenoid puncher{PUNCHER_SOLENOID_PIN};
+	Arm arm{joint, flywheel, pot, puncher};
 
 	// Elevator Declarations
-	frc::VictorSP winch{ELEVATOR_MOTOR_PIN};
+	WPI_VictorSPX winch{ELEVATOR_MOTOR_ID};
 	frc::Encoder elevatorEncoder{ELEVATOR_ENCODER_DIO_ONE, ELEVATOR_ENCODER_DIO_TWO};
 	Elevator elevator{winch, elevatorEncoder};
 };
