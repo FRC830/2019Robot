@@ -12,6 +12,17 @@ using namespace Lib830;
 
 // Called Initially on Robot Start
 void Robot::RobotInit() {
+    // Reset Motors
+    rightFront.ConfigFactoryDefault();
+    rightBack.ConfigFactoryDefault();
+    leftFront.ConfigFactoryDefault();
+    leftBack.ConfigFactoryDefault();
+
+    // Set Motor Direction (Currently does nothing, may be useful for hot swapping)
+    rightFront.SetInverted(false);
+    rightBack.SetInverted(false);
+    leftFront.SetInverted(false);
+    leftBack.SetInverted(false);
 
     // Setup camera tools
     std::thread visionThread(CameraLoop);
@@ -107,18 +118,27 @@ void Robot::handlePistons() {
     }
     arm.update();
 }
+double deadzone(double d) {
+ if (std::fabs(d) < 0.05) {
+     return 0;
+    } else {
+    return d;
+    }
 
+}
 // Pilot: Handles controller input for movement
 void Robot::handleDrivetrain() {
+
     speed = Lib830::accel(prevSpeed, pilot.LeftY(), TICKS_TO_ACCEL);
     prevSpeed = speed;
 
     // Activates gyro correct on straight driving
-    if (std::fabs(pilot.RightX()) > CONTROLLER_GYRO_THRESHOLD) {
-        drivetrain.CurvatureDrive(speed, pilot.RightX(), std::fabs(speed) < CONTROLLER_GYRO_THRESHOLD);
-        prevAngle = gyro.GetAngle();
+    if ((std::fabs(pilot.RightX()) < CONTROLLER_GYRO_THRESHOLD) && gyroCorrectEnabled) {
+        drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), std::fabs(speed) < 0.05);
     } else {
-        drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), std::fabs(speed) < CONTROLLER_GYRO_THRESHOLD);
+        // cout<<"you've got mail;";
+        drivetrain.CurvatureDrive(speed, pilot.RightX(), std::fabs(speed) < 0.05);
+        prevAngle = gyro.GetAngle();
     }
 }
 

@@ -25,6 +25,7 @@ public:
 	void handleFlywheel();
 	void handlePistons();
 	void handleElevator();
+	double deadzone(double);
 	static void CameraLoop();
 
   private:
@@ -48,22 +49,23 @@ public:
 	static const int ENCODER_TICK_DISTANCE = 6 * PI / ENCODER_TICKS;
 
 	// Encoder Pins
-	static const int ELEVATOR_ENCODER_DIO_ONE = 999;
-	static const int ELEVATOR_ENCODER_DIO_TWO = 998;
-	static const int DRIVETRAIN_ENCODER_LEFT_DIO_ONE = 991;
-	static const int DRIVETRAIN_ENCODER_LEFT_DIO_TWO = 992;
-	static const int DRIVETRAIN_ENCODER_RIGHT_DIO_ONE = 993;
-	static const int DRIVETRAIN_ENCODER_RIGHT_DIO_TWO = 994;
+	static const int ELEVATOR_ENCODER_DIO_ONE = 0;
+	static const int ELEVATOR_ENCODER_DIO_TWO = 0;
+	static const int DRIVETRAIN_ENCODER_LEFT_DIO_ONE = 0;
+	static const int DRIVETRAIN_ENCODER_LEFT_DIO_TWO = 0;
+	static const int DRIVETRAIN_ENCODER_RIGHT_DIO_ONE = 0;
+	static const int DRIVETRAIN_ENCODER_RIGHT_DIO_TWO = 0;
 
 	// Misc
 	static const int TICKS_TO_ACCEL = 10;
 	static constexpr double FLYWHEEL_THRESHOLD = 0.05;
 	static constexpr double JOINT_MOVEMENT_SPEED = 2.0;
-	static constexpr double CONTROLLER_GYRO_THRESHOLD = 0.05;
+	static constexpr double CONTROLLER_GYRO_THRESHOLD = 0.1;
 	double prevAngle = 0; 
 	double prevSpeed = 0;
 	double speed = 0;
 	bool bumperPressed = false;
+	bool gyroCorrectEnabled = false;
 	std::vector<double> heights = {10.0, 20.0, 30.0, 40.0, 50.0, 60.0};
 	double currentHeight = heights[0];
 
