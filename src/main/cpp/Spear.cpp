@@ -4,7 +4,7 @@ using namespace frc;
 // Initializes an Spear
 Spear::Spear(Solenoid &hatchGrabPiston, Solenoid &extensionPiston) : 
 hatchGrabPiston(hatchGrabPiston), extensionPiston(extensionPiston) {
-
+    timer.Start();
 }
 
 void Spear::setExtend (bool state) {
@@ -15,6 +15,19 @@ void Spear::setHatchGrab (bool state) {
     hatchGrabPiston.Set(state);
 }
 
+void Spear::placeRoutine(bool placing){
+    placing = placing;
+}
+
+void Spear::grabRoutine(bool grabbing){
+    grabbing = grabbing;
+}
+
+void Spear::updateRoutine(){
+    if (running || grabbing){
+        
+    }
+}
 // Hatch(Automated)
 
 //Intake (A Button?) Active VR. Inactive
