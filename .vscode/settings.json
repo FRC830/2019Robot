@@ -27,7 +27,8 @@
     "cstdint": "cpp",
     "tuple": "cpp",
     "C_Cpp.default.configurationProvider": "vscode-wpilib",
-    "vector": "cpp"
+    "vector": "cpp",
+    "*.inc": "cpp"
   },
   "C_Cpp.default.configurationProvider": "vscode-wpilib"
 }

@@ -2,8 +2,8 @@
 using namespace frc;
 
 // Initializes an Arm
-Arm::Arm(WPI_VictorSPX &joint, WPI_VictorSPX &flywheel, AnalogPotentiometer &pot, Solenoid &puncher) : 
-flywheel(flywheel), joint(joint), pot(pot), puncher(puncher) {
+Arm::Arm(WPI_VictorSPX &joint, WPI_VictorSPX &flywheel, AnalogPotentiometer &pot) : 
+flywheel(flywheel), joint(joint), pot(pot) {
     timer.Start();
 }
 
@@ -18,17 +18,9 @@ void Arm::setMode(Mode mode) {
     }
 }
 
-// Extends Pistons
-void Arm::releasePistons() {
-    timer.Reset();
-    puncher.Set(true);
-}
 
-// Updates Pistons
 void Arm::update() {
-    if (timer.Get() > PISTON_EXTENSION_TIME) {
-        puncher.Set(false);
-    }
+
 }
 
 // Moves the arm to the specified angle

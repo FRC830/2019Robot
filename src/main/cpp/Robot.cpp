@@ -55,10 +55,11 @@ void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
     handleDrivetrain();
     handleElevator();
-    handlePistons();
-    handleJoint();
+    handleSpear();
+    handleArm();
     handleFlywheel();
 
+    arm.update();
 }
 
 // Seperate Thread For Camera Processing
@@ -111,13 +112,14 @@ void Robot::handleFlywheel() {
     }
 }
 
-// Copilot: Handles controller input with pistons
-void Robot::handlePistons() {
-    if (copilot.ButtonState(GamepadF310::BUTTON_A)) {
-        arm.releasePistons();
-    }
-    arm.update();
+// Copilot: Handles controller input with pistons (Spear)
+void Robot::handleSpear() {
+    static Toggle spearExtendTog;
+    spear.setExtend(spearExtendTog.toggle(
+                    copilot.ButtonState(GamepadF310::BUTTON_A)));
+    spear.setHatchGrab(copilot.RightTrigger() > 0.25);
 }
+
 double deadzone(double d) {
  if (std::fabs(d) < 0.05) {
      return 0;
@@ -163,7 +165,7 @@ void Robot::handleElevator() {
 }
 
 // Copilot: Handles controller input with rotating arm
-void Robot::handleJoint() {
+void Robot::handleArm() {
     if (copilot.DPadY() != 0) {
         arm.setAngle(arm.getAngle() + copilot.DPadY() * JOINT_MOVEMENT_SPEED);
     }
@@ -171,6 +173,11 @@ void Robot::handleJoint() {
 
 void Robot::TestPeriodic() {}
         //Called During Test
+
+void Robot::DisabledInit(){
+    spear.setExtend(false);
+    spear.setHatchGrab(false);
+}
 
 #ifndef RUNNING_FRC_TESTS
 int main(){

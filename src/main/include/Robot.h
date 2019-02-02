@@ -6,10 +6,11 @@
 #include <ctre/Phoenix.h>
 #include <thread>
 #include <opencv2/core/core.hpp>
+#include <vector>
 #include "GripPipeline.h"
 #include "Elevator.h"
 #include "Arm.h"
-#include <vector>
+#include "Spear.h"
 
 class Robot : public frc::TimedRobot {
 public:
@@ -20,10 +21,11 @@ public:
 	void TeleopInit() override;
 	void TeleopPeriodic() override;
 	void TestPeriodic() override;
-	void handleJoint();
+	void DisabledInit() override;
+	void handleArm();
 	void handleDrivetrain();
 	void handleFlywheel();
-	void handlePistons();
+	void handleSpear();
 	void handleElevator();
 	double deadzone(double);
 	static void CameraLoop();
@@ -39,8 +41,9 @@ public:
 	static const int WINCH_MOTOR_ID = 0;
 	static const int FLYWHEEL_MOTOR_ID = 0;
 	static const int ELEVATOR_MOTOR_ID = 0;
-	static const int PUNCHER_SOLENOID_PIN = 4;
 	static const int GEARSHIFT_SOLENOID_PIN = 5;
+	static const int HATCH_GRAB_SOLENOID_PIN = 6;
+	static const int EXTENSION_SOLENOID_PIN = 7;
 
 	// Encoder Values
 	static const int ENCODER_TICKS = 1024;
@@ -77,6 +80,7 @@ public:
 	frc::SpeedControllerGroup left {leftFront, leftBack};
 	frc::SpeedControllerGroup right {rightFront, rightBack};
 	frc::DifferentialDrive drivetrain {left, right};
+	frc::Solenoid gearshifter{GEARSHIFT_SOLENOID_PIN};
 
 	// Control declarations
 	Lib830::GamepadF310 pilot {0};
@@ -89,9 +93,12 @@ public:
 	WPI_VictorSPX joint{WINCH_MOTOR_ID};
 	WPI_VictorSPX flywheel{FLYWHEEL_MOTOR_ID};
 	frc::AnalogPotentiometer pot{POTENTIOMETER_ANALOG_PIN};
-	frc::Solenoid gearshifter{GEARSHIFT_SOLENOID_PIN};
-	frc::Solenoid puncher{PUNCHER_SOLENOID_PIN};
-	Arm arm{joint, flywheel, pot, puncher};
+	Arm arm{joint, flywheel, pot};
+	
+	// Spear Declarations
+	frc::Solenoid hatchGrabPiston{HATCH_GRAB_SOLENOID_PIN};
+    frc::Solenoid extensionPiston{EXTENSION_SOLENOID_PIN};
+	Spear spear{hatchGrabPiston, extensionPiston};
 
 	// Elevator Declarations
 	WPI_VictorSPX winch{ELEVATOR_MOTOR_ID};
