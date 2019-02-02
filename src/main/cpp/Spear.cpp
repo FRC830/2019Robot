@@ -2,48 +2,83 @@
 using namespace frc;
 
 // Initializes an Spear
-Spear::Spear(Solenoid &hatchGrabPiston, Solenoid &extensionPiston) : 
-hatchGrabPiston(hatchGrabPiston), extensionPiston(extensionPiston) {
-    timer.Start();
+Spear::Spear(Solenoid &hatchGrabPiston, Solenoid &extensionPiston) : hatchGrabPiston(hatchGrabPiston), extensionPiston(extensionPiston) {
+
 }
 
+//true is extended, false is retracted
 void Spear::setExtend (bool state) {
     extensionPiston.Set(state);
 }
 
+//true is down, false is up
 void Spear::setHatchGrab (bool state) {
     hatchGrabPiston.Set(state);
 }
 
-void Spear::placeRoutine(bool placing){
-    placing = placing;
-}
-
-void Spear::grabRoutine(bool grabbing){
-    grabbing = grabbing;
-}
-
-void Spear::updateRoutine(){
-    if (running || grabbing){
-        
+void Spear::setPlaceRoutine(bool placing) {
+    this->placing = placing;
+    if (placing) {
+        timer.Start();
     }
 }
-// Hatch(Automated)
 
-//Intake (A Button?) Active VR. Inactive
+void Spear::setGrabRoutine(bool grabbing) {
+    this->grabbing = grabbing;
+    if (grabbing) {
+        timer.Start();
+    }
+}
 
-//JoystickButton (JoystickButton &&A)=default, virtual void 
-//frc::Button::ToggleWhenPressed( hatchGrabPiston.Set(false) || extensionPiston.Set(true)
-// *hatchGrabPiston.Set(true) || extensionPiston.Set(false))	
+void Spear::updateRoutine() {
+    //stops both routines running at same time or when neither is running
+    if (placing == grabbing) {
+        timer.Stop();
+        timer.Reset();
+        return;
+    }
 
-//Press 1: Grab | Spearhead moves down (Pneumatic 1 recoils), Wait for completion, Shaft Extends (Pneumatic 2 extends)
-//Press 2: Secure | Spearhead moves up (Pneumatic 1 extends), Wait for completion, Shaft Retracts (Pneumatic 2 recoils)
+    double time = timer.Get();
 
-//Outtake (B Button//?) 
+    // Placing Routine
+    // (1) Extend Arm
+    // (2) Flip Down
+    // (3) Retract Down
+    // (4) Flip Up
+    if (placing) {
+        if (time < PLACING_EXTEND_TIME) {
+            setHatchGrab(false);
+            setExtend(true);
+        } else if (time < PLACING_EXTEND_TIME + PLACING_FLIP_DOWN_TIME) {
+            setHatchGrab(true);
+            setExtend(true);
+        } else if (time < PLACING_EXTEND_TIME + PLACING_FLIP_DOWN_TIME + PLACING_RETRACT_TIME) {
+            setHatchGrab(true);
+            setExtend(false);
+        } else {
+            setHatchGrab(false);
+            setExtend(false);
+        }                 
+    }
 
-//JoystickButton (JoystickButton &&B)=default, virtual void 
-//frc::Button::ToggleWhenPressed(hatchGrabPiston.Set(false) || extensionPiston.Set(false) * command	)	
-
-//Press 1: Extend | Shaft Extends (Pneumatics 2 Extends) 
-//Press 2: Release | Spearhead moves down (Pneumatic 1 recoils), Wait for completion, Shaft Retracts (Pneumatic 2 recoils), 
-//Spearhead moves up (Pneumatic 1 extends
+    // Grabbing Routine
+    // (1) Flip Down
+    // (2) Extend Arm
+    // (3) Flip Up
+    // (4) Retract
+    if (grabbing) {
+        if (time < GRABBING_FLIP_DOWN_TIME) {
+            setHatchGrab(true);
+            setExtend(false);
+        } else if (time < GRABBING_FLIP_DOWN_TIME + GRABBING_EXTEND_TIME) {
+            setHatchGrab(true);
+            setExtend(true);
+        } else if (time < GRABBING_FLIP_DOWN_TIME + GRABBING_EXTEND_TIME + GRABBING_FLIP_UP_TIME) {
+            setHatchGrab(false);
+            setExtend(true);
+        } else {
+            setHatchGrab(false);
+            setExtend(false);            
+        }                 
+    }
+}

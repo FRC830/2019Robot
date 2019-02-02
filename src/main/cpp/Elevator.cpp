@@ -1,7 +1,7 @@
-#include <Elevator.h>
+#include "Elevator.h"
 using namespace frc;
 
-// Initilized the Elevator Arm with a motor and encoder
+// Initialized the Elevator Arm with a motor and encoder
 Elevator::Elevator(WPI_VictorSPX &winch, Encoder &elevatorEncoder) : winch(winch), elevatorEncoder(elevatorEncoder) {
 
 }

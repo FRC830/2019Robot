@@ -51,7 +51,7 @@ void Robot::AutonomousPeriodic() {}
 //Called Initially on Teleop Start
 void Robot::TeleopInit() {}
 
-// Called During Periodic
+// Called During Teleop
 void Robot::TeleopPeriodic() {
     handleDrivetrain();
     handleElevator();
@@ -59,7 +59,6 @@ void Robot::TeleopPeriodic() {
     handleArm();
     handleFlywheel();
 
-    arm.update();
 }
 
 // Seperate Thread For Camera Processing
@@ -114,10 +113,15 @@ void Robot::handleFlywheel() {
 
 // Copilot: Handles controller input with pistons (Spear)
 void Robot::handleSpear() {
+    
     static Toggle spearExtendTog;
-    spear.setExtend(spearExtendTog.toggle(
-                    copilot.ButtonState(GamepadF310::BUTTON_A)));
+    // Manual setting of spear
+    spear.setExtend(spearExtendTog.toggle(copilot.ButtonState(GamepadF310::BUTTON_A)));
     spear.setHatchGrab(copilot.RightTrigger() > 0.25);
+    // Routines are a full set of instructions
+    spear.setPlaceRoutine(copilot.ButtonState(GamepadF310::BUTTON_X));
+    spear.setGrabRoutine(copilot.ButtonState(GamepadF310::BUTTON_Y));
+    spear.updateRoutine();
 }
 
 double deadzone(double d) {
@@ -166,6 +170,7 @@ void Robot::handleElevator() {
 
 // Copilot: Handles controller input with rotating arm
 void Robot::handleArm() {
+    arm.update();    
     if (copilot.DPadY() != 0) {
         arm.setAngle(arm.getAngle() + copilot.DPadY() * JOINT_MOVEMENT_SPEED);
     }
@@ -175,7 +180,7 @@ void Robot::TestPeriodic() {}
         //Called During Test
 
 void Robot::DisabledInit(){
-    spear.setExtend(false);
+    spear.setExtend(false); 
     spear.setHatchGrab(false);
 }
 
