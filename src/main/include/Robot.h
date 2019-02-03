@@ -71,6 +71,7 @@ public:
 	bool gyroCorrectEnabled = false;
 	std::vector<double> heights = {10.0, 20.0, 30.0, 40.0, 50.0, 60.0};
 	double currentHeight = heights[0];
+	
 
 	// Drivetrain declarations
 	WPI_VictorSPX rightFront {RIGHT_FRONT_MOTOR_ID};

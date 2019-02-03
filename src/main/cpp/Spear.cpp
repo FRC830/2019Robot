@@ -32,53 +32,68 @@ void Spear::setGrabRoutine(bool grabbing) {
 
 void Spear::updateRoutine() {
     //stops both routines running at same time or when neither is running
-    if (placing == grabbing) {
+    if (placing && grabbing) {
         timer.Stop();
         timer.Reset();
         return;
     }
 
-    double time = timer.Get();
+    if (placing != previous_placing || grabbing != previous_grabbing){
+        timer.Reset();
+        timer.Start();
+    }
 
+
+    double time = timer.Get();
     // Placing Routine
     // (1) Extend Arm
     // (2) Flip Down
+    // WAIT
     // (3) Retract Down
     // (4) Flip Up
     if (placing) {
-        if (time < PLACING_EXTEND_TIME) {
-            setHatchGrab(false);
-            setExtend(true);
-        } else if (time < PLACING_EXTEND_TIME + PLACING_FLIP_DOWN_TIME) {
+        setHatchGrab(false);
+        setExtend(true);
+    } else if (previous_placing || end_placing) {
+        if (time < FLIP_DELAY){
+            end_placing = true;
             setHatchGrab(true);
             setExtend(true);
-        } else if (time < PLACING_EXTEND_TIME + PLACING_FLIP_DOWN_TIME + PLACING_RETRACT_TIME) {
+        } else if (time < 2*FLIP_DELAY) {
             setHatchGrab(true);
             setExtend(false);
-        } else {
+        } else{
             setHatchGrab(false);
             setExtend(false);
-        }                 
-    }
+            end_placing = false;
+        }
+    }                                 
 
     // Grabbing Routine
     // (1) Flip Down
     // (2) Extend Arm
     // (3) Flip Up
     // (4) Retract
+
     if (grabbing) {
-        if (time < GRABBING_FLIP_DOWN_TIME) {
+        if (time < FLIP_DELAY) {
             setHatchGrab(true);
             setExtend(false);
-        } else if (time < GRABBING_FLIP_DOWN_TIME + GRABBING_EXTEND_TIME) {
+        } else {
             setHatchGrab(true);
             setExtend(true);
-        } else if (time < GRABBING_FLIP_DOWN_TIME + GRABBING_EXTEND_TIME + GRABBING_FLIP_UP_TIME) {
+        }
+    } else if (previous_grabbing || end_grabbing) {
+        if (time < FLIP_DELAY) {
+            end_grabbing = true;
             setHatchGrab(false);
             setExtend(true);
-        } else {
+        } else{
             setHatchGrab(false);
-            setExtend(false);            
-        }                 
+            setExtend(false);
+            end_grabbing = false;            
+        }  
     }
+    previous_grabbing = grabbing;
+    previous_placing = placing;
 }

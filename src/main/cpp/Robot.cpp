@@ -113,11 +113,10 @@ void Robot::handleFlywheel() {
 
 // Copilot: Handles controller input with pistons (Spear)
 void Robot::handleSpear() {
-    
     static Toggle spearExtendTog;
     // Manual setting of spear
-    spear.setExtend(spearExtendTog.toggle(copilot.ButtonState(GamepadF310::BUTTON_A)));
-    spear.setHatchGrab(copilot.RightTrigger() > 0.25);
+    // spear.setExtend(spearExtendTog.toggle(copilot.ButtonState(GamepadF310::BUTTON_A)));
+    // spear.setHatchGrab(copilot.RightTrigger() > 0.25);
     // Routines are a full set of instructions
     spear.setPlaceRoutine(copilot.ButtonState(GamepadF310::BUTTON_X));
     spear.setGrabRoutine(copilot.ButtonState(GamepadF310::BUTTON_Y));
