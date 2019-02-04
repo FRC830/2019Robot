@@ -70,6 +70,7 @@ public:
 	bool gyroCorrectEnabled = false;
 	std::vector<double> heights = {10.0, 20.0, 30.0, 40.0, 50.0, 60.0};
 	double currentHeight = heights[0];
+	
 
 	//Vision
 	bool doingAutoAlign = false;
