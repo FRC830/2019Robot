@@ -70,9 +70,9 @@ double combineIndividualPrevAndCurrentData(double prev, double current) {
 
 std::vector<double> Robot::combinePrevAndCurrentVisionData() {
     std::vector<double> result;
-    result.push_back(combineIndividualPrevAndCurrentData(prevLeftRectArea, leftRectArea));
-    result.push_back(combineIndividualPrevAndCurrentData(prevRightRectArea, rightRectArea));
-    result.push_back(combineIndividualPrevAndCurrentData(prevTargetMidpoint, targetMidpoint));
+    result.push_back(combineIndividualPrevAndCurrentData(prevLeftRectArea, currentLeftRectArea));
+    result.push_back(combineIndividualPrevAndCurrentData(prevRightRectArea, currentRightRectArea));
+    result.push_back(combineIndividualPrevAndCurrentData(prevTargetMidpoint, currentTargetMidpoint));
 
     return result;
 }
