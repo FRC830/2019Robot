@@ -7,7 +7,6 @@
 #include <thread>
 #include <opencv2/core/core.hpp>
 #include <vector>
-#include "GripPipeline.h"
 #include "Elevator.h"
 #include "Arm.h"
 #include "Spear.h"
@@ -22,13 +21,13 @@ public:
 	void TeleopPeriodic() override;
 	void TestPeriodic() override;
 	void DisabledInit() override;
+	void handleVision();
 	void handleArm();
 	void handleDrivetrain();
 	void handleFlywheel();
 	void handleSpear();
 	void handleElevator();
 	double deadzone(double);
-	static void CameraLoop();
 
   private:
 	// Motor IDs
@@ -71,6 +70,24 @@ public:
 	bool gyroCorrectEnabled = false;
 	std::vector<double> heights = {10.0, 20.0, 30.0, 40.0, 50.0, 60.0};
 	double currentHeight = heights[0];
+
+	//Vision
+	bool doingAutoAlign = false;
+	double visionSteer = 0.0;
+
+	double prevLeftRectArea = -1;
+	double prevRightRectArea = -1;
+	double prevTargetMidpoint = -1;
+	
+	double currentLeftRectArea = -1;
+	double currentRightRectArea = -1;
+	double currentTargetMidpoint = -1;
+
+	double combineIndividualPrevAndCurrentData(double prev, double current);
+	std::vector<double> combinePrevAndCurrentVisionData();
+
+	void doFullDataVision(std::vector<double> data);
+	void doMidpointOnlyVision(double midpoint);
 
 	// Drivetrain declarations
 	WPI_VictorSPX rightFront {RIGHT_FRONT_MOTOR_ID};

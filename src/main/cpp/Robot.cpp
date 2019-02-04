@@ -24,10 +24,6 @@ void Robot::RobotInit() {
     leftFront.SetInverted(false);
     leftBack.SetInverted(false);
 
-    // Setup camera tools
-    std::thread visionThread(CameraLoop);
-    visionThread.detach();
-
     // Setup Gyro
     gyro.Calibrate();
     gyro.Reset();
@@ -53,50 +49,68 @@ void Robot::TeleopInit() {}
 
 // Called During Teleop
 void Robot::TeleopPeriodic() {
+    handleVision();
     handleDrivetrain();
     handleElevator();
     handleSpear();
     handleArm();
     handleFlywheel();
-
 }
 
-// Seperate Thread For Camera Processing
-void Robot::CameraLoop() {
-    CameraServer &server = *CameraServer::GetInstance();
-    GripPipeline pipeline;
-    // cs::UsbCamera webcamfront {"Front Camera", 1};
+double combineIndividualPrevAndCurrentData(double prev, double current) {
+    if (prev == -1) {
+        return current;
+    }
+    if (current == -1) {
+        return prev;
+    }
 
-    cv::Mat image;
-    cv::Mat image_temp;
-    cv::Mat hsl_output;
-    int g_frame = 0;
+    return (prev + current) / 2;
+}
 
-    cs::CvSink sink;
-    cs::CvSource outputStream;
+std::vector<double> Robot::combinePrevAndCurrentVisionData() {
+    std::vector<double> result;
+    result.push_back(combineIndividualPrevAndCurrentData(prevLeftRectArea, leftRectArea));
+    result.push_back(combineIndividualPrevAndCurrentData(prevRightRectArea, rightRectArea));
+    result.push_back(combineIndividualPrevAndCurrentData(prevTargetMidpoint, targetMidpoint));
 
-    cs::UsbCamera webcamFront = server.StartAutomaticCapture();
-    webcamFront.SetResolution(320, 240);
-    webcamFront.SetExposureManual(20);
-    webcamFront.SetFPS(30);
+    return result;
+}
 
-    sink = server.GetVideo();
-    outputStream = server.PutVideo("Processed", 320, 240);
+//The vision code for if we have the midpoint and both rectangle areas
+void Robot::doFullDataVision(std::vector<double> data) {
+    doMidpointOnlyVision(data[2]); //Maybe do something special here later
+    /*double ratio = data[0] / data[1];
+    double inv = 1.0 / ratio;
+    double maxOfInverses = ratio > inv? ratio: inv;
 
-    while (1) {
-        bool working = sink.GrabFrame(image_temp);
+    double difference = maxOfInverses - 1;
+    double direction = ratio*/
+}
 
-        if (working) {
-            g_frame++;
-            image = image_temp;
+//The vision code for if we only have the midpoint
+void Robot::doMidpointOnlyVision(double midpoint) {
+    Robot::visionSteer = (midpoint - 160) / 160;
+}
+
+void Robot::handleVision() {
+    doingAutoAlign = pilot.ButtonState(GamepadF310::BUTTON_B);
+
+    if (doingAutoAlign) {
+        Robot::currentLeftRectArea = SmartDashboard::GetNumber("Left Rect Area", -1);
+        Robot::currentRightRectArea = SmartDashboard::GetNumber("Right Rect Area", -1);
+        Robot::currentTargetMidpoint = SmartDashboard::GetNumber("Vision Mid X", -1);
+
+        std::vector<double> combined = combinePrevAndCurrentVisionData();
+
+        
+        if(combined[0] != -1 && combined[1] != -1 && combined[2] != -1) {
+            doFullDataVision(combined);
+        } else if (combined[2] != 0) {
+            doMidpointOnlyVision(combined[2]);
+        } else {
+            visionSteer = false; //We don't have data, so we can't steer
         }
-        if (g_frame < 1) {
-            continue;
-        }
-
-        pipeline.Process(image);
-        // outputStream.PutFrame(*pipeline.gethslThresholdOutput());
-        outputStream.PutFrame(image);
     }
 }
 
@@ -139,12 +153,17 @@ void Robot::handleDrivetrain() {
     prevSpeed = speed;
 
     // Activates gyro correct on straight driving
-    if ((std::fabs(pilot.RightX()) < CONTROLLER_GYRO_THRESHOLD) && gyroCorrectEnabled) {
-        drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), std::fabs(speed) < 0.05);
-    } else {
-        // cout<<"you've got mail;";
-        drivetrain.CurvatureDrive(speed, pilot.RightX(), std::fabs(speed) < 0.05);
-        prevAngle = gyro.GetAngle();
+    if(visionSteer) {
+        drivetrain.CurvatureDrive(speed, visionSteer, false);
+    }
+    else {
+        if ((std::fabs(pilot.RightX()) < CONTROLLER_GYRO_THRESHOLD) && gyroCorrectEnabled) {
+            drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), std::fabs(speed) < 0.05);
+        } else {
+            // cout<<"you've got mail;";
+            drivetrain.CurvatureDrive(speed, pilot.RightX(), std::fabs(speed) < 0.05);
+            prevAngle = gyro.GetAngle();
+        }
     }
 }
 
