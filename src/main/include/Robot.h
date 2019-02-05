@@ -76,19 +76,21 @@ public:
 	bool doingAutoAlign = false;
 	double visionSteer = 0.0;
 
-	double prevLeftRectArea = -1;
-	double prevRightRectArea = -1;
+	double prevLeftArea = -1;
+	double prevRightArea = -1;
 	double prevTargetMidpoint = -1;
 	
-	double currentLeftRectArea = -1;
-	double currentRightRectArea = -1;
+	double currentLeftArea = -1;
+	double currentRightArea = -1;
 	double currentTargetMidpoint = -1;
 
-	double combineIndividualPrevAndCurrentData(double prev, double current);
+	double combineIndividualPrevAndCurrentData(double prev, double current, double angle);
 	std::vector<double> combinePrevAndCurrentVisionData();
 
+	double estimateHorizontalDisplacement(double leftArea, double rightArea, double targetMidpoint);
 	void doFullDataVision(std::vector<double> data);
 	void doMidpointOnlyVision(double midpoint);
+
 
 	// Drivetrain declarations
 	WPI_VictorSPX rightFront {RIGHT_FRONT_MOTOR_ID};

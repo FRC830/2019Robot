@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 
 #include <Robot.h>
+#include <math.h> //For trig for vision
 
 using namespace frc;
 using namespace Lib830;
@@ -70,36 +71,41 @@ double combineIndividualPrevAndCurrentData(double prev, double current) {
 
 std::vector<double> Robot::combinePrevAndCurrentVisionData() {
     std::vector<double> result;
-    result.push_back(combineIndividualPrevAndCurrentData(prevLeftRectArea, currentLeftRectArea));
-    result.push_back(combineIndividualPrevAndCurrentData(prevRightRectArea, currentRightRectArea));
+    result.push_back(combineIndividualPrevAndCurrentData(prevLeftArea, currentLeftArea));
+    result.push_back(combineIndividualPrevAndCurrentData(prevRightArea, currentRightArea));
     result.push_back(combineIndividualPrevAndCurrentData(prevTargetMidpoint, currentTargetMidpoint));
 
     return result;
 }
 
+//Negative: left, Positive: right
+double Robot::estimateHorizontalDisplacement(double leftArea, double rightArea, double targetMidpoint) {
+    //TODO
+}
+
 //The vision code for if we have the midpoint and both rectangle areas
 void Robot::doFullDataVision(std::vector<double> data) {
-    doMidpointOnlyVision(data[2]); //Maybe do something special here later
-    /*double ratio = data[0] / data[1];
-    double inv = 1.0 / ratio;
-    double maxOfInverses = ratio > inv? ratio: inv;
-
-    double difference = maxOfInverses - 1;
-    double direction = ratio*/
+    doMidpointOnlyVision(data[2]); //Maybe do something special here later    
+    /*
+    double horizDisplacement = estimateHorizontalDisplacement(data[0], data[1], data[2]);
+    double target = 160 + horizDisplacement;
+    Robot::visionSteer = (midpoint - target) / 160;
+    */
 }
 
 //The vision code for if we only have the midpoint
 void Robot::doMidpointOnlyVision(double midpoint) {
-    Robot::visionSteer = (midpoint - 160) / 160;
+    int target = 160; //Where we want the midpoint of the vision target to be
+    Robot::visionSteer = (midpoint - target) / 160;
 }
 
 void Robot::handleVision() {
     doingAutoAlign = pilot.ButtonState(GamepadF310::BUTTON_B);
 
     if (doingAutoAlign) {
-        Robot::currentLeftRectArea = SmartDashboard::GetNumber("Left Rect Area", -1);
-        Robot::currentRightRectArea = SmartDashboard::GetNumber("Right Rect Area", -1);
-        Robot::currentTargetMidpoint = SmartDashboard::GetNumber("Vision Mid X", -1);
+        currentLeftArea = SmartDashboard::GetNumber("Left Contour Area", -1);
+        currentRightArea = SmartDashboard::GetNumber("Right Contour Area", -1);
+        currentTargetMidpoint = SmartDashboard::GetNumber("Vision Mid X", -1);
 
         std::vector<double> combined = combinePrevAndCurrentVisionData();
 
@@ -111,6 +117,10 @@ void Robot::handleVision() {
         } else {
             visionSteer = false; //We don't have data, so we can't steer
         }
+
+        prevLeftArea = currentLeftArea;
+        prevRightArea = currentRightArea;
+        prevTargetMidpoint = currentTargetMidpoint;
     }
 }
 
