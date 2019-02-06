@@ -50,78 +50,11 @@ void Robot::TeleopInit() {}
 
 // Called During Teleop
 void Robot::TeleopPeriodic() {
-    handleVision();
     handleDrivetrain();
     handleElevator();
     handleSpear();
     handleArm();
     handleFlywheel();
-}
-
-double combineIndividualPrevAndCurrentData(double prev, double current) {
-    if (prev == -1) {
-        return current;
-    }
-    if (current == -1) {
-        return prev;
-    }
-
-    return (prev + current) / 2;
-}
-
-std::vector<double> Robot::combinePrevAndCurrentVisionData() {
-    std::vector<double> result;
-    result.push_back(combineIndividualPrevAndCurrentData(prevLeftArea, currentLeftArea));
-    result.push_back(combineIndividualPrevAndCurrentData(prevRightArea, currentRightArea));
-    result.push_back(combineIndividualPrevAndCurrentData(prevTargetMidpoint, currentTargetMidpoint));
-
-    return result;
-}
-
-//Negative: left, Positive: right
-double Robot::estimateHorizontalDisplacement(double leftArea, double rightArea, double targetMidpoint) {
-    //TODO
-}
-
-//The vision code for if we have the midpoint and both rectangle areas
-void Robot::doFullDataVision(std::vector<double> data) {
-    doMidpointOnlyVision(data[2]); //Maybe do something special here later    
-    /*
-    double horizDisplacement = estimateHorizontalDisplacement(data[0], data[1], data[2]);
-    double target = 160 + horizDisplacement;
-    Robot::visionSteer = (midpoint - target) / 160;
-    */
-}
-
-//The vision code for if we only have the midpoint
-void Robot::doMidpointOnlyVision(double midpoint) {
-    int target = 160; //Where we want the midpoint of the vision target to be
-    Robot::visionSteer = (midpoint - target) / 160;
-}
-
-void Robot::handleVision() {
-    doingAutoAlign = pilot.ButtonState(GamepadF310::BUTTON_B);
-
-    if (doingAutoAlign) {
-        currentLeftArea = SmartDashboard::GetNumber("Left Contour Area", -1);
-        currentRightArea = SmartDashboard::GetNumber("Right Contour Area", -1);
-        currentTargetMidpoint = SmartDashboard::GetNumber("Vision Mid X", -1);
-
-        std::vector<double> combined = combinePrevAndCurrentVisionData();
-
-        
-        if(combined[0] != -1 && combined[1] != -1 && combined[2] != -1) {
-            doFullDataVision(combined);
-        } else if (combined[2] != 0) {
-            doMidpointOnlyVision(combined[2]);
-        } else {
-            visionSteer = false; //We don't have data, so we can't steer
-        }
-
-        prevLeftArea = currentLeftArea;
-        prevRightArea = currentRightArea;
-        prevTargetMidpoint = currentTargetMidpoint;
-    }
 }
 
 // Copilot: Handles controller input use with flywheel
@@ -148,31 +81,33 @@ void Robot::handleSpear() {
 }
 
 double deadzone(double d) {
- if (std::fabs(d) < 0.05) {
-     return 0;
+    if (std::fabs(d) < 0.05) {
+        return 0;
     } else {
-    return d;
+        return d;
     }
-
 }
 // Pilot: Handles controller input for movement
 void Robot::handleDrivetrain() {
-
+    
+    double turn = pilot.RightX();
+    if (pilot.RightTrigger() > 0.25){
+        int visionMid = SmartDashboard::GetNumber("Vision Mid X", 160);
+        turn = (visionMid-160)/640.0;
+    }
+    
     speed = Lib830::accel(prevSpeed, pilot.LeftY(), TICKS_TO_ACCEL);
     prevSpeed = speed;
 
     // Activates gyro correct on straight driving
-    if(visionSteer) {
-        drivetrain.CurvatureDrive(speed, visionSteer, false);
-    }
-    else {
-        if ((std::fabs(pilot.RightX()) < CONTROLLER_GYRO_THRESHOLD) && gyroCorrectEnabled) {
-            drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), std::fabs(speed) < 0.05);
-        } else {
-            // cout<<"you've got mail;";
-            drivetrain.CurvatureDrive(speed, pilot.RightX(), std::fabs(speed) < 0.05);
-            prevAngle = gyro.GetAngle();
-        }
+    
+    if (gyroCorrectState.toggle(pilot.ButtonState(GamepadF310::BUTTON_RIGHT_STICK))
+        && (std::fabs(pilot.RightX()) < CONTROLLER_GYRO_THRESHOLD)) {
+        drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), std::fabs(speed) < 0.05);
+    } else {
+        // cout<<"you've got mail;";
+        drivetrain.CurvatureDrive(speed, turn, std::fabs(speed) < 0.05);
+        prevAngle = gyro.GetAngle();
     }
 }
 

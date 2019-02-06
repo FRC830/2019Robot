@@ -66,8 +66,8 @@ public:
 	double prevAngle = 0; 
 	double prevSpeed = 0;
 	double speed = 0;
+	Toggle gyroCorrectState{true};
 	bool bumperPressed = false;
-	bool gyroCorrectEnabled = false;
 	std::vector<double> heights = {10.0, 20.0, 30.0, 40.0, 50.0, 60.0};
 	double currentHeight = heights[0];
 	
@@ -84,7 +84,7 @@ public:
 	double currentRightArea = -1;
 	double currentTargetMidpoint = -1;
 
-	double combineIndividualPrevAndCurrentData(double prev, double current, double angle);
+	double combineIndividualPrevAndCurrentData(double prev, double current);
 	std::vector<double> combinePrevAndCurrentVisionData();
 
 	double estimateHorizontalDisplacement(double leftArea, double rightArea, double targetMidpoint);
