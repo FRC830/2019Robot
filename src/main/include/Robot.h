@@ -24,7 +24,7 @@ public:
 	void handleVision();
 	void handleArm();
 	void handleDrivetrain();
-	void handleFlywheel();
+	void handleCargoIntake();
 	void handleSpear();
 	void handleElevator();
 	double deadzone(double);

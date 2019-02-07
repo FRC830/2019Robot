@@ -54,11 +54,11 @@ void Robot::TeleopPeriodic() {
     handleElevator();
     handleSpear();
     handleArm();
-    handleFlywheel();
+    handleCargoIntake();
 }
 
 // Copilot: Handles controller input use with flywheel
-void Robot::handleFlywheel() {
+void Robot::handleCargoIntake() {
     if (copilot.LeftY() > FLYWHEEL_THRESHOLD) {
         arm.setMode(Arm::OUTTAKE);
     } else if (copilot.LeftY() < -(FLYWHEEL_THRESHOLD)) {
@@ -91,9 +91,9 @@ double deadzone(double d) {
 void Robot::handleDrivetrain() {
     
     double turn = pilot.RightX();
-    if (pilot.RightTrigger() > 0.25){
+    if (pilot.RightTrigger() > 0.3 && SmartDashboard::GetBoolean("Target Aquired", false)){
         int visionMid = SmartDashboard::GetNumber("Vision Mid X", 160);
-        turn = (visionMid-160)/640.0;
+        turn = (visionMid-160)/580.0;
     }
     
     speed = Lib830::accel(prevSpeed, pilot.LeftY(), TICKS_TO_ACCEL);
