@@ -91,7 +91,7 @@ double deadzone(double d) {
 void Robot::handleDrivetrain() {
     
     double turn = pilot.RightX();
-    if (pilot.RightTrigger() > 0.3){
+    if (pilot.RightTrigger() > 0.3 && SmartDashboard::GetBoolean("Target Aquired", false)){
         int visionMid = SmartDashboard::GetNumber("Vision Mid X", 160);
         turn = (visionMid-160)/580.0;
     }
