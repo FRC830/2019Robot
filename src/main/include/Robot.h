@@ -48,7 +48,7 @@ public:
 	static const int ENCODER_TICKS = 1024;
 	static constexpr double PI = 3.1415927;
 	static const int WINCH_DIAMETER = 6; // PLACEHOOLDER;
-	static const int ENCODER_TICK_DISTANCE = 6 * PI / ENCODER_TICKS;
+	static constexpr double ENCODER_TICK_DISTANCE = 6 * PI / ENCODER_TICKS;
 
 	// Encoder Pins
 	static const int ELEVATOR_ENCODER_DIO_ONE = 0;
