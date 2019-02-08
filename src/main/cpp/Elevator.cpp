@@ -2,23 +2,25 @@
 using namespace frc;
 
 // Initialized the Elevator Arm with a motor and encoder
-Elevator::Elevator(WPI_VictorSPX &winch, Encoder &elevatorEncoder) : winch(winch), elevatorEncoder(elevatorEncoder) {
-
+Elevator::Elevator(WPI_VictorSPX &motor) : motor(motor) {
+    motor.SetNeutralMode(NeutralMode::Brake);
+    motor.SetSensorPhase(false);
+    // PID Controller
+    motor.Config_kP(0, 2.0);
+    motor.Config_kI(0, 0.0);
+    motor.Config_kD(0, 0.0);
+    motor.Config_kF(0, 0.0);
 }
 
 // Raises the elevator to the specified height
-void Elevator::setHeight(double height) {
-    double currentHeight = getHeight();
-    if (std::fabs(height - currentHeight) < HEIGHT_THRESHOLD) {
-        winch.Set(0);
-    } else if (height < currentHeight) {
-        winch.Set(1);
-    } else if (height > currentHeight) {
-        winch.Set(-1);
-    }
+void Elevator::setHeight(int height) {
+    motor.Set(ControlMode::Position, heights[height]);
 }
 
-// Returns the current height of the elevator
-double Elevator::getHeight() {
-    return elevatorEncoder.GetDistance();
+void Elevator::setManualSpeed(double speed) {
+    motor.Set(ControlMode::PercentOutput, speed);
+}
+
+int Elevator::numSetpoints(){
+    return heights.size();
 }

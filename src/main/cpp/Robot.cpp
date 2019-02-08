@@ -38,14 +38,11 @@ void Robot::RobotInit() {
     gyro.Calibrate();
     gyro.Reset();
     prevAngle = gyro.GetAngle();
-
-    // Setup Encoder
-    elevatorEncoder.SetDistancePerPulse(ENCODER_TICK_DISTANCE);
 }
 
 //Called Whilst Robot is on
 void Robot::RobotPeriodic() {
-    frc::SmartDashboard::PutNumber("Height: ", heights[currentHeight]);
+    frc::SmartDashboard::PutNumber("Height: ", currentHeight);
 }
 
 //Called Initially on Autonomous Start
@@ -108,7 +105,7 @@ void Robot::handleDrivetrain() {
     double turn = pilot.RightX();
     if (pilot.RightTrigger() > 0.3 && SmartDashboard::GetBoolean("Target Acquired", false)) {
         int visionMid = SmartDashboard::GetNumber("Vision Mid X", 160);
-        turn = (visionMid-160)/580.0;
+        turn = sqrt(visionMid-160)/15.0;
     }
     
     speed = Lib830::accel(prevSpeed, pilot.LeftY(), TICKS_TO_ACCEL);
@@ -129,15 +126,17 @@ void Robot::handleElevator() {
 
     leftBumper.toggle(copilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER));
     rightBumper.toggle(copilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER));
-    
-    if ((leftBumper && !rightBumper) && currentHeight != heights.size() - 1) {
-        elevator.setHeight(heights[currentHeight -= 1]);
+
+    if ((leftBumper && !rightBumper) && currentHeight != elevator.numSetpoints()) {
+        elevator.setHeight(currentHeight -= 1);
     } else if (leftBumper && !rightBumper && currentHeight != 0) {
-        elevator.setHeight(heights[currentHeight += 1]);
+        elevator.setHeight(currentHeight += 1);
     }
 
     leftBumper = false;
     rightBumper = false;
+
+
 }
 
 // Copilot: Handles controller input with rotating arm

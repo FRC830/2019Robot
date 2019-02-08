@@ -47,18 +47,11 @@ public:
 	static const int EXTENSION_SOLENOID_PIN = 7;
 
 	// Encoder Values
-	static const int ENCODER_TICKS = 1024;
+	static const int ENCODER_TICKS = 4096;
 	static constexpr double PI = 3.1415927;
 	static const int WINCH_DIAMETER = 6;
 	static constexpr double ENCODER_TICK_DISTANCE = 6 * PI / ENCODER_TICKS;
 
-	// Encoder Pins
-	static const int ELEVATOR_ENCODER_DIO_ONE = 0;
-	static const int ELEVATOR_ENCODER_DIO_TWO = 0;
-	static const int DRIVETRAIN_ENCODER_LEFT_DIO_ONE = 0;
-	static const int DRIVETRAIN_ENCODER_LEFT_DIO_TWO = 0;
-	static const int DRIVETRAIN_ENCODER_RIGHT_DIO_ONE = 0;
-	static const int DRIVETRAIN_ENCODER_RIGHT_DIO_TWO = 0;
 
 	// Misc
 	static const int TICKS_TO_ACCEL = 10;
@@ -71,8 +64,6 @@ public:
 	double speed = 0;
 	Toggle gyroCorrectState{true};
 	GearState gearState = HIGH;
-
-	
 
 	//Vision
 	bool doingAutoAlign = false;
@@ -122,10 +113,8 @@ public:
 
 	// Elevator Declarations
 	WPI_VictorSPX winch{ELEVATOR_MOTOR_ID};
-	frc::Encoder elevatorEncoder{ELEVATOR_ENCODER_DIO_ONE, ELEVATOR_ENCODER_DIO_TWO};
-	Elevator elevator{winch, elevatorEncoder};
-	std::vector<double> heights = {10.0, 20.0, 30.0, 40.0, 50.0, 60.0};
-	double currentHeight = heights[0];
+	Elevator elevator{winch};
+	double currentHeight = 0;
 	Toggle leftBumper;
 	Toggle rightBumper;
 };
