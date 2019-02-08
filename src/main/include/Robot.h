@@ -11,6 +11,8 @@
 #include "Arm.h"
 #include "Spear.h"
 
+enum GearState {HIGH = true, LOW = false};
+
 class Robot : public frc::TimedRobot {
 public:
 	void RobotInit() override;
@@ -47,7 +49,7 @@ public:
 	// Encoder Values
 	static const int ENCODER_TICKS = 1024;
 	static constexpr double PI = 3.1415927;
-	static const int WINCH_DIAMETER = 6; // PLACEHOOLDER;
+	static const int WINCH_DIAMETER = 6;
 	static constexpr double ENCODER_TICK_DISTANCE = 6 * PI / ENCODER_TICKS;
 
 	// Encoder Pins
@@ -63,13 +65,13 @@ public:
 	static constexpr double FLYWHEEL_THRESHOLD = 0.05;
 	static constexpr double JOINT_MOVEMENT_SPEED = 2.0;
 	static constexpr double CONTROLLER_GYRO_THRESHOLD = 0.1;
+	static constexpr double CONTROLLER_DEADZONE_THRESHOLD = 0.05;
 	double prevAngle = 0; 
 	double prevSpeed = 0;
 	double speed = 0;
 	Toggle gyroCorrectState{true};
-	bool bumperPressed = false;
-	std::vector<double> heights = {10.0, 20.0, 30.0, 40.0, 50.0, 60.0};
-	double currentHeight = heights[0];
+	GearState gearState = HIGH;
+
 	
 
 	//Vision
@@ -97,19 +99,17 @@ public:
 	WPI_VictorSPX leftFront {LEFT_FRONT_MOTOR_ID};
 	WPI_TalonSRX rightBack {RIGHT_BACK_MOTOR_ID};
 	WPI_TalonSRX leftBack {LEFT_BACK_MOTOR_ID};
-	frc::SpeedControllerGroup left {leftFront, leftBack};
-	frc::SpeedControllerGroup right {rightFront, rightBack};
-	frc::DifferentialDrive drivetrain {left, right};
-	frc::Solenoid gearshifter{GEARSHIFT_SOLENOID_PIN};
+	frc::DifferentialDrive drivetrain {leftBack, rightBack};
+	frc::Solenoid gearShifter{GEARSHIFT_SOLENOID_PIN};
 
-	// Control declarations
+	// Controller declarations
 	Lib830::GamepadF310 pilot {0};
 	Lib830::GamepadF310 copilot {1};
 
 	// Misc component declarations
 	frc::AnalogGyro gyro {ANALOG_GYRO_PIN};
 
-	// Arm Declarations
+	// Rotating Arm Declarations
 	WPI_VictorSPX joint{WINCH_MOTOR_ID};
 	WPI_VictorSPX flywheel{FLYWHEEL_MOTOR_ID};
 	frc::AnalogPotentiometer pot{POTENTIOMETER_ANALOG_PIN};
@@ -124,4 +124,8 @@ public:
 	WPI_VictorSPX winch{ELEVATOR_MOTOR_ID};
 	frc::Encoder elevatorEncoder{ELEVATOR_ENCODER_DIO_ONE, ELEVATOR_ENCODER_DIO_TWO};
 	Elevator elevator{winch, elevatorEncoder};
+	std::vector<double> heights = {10.0, 20.0, 30.0, 40.0, 50.0, 60.0};
+	double currentHeight = heights[0];
+	Toggle leftBumper;
+	Toggle rightBumper;
 };
