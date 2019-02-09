@@ -40,7 +40,6 @@ void Robot::RobotInit() {
 
 //Called Whilst Robot is on
 void Robot::RobotPeriodic() {
-    frc::SmartDashboard::PutNumber("Setpoint: ", currentSetpoint);
 }
 
 //Called Initially on Autonomous Start
@@ -115,6 +114,10 @@ void Robot::handleDrivetrain() {
         drivetrain.CurvatureDrive(speed, turn, drivetrainDeadzone(speed));
         prevAngle = gyro.GetAngle();
     }
+    
+    SmartDashboard::PutNumber("Drivetrain Turn: ", turn);
+    SmartDashboard::PutNumber("Gyro Angle: ", gyro.GetAngle());
+    SmartDashboard::PutBoolean("Gear State: ", gearState);
 }
 
 // Copilot: Handles controller input with elevator
@@ -135,9 +138,10 @@ void Robot::handleElevator() {
     } else {
         elevator.setManualSpeed(0);
     }
-
     leftBumper = false;
     rightBumper = false;
+
+    SmartDashboard::PutNumber("Setpoint: ", currentSetpoint);
 }
 
 
@@ -147,6 +151,7 @@ void Robot::handleArm() {
     if (copilot.DPadY() != 0) {
         arm.setAngle(arm.getAngle() + copilot.DPadY() * JOINT_MOVEMENT_SPEED);
     }
+    SmartDashboard::PutNumber("Arm Angle: ", arm.getAngle());
 }
 
 void Robot::TestPeriodic() {}

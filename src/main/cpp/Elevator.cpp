@@ -20,7 +20,9 @@ void Elevator::setSetpoint(int height) {
 void Elevator::setManualSpeed(double speed) {
     motor.Set(ControlMode::PercentOutput, speed);
 }
-
+double Elevator::getHeight() {
+    
+}
 int Elevator::numSetpoints() {
     return heights.size();
 }
