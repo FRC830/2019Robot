@@ -115,9 +115,9 @@ void Robot::handleDrivetrain() {
         prevAngle = gyro.GetAngle();
     }
     
-    SmartDashboard::PutNumber("Drivetrain Turn: ", turn);
-    SmartDashboard::PutNumber("Gyro Angle: ", gyro.GetAngle());
-    SmartDashboard::PutBoolean("Gear State: ", gearState);
+    SmartDashboard::PutNumber("Drivetrain Turn", turn);
+    SmartDashboard::PutNumber("Gyro Angle", gyro.GetAngle());
+    SmartDashboard::PutBoolean("Gear State", gearState);
 }
 
 // Copilot: Handles controller input with elevator
@@ -141,7 +141,8 @@ void Robot::handleElevator() {
     leftBumper = false;
     rightBumper = false;
 
-    SmartDashboard::PutNumber("Setpoint: ", currentSetpoint);
+    SmartDashboard::PutNumber("Setpoint", currentSetpoint);
+    SmartDashboard::PutNumber("Height (in)", elevator.getHeight());
 }
 
 
@@ -151,7 +152,7 @@ void Robot::handleArm() {
     if (copilot.DPadY() != 0) {
         arm.setAngle(arm.getAngle() + copilot.DPadY() * JOINT_MOVEMENT_SPEED);
     }
-    SmartDashboard::PutNumber("Arm Angle: ", arm.getAngle());
+    SmartDashboard::PutNumber("Arm Angle", arm.getAngle());
 }
 
 void Robot::TestPeriodic() {}

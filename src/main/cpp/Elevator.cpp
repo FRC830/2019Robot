@@ -21,7 +21,7 @@ void Elevator::setManualSpeed(double speed) {
     motor.Set(ControlMode::PercentOutput, speed);
 }
 double Elevator::getHeight() {
-    
+    return motor.GetSelectedSensorPosition() * ENCODER_TICK_DISTANCE;
 }
 int Elevator::numSetpoints() {
     return heights.size();
