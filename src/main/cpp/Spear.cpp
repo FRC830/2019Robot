@@ -45,12 +45,12 @@ void Spear::updateRoutine() {
 
 
     double time = timer.Get();
-    // Placing Routine
-    // (1) Extend Arm
-    // (2) Flip Down
-    // WAIT
-    // (3) Retract Down
-    // (4) Flip Up
+    /* Placing Routine
+    (1) Extend Arm
+    (2) Flip Down
+    WAIT
+    (3) Retract Down
+    (4) Flip Up*/
     if (placing) {
         setHatchGrab(false);
         setExtend(true);
@@ -58,7 +58,7 @@ void Spear::updateRoutine() {
         if (time < FLIP_DELAY) {
             end_placing = true;
             setHatchGrab(true);
-            setExtend(false);
+            setExtend(true);
         } else if (time < 2*FLIP_DELAY) {
             setHatchGrab(true);
             setExtend(false);
@@ -69,11 +69,11 @@ void Spear::updateRoutine() {
         }
     }                                 
 
-    // Grabbing Routine
-    // (1) Flip Down
-    // (2) Extend Arm
-    // (3) Flip Up
-    // (4) Retract
+    /* Grabbing Routine
+    (1) Flip Down
+    (2) Extend Arm
+    (3) Flip Up
+    (4) Retract*/
 
     if (grabbing) {
         if (time < FLIP_DELAY) {
