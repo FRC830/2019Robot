@@ -27,8 +27,6 @@ void Robot::RobotInit() {
     // For if we need to change it later
     rightBack.SetSensorPhase(false);
     leftBack.SetSensorPhase(false);
-
-    // Set Motor Direction (Currently does nothing, may be useful for hot swapping)
     rightFront.SetInverted(false);
     rightBack.SetInverted(false);
     leftFront.SetInverted(false);
@@ -42,7 +40,7 @@ void Robot::RobotInit() {
 
 //Called Whilst Robot is on
 void Robot::RobotPeriodic() {
-    frc::SmartDashboard::PutNumber("Height: ", currentHeight);
+    frc::SmartDashboard::PutNumber("Setpoint: ", currentSetpoint);
 }
 
 //Called Initially on Autonomous Start
@@ -65,9 +63,9 @@ void Robot::TeleopPeriodic() {
 
 // Copilot: Handles controller input use with flywheel
 void Robot::handleCargoIntake() {
-    if (copilot.LeftY() > FLYWHEEL_THRESHOLD) {
+    if (copilot.RightY() > FLYWHEEL_THRESHOLD) {
         arm.setMode(Arm::OUTTAKE);
-    } else if (copilot.LeftY() < -(FLYWHEEL_THRESHOLD)) {
+    } else if (copilot.RightY() < -(FLYWHEEL_THRESHOLD)) {
         arm.setMode(Arm::INTAKE);
     } else {
         arm.setMode(Arm::OFF);
@@ -77,35 +75,33 @@ void Robot::handleCargoIntake() {
 // Copilot: Handles controller input with pistons (Spear)
 void Robot::handleSpear() {
 
-    spear.setPlaceRoutine(copilot.ButtonState(GamepadF310::BUTTON_X));
-    spear.setGrabRoutine(copilot.ButtonState(GamepadF310::BUTTON_Y));
+    spear.setPlaceRoutine(copilot.LeftTrigger() > SPEAR_TRIGGER_THRESHOLD);
+    spear.setGrabRoutine(copilot.RightTrigger() > SPEAR_TRIGGER_THRESHOLD);
     spear.updateRoutine();
 }
 
-double Robot::deadzone(double d) {
-    if (std::fabs(d) < CONTROLLER_DEADZONE_THRESHOLD) {
+double Robot::drivetrainDeadzone(double d) {
+    if (std::fabs(d) < DRIVETRAIN_DEADZONE_THRESHOLD) {
         return 0;
-    } else {
-        return d;
     }
+    return d;
 }
 // Pilot: Handles controller input for movement
 void Robot::handleDrivetrain() {
     // Gearshifter
-    if (pilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER)){
+    if (pilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER)) {
         gearState = LOW;
-    }
-    if(pilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER)){
+    } else if (pilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER)) {
         gearState = HIGH;
     }           
     
     gearShifter.Set(gearState);
 
-
+    // Vision Autocorrect
     double turn = pilot.RightX();
-    if (pilot.RightTrigger() > 0.3 && SmartDashboard::GetBoolean("Target Acquired", false)) {
-        int visionMid = SmartDashboard::GetNumber("Vision Mid X", 160);
-        turn = sqrt(visionMid-160)/15.0;
+    if (pilot.RightTrigger() > VISION_TRIGGER_THRESHOLD && SmartDashboard::GetBoolean("Target Acquired", false)) {
+        int visionMid = SmartDashboard::GetNumber("Vision Mid X", CAMERA_WIDTH/2);
+        turn = sqrt(visionMid - CAMERA_WIDTH / 2) / TURN_SCALE_FACTOR;
     }
     
     speed = Lib830::accel(prevSpeed, pilot.LeftY(), TICKS_TO_ACCEL);
@@ -114,9 +110,9 @@ void Robot::handleDrivetrain() {
     // Activates gyro correct on straight driving
     if (gyroCorrectState.toggle(pilot.ButtonState(GamepadF310::BUTTON_RIGHT_STICK))
         && (std::fabs(pilot.RightX()) < CONTROLLER_GYRO_THRESHOLD)) {
-        drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), deadzone(speed));
+        drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), drivetrainDeadzone(speed));
     } else {
-        drivetrain.CurvatureDrive(speed, turn, deadzone(speed));
+        drivetrain.CurvatureDrive(speed, turn, drivetrainDeadzone(speed));
         prevAngle = gyro.GetAngle();
     }
 }
@@ -127,17 +123,23 @@ void Robot::handleElevator() {
     leftBumper.toggle(copilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER));
     rightBumper.toggle(copilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER));
 
-    if ((leftBumper && !rightBumper) && currentHeight != elevator.numSetpoints()) {
-        elevator.setHeight(currentHeight -= 1);
-    } else if (leftBumper && !rightBumper && currentHeight != 0) {
-        elevator.setHeight(currentHeight += 1);
+    if (std::fabs(copilot.LeftY()) > MANUAL_ELEVATOR_THRESHOLD) {
+        elevator.setManualSpeed(copilot.LeftY());
+    } else if ((leftBumper && !rightBumper) && currentSetpoint > 0) {
+        currentSetpoint--;
+        elevator.setSetpoint(currentSetpoint);
+    }
+    else if (leftBumper && !rightBumper && currentSetpoint < (elevator.numSetpoints() - 1)) {
+        currentSetpoint++;
+        elevator.setSetpoint(currentSetpoint);
+    } else {
+        elevator.setManualSpeed(0);
     }
 
     leftBumper = false;
     rightBumper = false;
-
-
 }
+
 
 // Copilot: Handles controller input with rotating arm
 void Robot::handleArm() {

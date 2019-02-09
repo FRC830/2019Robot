@@ -1,6 +1,7 @@
 #include "Spear.h"
 using namespace frc;
 
+ 
 // Initializes an Spear
 Spear::Spear(Solenoid &hatchGrabPiston, Solenoid &extensionPiston) : hatchGrabPiston(hatchGrabPiston), extensionPiston(extensionPiston) {
 
@@ -12,7 +13,7 @@ void Spear::setExtend (bool state) {
 }
 
 //true is down, false is up
-void Spear::setHatchGrab (bool state) {
+void Spear::setHatchGrab(bool state) {
     hatchGrabPiston.Set(state);
 }
 
@@ -29,7 +30,6 @@ void Spear::setGrabRoutine(bool grabbing) {
         timer.Start();
     }
 }
-
 void Spear::updateRoutine() {
     //stops both routines running at same time or when neither is running
     if (placing && grabbing) {
@@ -38,7 +38,7 @@ void Spear::updateRoutine() {
         return;
     }
 
-    if (placing != previous_placing || grabbing != previous_grabbing){
+    if (placing != previous_placing || grabbing != previous_grabbing) {
         timer.Reset();
         timer.Start();
     }
@@ -55,10 +55,10 @@ void Spear::updateRoutine() {
         setHatchGrab(false);
         setExtend(true);
     } else if (previous_placing || end_placing) {
-        if (time < FLIP_DELAY){
+        if (time < FLIP_DELAY) {
             end_placing = true;
             setHatchGrab(true);
-            setExtend(true);
+            setExtend(false);
         } else if (time < 2*FLIP_DELAY) {
             setHatchGrab(true);
             setExtend(false);
@@ -88,10 +88,10 @@ void Spear::updateRoutine() {
             end_grabbing = true;
             setHatchGrab(false);
             setExtend(true);
-        } else{
+        } else {
             setHatchGrab(false);
             setExtend(false);
-            end_grabbing = false;            
+            end_grabbing = false;     
         }  
     }
     previous_grabbing = grabbing;

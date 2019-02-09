@@ -13,14 +13,14 @@ Elevator::Elevator(WPI_VictorSPX &motor) : motor(motor) {
 }
 
 // Raises the elevator to the specified height
-void Elevator::setHeight(int height) {
-    motor.Set(ControlMode::Position, heights[height]);
+void Elevator::setSetpoint(int height) {
+    motor.Set(ControlMode::Position, heights[height] / ENCODER_TICK_DISTANCE);
 }
 
 void Elevator::setManualSpeed(double speed) {
     motor.Set(ControlMode::PercentOutput, speed);
 }
 
-int Elevator::numSetpoints(){
+int Elevator::numSetpoints() {
     return heights.size();
 }

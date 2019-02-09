@@ -6,22 +6,30 @@ class Elevator {
     public:
         Elevator(WPI_VictorSPX &motor);
         double getHeight();
-        void setHeight(int height);
+        void setSetpoint(int height);
         void setManualSpeed(double speed);
         int numSetpoints();
     private:
         WPI_VictorSPX &motor;
+        static const int ENCODER_TICKS = 4096;
+        static constexpr double PI = 3.1415927;
+        static const int WINCH_DIAMETER = 6;
+        static constexpr double ENCODER_TICK_DISTANCE = WINCH_DIAMETER * PI / ENCODER_TICKS;
 
-        static constexpr double HEIGHT_THRESHOLD = 1.0;
-        static constexpr double CARGO_HEIGHT = 10.0; 
-        static constexpr double FIRST_BALL_HEIGHT = 20.0;
-        static constexpr double SECOND_HATCH_HEIGHT = 30.0;
-        static constexpr double SECOND_BALL_HEIGHT = 40.0;
-        static constexpr double THIRD_HATCH_HEIGHT = 50.0;
-        static constexpr double THIRD_BALL_HEIGHT = 60.0;
+        // Distance to offset flywheel/spear against center of target
+        static constexpr double FLYWHEEL_OFFSET = 0;
+        static constexpr double SPEAR_OFFSET = 0;
+
+        // Heights of all targets, In inches
+        static constexpr double FIRST_HATCH_HEIGHT = 19 + SPEAR_OFFSET;
+        static constexpr double FIRST_BALL_HEIGHT = 27.5 + FLYWHEEL_OFFSET;
+        static constexpr double SECOND_HATCH_HEIGHT = FIRST_HATCH_HEIGHT + 28 + SPEAR_OFFSET;
+        static constexpr double SECOND_BALL_HEIGHT = FIRST_BALL_HEIGHT + 28 + FLYWHEEL_OFFSET;
+        static constexpr double THIRD_HATCH_HEIGHT = SECOND_HATCH_HEIGHT + 28 + SPEAR_OFFSET;
+        static constexpr double THIRD_BALL_HEIGHT = SECOND_BALL_HEIGHT + 28 + FLYWHEEL_OFFSET;
 
         std::vector<double> heights = {
-            CARGO_HEIGHT, 
+            FIRST_HATCH_HEIGHT, 
             FIRST_BALL_HEIGHT, 
             SECOND_HATCH_HEIGHT, 
             SECOND_BALL_HEIGHT, 
