@@ -38,7 +38,7 @@ public:
 	static const int RIGHT_BACK_MOTOR_ID = 3; 
 	static const int LEFT_BACK_MOTOR_ID = 4; 
 	static const int ANALOG_GYRO_PIN = 0;
-	static const int POTENTIOMETER_ANALOG_PIN = 0;
+	static const int POTENTIOMETER_ANALOG_PIN = 3;
 	static const int WINCH_MOTOR_ID = 0;
 	static const int FLYWHEEL_MOTOR_ID = 0;
 	static const int ELEVATOR_MOTOR_ID = 0;
