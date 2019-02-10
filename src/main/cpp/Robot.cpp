@@ -38,7 +38,7 @@ void Robot::RobotInit() {
     prevAngle = gyro.GetAngle();
 }
 
-//Called Whilst Robot is on
+//Called While Robot is on
 void Robot::RobotPeriodic() {
 }
 
