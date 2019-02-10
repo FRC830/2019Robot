@@ -40,6 +40,7 @@ void Robot::RobotInit() {
 
 //Called While Robot is on
 void Robot::RobotPeriodic() {
+    SmartDashboard::PutNumber("Potentiometer Value", arm.getAngle());
 }
 
 //Called Initially on Autonomous Start
@@ -77,15 +78,9 @@ void Robot::handleSpear() {
     spear.setGrabRoutine(copilot.ButtonState(GamepadF310::BUTTON_Y));
     spear.updateRoutine();
 }
-
-double Robot::drivetrainDeadzone(double d) {
-    if (std::fabs(d) < DRIVETRAIN_DEADZONE_THRESHOLD) {
-        return 0;
-    }
-    return d;
-}
 // Pilot: Handles controller input for movement
 void Robot::handleDrivetrain() {
+
     // Gearshifter
     if (pilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER)) {
         gearState = LOW;
@@ -107,12 +102,13 @@ void Robot::handleDrivetrain() {
 
     // Activates gyro correct on straight driving
     if (gyroCorrectState.toggle(pilot.ButtonState(GamepadF310::BUTTON_RIGHT_STICK))
-        && (std::fabs(pilot.RightX()) < CONTROLLER_GYRO_THRESHOLD)) {
-        drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), drivetrainDeadzone(speed));
+        && (std::fabs(pilot.RightX()) < CONTROLLER_GYRO_THRESHOLD) && speed > SPEED_GYRO_THRESHOLD) {
+        drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), std::fabs(speed)<DRIVETRAIN_DEADZONE_THRESHOLD);
     } else {
-        drivetrain.CurvatureDrive(speed, turn, drivetrainDeadzone(speed));
+        drivetrain.CurvatureDrive(speed, turn, std::fabs(speed)<DRIVETRAIN_DEADZONE_THRESHOLD);
         prevAngle = gyro.GetAngle();
     }
+
     SmartDashboard::PutNumber("Drivetrain Turn", turn);
     SmartDashboard::PutNumber("Gyro Angle", gyro.GetAngle());
     SmartDashboard::PutBoolean("Gear State", gearState);
@@ -123,23 +119,40 @@ void Robot::handleDrivetrain() {
 // manual raise: right trigger
 void Robot::handleElevator() {
 
+    if (copilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER) || copilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER)){
+        elevatorMode = AUTOMATIC;
+    }
+
+    //deadzone
+    if (copilot.RightTrigger() > MANUAL_ELEVATOR_THRESHOLD || copilot.LeftTrigger() > MANUAL_ELEVATOR_THRESHOLD){
+        elevatorMode = MANUAL;
+    }
+
+
     leftBumper.toggle(copilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER));
     rightBumper.toggle(copilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER));
-    // manual lower
-    if (std::fabs(copilot.LeftTrigger()) > MANUAL_ELEVATOR_THRESHOLD) {
-        elevator.setManualSpeed(-(copilot.LeftTrigger()));
-    } else if (std::fabs(copilot.RightTrigger()) > MANUAL_ELEVATOR_THRESHOLD) {
-        elevator.setManualSpeed(copilot.RightTrigger());
-    } else if ((leftBumper && !rightBumper) && currentSetpoint > 0) {
-        currentSetpoint--;
-        elevator.setSetpoint(currentSetpoint);
-    }
-    else if (leftBumper && !rightBumper && currentSetpoint < (elevator.numSetpoints() - 1)) {
-        currentSetpoint++;
-        elevator.setSetpoint(currentSetpoint);
+
+    if (elevatorMode == MANUAL){
+        // manual lower
+        if (std::fabs(copilot.LeftTrigger()) > MANUAL_ELEVATOR_THRESHOLD) {
+            elevator.setManualSpeed(-(copilot.LeftTrigger()));
+        } else if (std::fabs(copilot.RightTrigger()) > MANUAL_ELEVATOR_THRESHOLD) {
+            elevator.setManualSpeed(copilot.RightTrigger());
+        } else {
+            elevator.setManualSpeed(0);
+        }
     } else {
-        elevator.setManualSpeed(0);
+        //automatic setpoints, right bumper is up one, left bumper is down one
+        if ((leftBumper && !rightBumper) && currentSetpoint > 0) {
+            currentSetpoint--;
+            elevator.setSetpoint(currentSetpoint);
+        }
+        else if (leftBumper && !rightBumper && currentSetpoint < (elevator.numSetpoints() - 1)) {
+            currentSetpoint++;
+            elevator.setSetpoint(currentSetpoint);
+        }
     }
+
     leftBumper = false;
     rightBumper = false;
 
@@ -151,7 +164,6 @@ void Robot::handleElevator() {
 // Copilot: Handles controller input with rotating arm
 // this becomes left stick 
 void Robot::handleArm() {
-    arm.update();
     if (std::fabs(copilot.LeftY()) > ARM_THRESHOLD) {
         arm.setAngle(arm.getAngle() + copilot.LeftY() * JOINT_MOVEMENT_SPEED);
     };

@@ -13,8 +13,8 @@ class Elevator {
         WPI_VictorSPX &motor;
         static const int ENCODER_TICKS = 4096;
         static constexpr double PI = 3.1415927;
-        static const int WINCH_DIAMETER = 6;
-        static constexpr double ENCODER_TICK_DISTANCE = WINCH_DIAMETER * PI / ENCODER_TICKS;
+        static constexpr double MOTOR_DIAMETER = 4.0/7.0;
+        static constexpr double ENCODER_TICK_DISTANCE = MOTOR_DIAMETER * PI / ENCODER_TICKS;
 
         // Distance to offset flywheel/spear against center of target
         static constexpr double FLYWHEEL_OFFSET = 0;
