@@ -1,4 +1,4 @@
-/*----------------------------------------------------------------------------*/
+ /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
@@ -73,9 +73,8 @@ void Robot::handleCargoIntake() {
 
 // Copilot: Handles controller input with pistons (Spear)
 void Robot::handleSpear() {
-
-    spear.setPlaceRoutine(copilot.LeftTrigger() > SPEAR_TRIGGER_THRESHOLD);
-    spear.setGrabRoutine(copilot.RightTrigger() > SPEAR_TRIGGER_THRESHOLD);
+    spear.setPlaceRoutine(copilot.ButtonState(GamepadF310::BUTTON_X));
+    spear.setGrabRoutine(copilot.ButtonState(GamepadF310::BUTTON_Y));
     spear.updateRoutine();
 }
 
@@ -114,20 +113,23 @@ void Robot::handleDrivetrain() {
         drivetrain.CurvatureDrive(speed, turn, drivetrainDeadzone(speed));
         prevAngle = gyro.GetAngle();
     }
-    
     SmartDashboard::PutNumber("Drivetrain Turn", turn);
     SmartDashboard::PutNumber("Gyro Angle", gyro.GetAngle());
     SmartDashboard::PutBoolean("Gear State", gearState);
 }
 
 // Copilot: Handles controller input with elevator
+// manual lower: left trigger
+// manual raise: right trigger
 void Robot::handleElevator() {
 
     leftBumper.toggle(copilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER));
     rightBumper.toggle(copilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER));
-
-    if (std::fabs(copilot.LeftY()) > MANUAL_ELEVATOR_THRESHOLD) {
-        elevator.setManualSpeed(copilot.LeftY());
+    // manual lower
+    if (std::fabs(copilot.LeftTrigger()) > MANUAL_ELEVATOR_THRESHOLD) {
+        elevator.setManualSpeed(-(copilot.LeftTrigger()));
+    } else if (std::fabs(copilot.RightTrigger()) > MANUAL_ELEVATOR_THRESHOLD) {
+        elevator.setManualSpeed(copilot.RightTrigger());
     } else if ((leftBumper && !rightBumper) && currentSetpoint > 0) {
         currentSetpoint--;
         elevator.setSetpoint(currentSetpoint);
@@ -147,11 +149,12 @@ void Robot::handleElevator() {
 
 
 // Copilot: Handles controller input with rotating arm
+// this becomes left stick 
 void Robot::handleArm() {
-    arm.update();    
-    if (copilot.DPadY() != 0) {
-        arm.setAngle(arm.getAngle() + copilot.DPadY() * JOINT_MOVEMENT_SPEED);
-    }
+    arm.update();
+    if (std::fabs(copilot.LeftY()) > ARM_THRESHOLD) {
+        arm.setAngle(arm.getAngle() + copilot.LeftY() * JOINT_MOVEMENT_SPEED);
+    };
     SmartDashboard::PutNumber("Arm Angle", arm.getAngle());
 }
 

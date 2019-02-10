@@ -24,19 +24,17 @@ void Arm::update() {
 }
 
 // Moves the arm to the specified angle
-void Arm::setAngle(double angle) {
-    double currentAngle = getAngle();
-    if (std::fabs(angle - currentAngle) < JOINT_ANGLE_THRESHOLD) {
+void Arm::setAngle(double angleSetpoint) {
+    double difference = angleSetpoint-getAngle();
+    if (std::fabs(difference) < JOINT_ANGLE_THRESHOLD) {
         joint.Set(0);
-    } else if (angle > currentAngle) {
-        joint.Set(-1);
-    } else if (angle < currentAngle) {
-        joint.Set(1);
+    } else { //eat chicken
+        joint.Set(difference/180); // Switch value after testing
     }
 
 }
 
 // Returns the current angle of the Arm
 double Arm::getAngle() {
-    return pot.Get();
+    return pot.Get(); //get some weed
 }

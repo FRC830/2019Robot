@@ -54,11 +54,11 @@ public:
 	static constexpr double ENCODER_TICK_DISTANCE = 6 * PI / ENCODER_TICKS;
 	static const int TICKS_TO_ACCEL = 10;
 	static constexpr double FLYWHEEL_THRESHOLD = 0.05;
-	static constexpr double JOINT_MOVEMENT_SPEED = 2.0;
+	static constexpr double JOINT_MOVEMENT_SPEED = 0.5;
 	static constexpr double CONTROLLER_GYRO_THRESHOLD = 0.1;
 	static constexpr double DRIVETRAIN_DEADZONE_THRESHOLD = 0.05;
 	static constexpr double MANUAL_ELEVATOR_THRESHOLD = 0.1;
-	static constexpr double SPEAR_TRIGGER_THRESHOLD = 0.3;
+	static constexpr double ARM_THRESHOLD = 0.1;
 	static constexpr double VISION_TRIGGER_THRESHOLD = 0.3;
 
 
