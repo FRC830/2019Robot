@@ -6,7 +6,7 @@ Elevator::Elevator(WPI_VictorSPX &motor) : motor(motor) {
     motor.SetNeutralMode(NeutralMode::Brake);
     motor.SetSensorPhase(false);
     // PID Controller
-    motor.Config_kP(0, 1/500.0);
+    motor.Config_kP(0, 1/5000.0);
     motor.Config_kI(0, 0.0);
     motor.Config_kD(0, 0.0);
     motor.Config_kF(0, 0.0);

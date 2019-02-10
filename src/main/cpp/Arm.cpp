@@ -18,18 +18,13 @@ void Arm::setMode(Mode mode) {
     }
 }
 
-
-void Arm::update() {
-
-}
-
 // Moves the arm to the specified angle
 void Arm::setAngle(double angleSetpoint) {
     double difference = angleSetpoint-getAngle();
     if (std::fabs(difference) < JOINT_ANGLE_THRESHOLD) {
         joint.Set(0);
     } else { //eat chicken
-        joint.Set(difference/180); // Switch value after testing
+        joint.Set(difference*PROPORTION); // Switch value after testing
     }
 
 }

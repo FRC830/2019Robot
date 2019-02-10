@@ -56,6 +56,7 @@ public:
 	static constexpr double FLYWHEEL_THRESHOLD = 0.05;
 	static constexpr double JOINT_MOVEMENT_SPEED = 0.5;
 	static constexpr double CONTROLLER_GYRO_THRESHOLD = 0.1;
+	static constexpr double SPEED_GYRO_THRESHOLD = 0.1;
 	static constexpr double DRIVETRAIN_DEADZONE_THRESHOLD = 0.05;
 	static constexpr double MANUAL_ELEVATOR_THRESHOLD = 0.1;
 	static constexpr double ARM_THRESHOLD = 0.1;
