@@ -102,6 +102,8 @@ public:
 	// Elevator Declarations
 	WPI_VictorSPX winch{ELEVATOR_MOTOR_ID};
 	Elevator elevator{winch};
+	enum ElevatorMode {MANUAL,AUTOMATIC};
+	ElevatorMode elevatorMode = AUTOMATIC;
 	int currentSetpoint = 0;
 	Toggle leftBumper;
 	Toggle rightBumper;

@@ -36,5 +36,5 @@ void Arm::setAngle(double angleSetpoint) {
 
 // Returns the current angle of the Arm
 double Arm::getAngle() {
-    return pot.Get(); //get some weed
+    return pot.Get();
 }
