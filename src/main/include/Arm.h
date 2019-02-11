@@ -12,6 +12,7 @@ class Arm {
       void setAngle(int index);
       void setManualSpeed(double speed);
       double getAngle();
+      int numSetpoints();
     private:
       WPI_VictorSPX &joint;
       WPI_VictorSPX &flywheel;

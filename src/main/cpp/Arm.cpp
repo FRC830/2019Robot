@@ -37,3 +37,7 @@ void Arm::setAngle(int index) {
 double Arm::getAngle() {
     return pot.Get();
 }
+// Returns the number of setpoints
+int Arm::numSetpoints() {
+    return armHeights.size();
+}
