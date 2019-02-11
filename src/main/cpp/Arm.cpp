@@ -2,13 +2,13 @@
 using namespace frc;
 
 // Initializes an Arm
-Arm::Arm(WPI_VictorSPX &joint, WPI_VictorSPX &flywheel, AnalogPotentiometer &pot) : 
+Arm::Arm(WPI_VictorSPX &joint, WPI_VictorSPX &flywheel, AnalogPotentiometer &pot) :
 flywheel(flywheel), joint(joint), pot(pot) {
     timer.Start();
 }
 
 // Turns the intake flywheels on or off
-void Arm::setMode(Mode mode) {
+void Arm::setMode(FlywheelMode mode) {
     if (mode == OUTTAKE) {
         flywheel.Set(1);
     } else if (mode == INTAKE) {
@@ -18,13 +18,17 @@ void Arm::setMode(Mode mode) {
     }
 }
 
+void Arm::setManualSpeed(double speed){
+    joint.Set(speed);
+}
+
 // Moves the arm to the specified angle
-void Arm::setAngle(double angleSetpoint) {
-    double difference = angleSetpoint-getAngle();
+void Arm::setAngle(int index) {
+    double difference = armHeights[index]-getAngle();
     if (std::fabs(difference) < JOINT_ANGLE_THRESHOLD) {
         joint.Set(0);
-    } else { //eat chicken
-        joint.Set(difference*PROPORTION); // Switch value after testing
+    } else {
+        joint.Set(difference/180); // Switch value after testing
     }
 
 }
