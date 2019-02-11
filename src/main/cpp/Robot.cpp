@@ -171,9 +171,9 @@ void Robot::handleArm() {
     double deadzoneLeftY = (std::fabs(copilot.LeftY()) > ARM_THRESHOLD ? copilot.LeftY() : 0);
     if (manualMode) {
         arm.setManualSpeed(deadzoneLeftY);
-    } else if (armDown) {
+    } else if (armDown && currentArmSetpoint < (arm.numSetpoints() - 1)) {
         currentSetpoint++;
-    } else if (armUp) {
+    } else if (armUp && currentArmSetpoint > 0) {
         currentArmSetpoint--;
     } else {
         arm.setAngle(currentArmSetpoint);
