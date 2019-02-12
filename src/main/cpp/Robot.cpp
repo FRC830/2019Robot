@@ -21,8 +21,8 @@ void Robot::RobotInit() {
     leftBack.ConfigFactoryDefault();
 
     // Set Victors to follow Talons
-    rightFront.Follow(rightBack);
-    leftFront.Follow(leftBack);
+    rightBack.Follow(rightFront);
+    leftBack.Follow(leftFront);
 
     // For if we need to change it later
     rightBack.SetSensorPhase(false);

@@ -38,7 +38,7 @@ public:
 	static const int WINCH_MOTOR_ID = 0;
 	static const int FLYWHEEL_MOTOR_ID = 0;
 	static const int ELEVATOR_MOTOR_ID = 0;
-	static const int GEARSHIFT_SOLENOID_PIN = 5;
+	static const int GEARSHIFT_SOLENOID_PIN = 4;
 	static const int HATCH_GRAB_SOLENOID_PIN = 6;
 	static const int EXTENSION_SOLENOID_PIN = 7;
 
@@ -62,10 +62,10 @@ public:
 	static constexpr double TURN_SCALE_FACTOR = 15.0;
 
 	// Drivetrain declarations
-	WPI_VictorSPX rightFront {RIGHT_FRONT_MOTOR_ID};
-	WPI_VictorSPX leftFront {LEFT_FRONT_MOTOR_ID};
-	WPI_TalonSRX rightBack {RIGHT_BACK_MOTOR_ID};
-	WPI_TalonSRX leftBack {LEFT_BACK_MOTOR_ID};
+	WPI_TalonSRX rightFront {RIGHT_FRONT_MOTOR_ID};
+	WPI_TalonSRX leftFront {LEFT_FRONT_MOTOR_ID};
+	WPI_VictorSPX rightBack {RIGHT_BACK_MOTOR_ID};
+	WPI_VictorSPX leftBack {LEFT_BACK_MOTOR_ID};
 	frc::DifferentialDrive drivetrain {leftBack, rightBack};
 	frc::Solenoid gearShifter{GEARSHIFT_SOLENOID_PIN};
 	double prevAngle = 0;
@@ -84,7 +84,7 @@ public:
 	// Rotating Arm Declarations
 	WPI_VictorSPX joint{WINCH_MOTOR_ID};
 	WPI_VictorSPX flywheel{FLYWHEEL_MOTOR_ID};
-	Toggle manualMode{false};
+	Toggle manualMode{true};
 	Toggle armUp{false};
 	Toggle armDown{false};
 	frc::AnalogPotentiometer pot{POTENTIOMETER_ANALOG_PIN};
@@ -100,7 +100,7 @@ public:
 	WPI_VictorSPX winch{ELEVATOR_MOTOR_ID};
 	Elevator elevator{winch};
 	enum ElevatorMode {MANUAL,AUTOMATIC};
-	ElevatorMode elevatorMode = AUTOMATIC;
+	ElevatorMode elevatorMode = MANUAL;
 	int currentSetpoint = 0;
 	Toggle leftBumper;
 	Toggle rightBumper;
