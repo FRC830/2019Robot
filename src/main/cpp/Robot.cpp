@@ -40,7 +40,6 @@ void Robot::RobotInit() {
 
 //Called While Robot is on
 void Robot::RobotPeriodic() {
-    SmartDashboard::PutNumber("Potentiometer Value", arm.getAngle());
 }
 
 //Called Initially on Autonomous Start
