@@ -163,9 +163,22 @@ void Robot::handleElevator() {
 // Copilot: Handles controller input with rotating arm
 // this becomes left stick 
 void Robot::handleArm() {
-    if (std::fabs(copilot.LeftY()) > ARM_THRESHOLD) {
-        arm.setAngle(arm.getAngle() + copilot.LeftY() * JOINT_MOVEMENT_SPEED);
-    };
+    manualMode.toggle(copilot.ButtonState(GamepadF310::BUTTON_START));
+    armUp.toggle(copilot.LeftY() > ARM_THRESHOLD);
+    armDown.toggle(-(copilot.LeftY()) > ARM_THRESHOLD);
+    
+    double deadzoneLeftY = (std::fabs(copilot.LeftY()) > ARM_THRESHOLD ? copilot.LeftY() : 0);
+    if (manualMode) {
+        arm.setManualSpeed(deadzoneLeftY);
+    } else if (armDown && currentArmSetpoint < (arm.numSetpoints() - 1)) {
+        currentSetpoint++;
+    } else if (armUp && currentArmSetpoint > 0) {
+        currentArmSetpoint--;
+    } else {
+        arm.setAngle(currentArmSetpoint);
+    }
+    armUp = false;
+    armDown = false;
     SmartDashboard::PutNumber("Arm Angle", arm.getAngle());
 }
 

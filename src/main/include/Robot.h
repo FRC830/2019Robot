@@ -1,12 +1,8 @@
 #pragma once
 
-#include <string>
 #include <Lib830.h>
 #include <frc/WPILib.h>
 #include <ctre/Phoenix.h>
-#include <thread>
-#include <opencv2/core/core.hpp>
-#include <vector>
 #include "Elevator.h"
 #include "Arm.h"
 #include "Spear.h"
@@ -38,7 +34,7 @@ public:
 	static const int RIGHT_BACK_MOTOR_ID = 3; 
 	static const int LEFT_BACK_MOTOR_ID = 4; 
 	static const int ANALOG_GYRO_PIN = 0;
-	static const int POTENTIOMETER_ANALOG_PIN = 0;
+	static const int POTENTIOMETER_ANALOG_PIN = 3;
 	static const int WINCH_MOTOR_ID = 0;
 	static const int FLYWHEEL_MOTOR_ID = 0;
 	static const int ELEVATOR_MOTOR_ID = 0;
@@ -48,10 +44,6 @@ public:
 
 
 	// Misc
-	static const int ENCODER_TICKS = 4096;
-	static constexpr double PI = 3.1415927;
-	static const int WINCH_DIAMETER = 6;
-	static constexpr double ENCODER_TICK_DISTANCE = 6 * PI / ENCODER_TICKS;
 	static const int TICKS_TO_ACCEL = 10;
 	static constexpr double FLYWHEEL_THRESHOLD = 0.05;
 	static constexpr double JOINT_MOVEMENT_SPEED = 0.5;
@@ -80,7 +72,7 @@ public:
 	double prevSpeed = 0;
 	double speed = 0;
 	Toggle gyroCorrectState{true};
-	GearState gearState = HIGH;
+	GearState gearState = LOW;
 
 	// Controller declarations
 	Lib830::GamepadF310 pilot {0};
@@ -92,8 +84,12 @@ public:
 	// Rotating Arm Declarations
 	WPI_VictorSPX joint{WINCH_MOTOR_ID};
 	WPI_VictorSPX flywheel{FLYWHEEL_MOTOR_ID};
+	Toggle manualMode{false};
+	Toggle armUp{false};
+	Toggle armDown{false};
 	frc::AnalogPotentiometer pot{POTENTIOMETER_ANALOG_PIN};
 	Arm arm{joint, flywheel, pot};
+	int currentArmSetpoint = 0;
 	
 	// Spear Declarations
 	frc::Solenoid hatchGrabPiston{HATCH_GRAB_SOLENOID_PIN};
