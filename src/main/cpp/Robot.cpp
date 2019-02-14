@@ -25,8 +25,9 @@ void Robot::RobotInit() {
     leftBack.Follow(leftFront);
 
     // For if we need to change it later
-    rightBack.SetSensorPhase(false);
-    leftBack.SetSensorPhase(false);
+    rightFront.SetSensorPhase(false);
+    leftFront.SetSensorPhase(false);
+
     rightFront.SetInverted(false);
     rightBack.SetInverted(false);
     leftFront.SetInverted(false);
