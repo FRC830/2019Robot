@@ -4,13 +4,13 @@
 
 class Elevator {
     public:
-        Elevator(WPI_VictorSPX &motor);
+        Elevator(WPI_TalonSRX &motor);
         double getHeight();
         void setSetpoint(int height);
         void setManualSpeed(double speed);
         int numSetpoints();
     private:
-        WPI_VictorSPX &motor;
+        WPI_TalonSRX &motor;
         static const int ENCODER_TICKS = 4096;
         static constexpr double PI = 3.1415927;
         static constexpr double MOTOR_DIAMETER = 4.0/7.0;

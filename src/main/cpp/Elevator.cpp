@@ -2,7 +2,7 @@
 using namespace frc;
 
 // Initialized the Elevator Arm with a motor and encoder
-Elevator::Elevator(WPI_VictorSPX &motor) : motor(motor) {
+Elevator::Elevator(WPI_TalonSRX &motor) : motor(motor) {
     motor.SetNeutralMode(NeutralMode::Brake);
     motor.SetSensorPhase(false);
     // PID Controller

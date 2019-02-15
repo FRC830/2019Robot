@@ -97,8 +97,8 @@ public:
 	Spear spear{hatchGrabPiston, extensionPiston};
 
 	// Elevator Declarations
-	WPI_VictorSPX winch{ELEVATOR_MOTOR_ID};
-	Elevator elevator{winch};
+	WPI_TalonSRX elevatorMotor{ELEVATOR_MOTOR_ID};
+	Elevator elevator{elevatorMotor};
 	enum ElevatorMode {MANUAL,AUTOMATIC};
 	ElevatorMode elevatorMode = MANUAL;
 	int currentSetpoint = 0;
