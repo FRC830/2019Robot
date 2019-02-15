@@ -35,9 +35,9 @@ public:
 	static const int LEFT_BACK_MOTOR_ID = 4; 
 	static const int ANALOG_GYRO_PIN = 0;
 	static const int POTENTIOMETER_ANALOG_PIN = 3;
-	static const int WINCH_MOTOR_ID = 0;
-	static const int FLYWHEEL_MOTOR_ID = 0;
-	static const int ELEVATOR_MOTOR_ID = 0;
+	static const int ARM_MOTOR_ID = 5;
+	static const int FLYWHEEL_MOTOR_ID = 7;
+	static const int ELEVATOR_MOTOR_ID = 6;
 	static const int GEARSHIFT_SOLENOID_PIN = 4;
 	static const int HATCH_GRAB_SOLENOID_PIN = 6;
 	static const int EXTENSION_SOLENOID_PIN = 7;
@@ -82,9 +82,9 @@ public:
 	frc::AnalogGyro gyro {ANALOG_GYRO_PIN};
 
 	// Rotating Arm Declarations
-	WPI_VictorSPX joint{WINCH_MOTOR_ID};
+	WPI_VictorSPX joint{ARM_MOTOR_ID};
 	WPI_VictorSPX flywheel{FLYWHEEL_MOTOR_ID};
-	Toggle manualMode{true};
+	Toggle armMode{true};
 	Toggle armUp{false};
 	Toggle armDown{false};
 	frc::AnalogPotentiometer pot{POTENTIOMETER_ANALOG_PIN};
