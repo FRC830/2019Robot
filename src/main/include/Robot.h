@@ -31,13 +31,15 @@ public:
 	// Motor IDs
 	static const int RIGHT_FRONT_MOTOR_ID = 1; 
 	static const int LEFT_FRONT_MOTOR_ID = 2; 
-	static const int RIGHT_BACK_MOTOR_ID = 3; 
-	static const int LEFT_BACK_MOTOR_ID = 4; 
-	static const int ANALOG_GYRO_PIN = 0;
-	static const int POTENTIOMETER_ANALOG_PIN = 3;
+	static const int RIGHT_BACK_MOTOR_ID = 3;
+	static const int LEFT_BACK_MOTOR_ID = 4;
 	static const int ARM_MOTOR_ID = 5;
-	static const int FLYWHEEL_MOTOR_ID = 7;
 	static const int ELEVATOR_MOTOR_ID = 6;
+	static const int FLYWHEEL_MOTOR_ID = 7;
+
+	static const int GYRO_ANALOG_PIN = 0;
+	static const int POTENTIOMETER_ANALOG_PIN = 3;
+
 	static const int GEARSHIFT_SOLENOID_PIN = 4;
 	static const int HATCH_GRAB_SOLENOID_PIN = 6;
 	static const int EXTENSION_SOLENOID_PIN = 7;
@@ -79,7 +81,7 @@ public:
 	Lib830::GamepadF310 copilot {1};
 
 	// Misc component declarations
-	frc::AnalogGyro gyro {ANALOG_GYRO_PIN};
+	frc::AnalogGyro gyro {GYRO_ANALOG_PIN};
 
 	// Rotating Arm Declarations
 	WPI_VictorSPX joint{ARM_MOTOR_ID};
