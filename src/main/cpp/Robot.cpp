@@ -41,6 +41,9 @@ void Robot::RobotInit() {
 
 //Called While Robot is on
 void Robot::RobotPeriodic() {
+    SmartDashboard::PutNumber("Arm Angle", arm.getAngle());
+    SmartDashboard::PutNumber("Gyro Angle", gyro.GetAngle());
+    SmartDashboard::PutNumber("Elevator Height (in)", elevator.getHeight());
 }
 
 //Called Initially on Autonomous Start
@@ -110,7 +113,6 @@ void Robot::handleDrivetrain() {
     }
 
     SmartDashboard::PutNumber("Drivetrain Turn", turn);
-    SmartDashboard::PutNumber("Gyro Angle", gyro.GetAngle());
     SmartDashboard::PutBoolean("Gear State", gearState);
 }
 
@@ -158,7 +160,6 @@ void Robot::handleElevator() {
 
     SmartDashboard::PutBoolean("Manual Elevator", elevatorMode);
     SmartDashboard::PutNumber("Setpoint", currentSetpoint);
-    SmartDashboard::PutNumber("Height (in)", elevator.getHeight());
 }
 
 
@@ -181,7 +182,6 @@ void Robot::handleArm() {
     }
     armUp = false;
     armDown = false;
-    SmartDashboard::PutNumber("Arm Angle", arm.getAngle());
     SmartDashboard::PutBoolean("Manual Arm", armMode);
 }
 
