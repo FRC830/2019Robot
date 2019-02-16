@@ -2,12 +2,15 @@
 using namespace frc;
 
 // Initializes an Arm
-Arm::Arm(WPI_VictorSPX &joint, WPI_VictorSPX &flywheel, AnalogPotentiometer &pot) :
-flywheel(flywheel), joint(joint), pot(pot) {
+Arm::Arm(WPI_VictorSPX &joint, WPI_VictorSPX &flywheel, AnalogPotentiometer &pot) : flywheel(flywheel), joint(joint), pot(pot) {
     joint.SetNeutralMode(NeutralMode::Brake);
     flywheel.SetInverted(true);
-}
+    armPID.SetInputRange(0, 1000);
+    armPID.SetOutputRange(0.0, 1.0);
+    armPID.SetAbsoluteTolerance(5);
+    armPID.Enable();
 
+}
 // Turns the intake flywheels on or off
 void Arm::setMode(FlywheelMode mode) {
     if (mode == OUTTAKE) {
@@ -19,24 +22,26 @@ void Arm::setMode(FlywheelMode mode) {
     }
 }
 
-void Arm::setManualSpeed(double speed){
+void Arm::setManualSpeed(double speed) {
+    if (armPID.IsEnabled()) {
+        armPID.Disable();
+    }
     joint.Set(speed);
 }
 
 // Moves the arm to the specified angle
 void Arm::setAngle(int index) {
-    double difference = armHeights[index]-getAngle();
-    if (std::fabs(difference) < JOINT_ANGLE_THRESHOLD) {
-        joint.Set(0.5);
-    } else {
-        joint.Set(difference/100); // Switch value after testing
+    SmartDashboard::PutData(&armPID);
+    if (!armPID.IsEnabled()) {
+        armPID.Enable();
     }
+    armPID.SetSetpoint(armHeights[index]);
 
 }
 
 // Returns the current angle of the Arm
 double Arm::getAngle() {
-    return pot.Get() * 300;
+    return pot.Get();
 }
 // Returns the number of setpoints
 int Arm::numSetpoints() {

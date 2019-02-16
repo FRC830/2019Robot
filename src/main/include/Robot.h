@@ -62,6 +62,7 @@ public:
 	double visionSteer = 0.0;
 	static constexpr double CAMERA_WIDTH = 320;
 	static constexpr double TURN_SCALE_FACTOR = 15.0;
+	static constexpr double TARGET_WIDTH_TO_CAMERA_OFFSET_RATIO = 3.23;
 
 	// Drivetrain declarations
 	WPI_TalonSRX rightFront {RIGHT_FRONT_MOTOR_ID};
@@ -89,7 +90,7 @@ public:
 	Toggle armMode{true};
 	Toggle armUp{false};
 	Toggle armDown{false};
-	frc::AnalogPotentiometer pot{POTENTIOMETER_ANALOG_PIN};
+	frc::AnalogPotentiometer pot{POTENTIOMETER_ANALOG_PIN, 300.0};
 	Arm arm{joint, flywheel, pot};
 	int currentArmSetpoint = 0;
 	

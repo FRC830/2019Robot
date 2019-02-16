@@ -97,7 +97,8 @@ void Robot::handleDrivetrain() {
     double turn = pilot.RightX();
     if (pilot.RightTrigger() > VISION_TRIGGER_THRESHOLD && SmartDashboard::GetBoolean("Target Acquired", false)) {
         int visionMid = SmartDashboard::GetNumber("Vision Mid X", CAMERA_WIDTH/2);
-        turn = sqrt(visionMid - CAMERA_WIDTH / 2) / TURN_SCALE_FACTOR;
+        int targetX = CAMERA_WIDTH/2 + SmartDashboard::GetNumber("Vision Target Pixel Width", 0)*TARGET_WIDTH_TO_CAMERA_OFFSET_RATIO;
+        turn = sqrt(visionMid - targetX) / TURN_SCALE_FACTOR;
     }
     
     speed = Lib830::accel(prevSpeed, pilot.LeftY(), TICKS_TO_ACCEL);
@@ -141,7 +142,7 @@ void Robot::handleElevator() {
         } else if (std::fabs(copilot.RightTrigger()) > MANUAL_ELEVATOR_THRESHOLD) {
             elevator.setManualSpeed(copilot.RightTrigger());
         } else {
-            elevator.setManualSpeed(0);
+            elevator.setManualSpeed(0); // TUNE THIS
         }
     } else {
         //automatic setpoints, right bumper is up one, left bumper is down one
