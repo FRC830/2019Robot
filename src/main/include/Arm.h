@@ -18,10 +18,10 @@ class Arm {
       WPI_VictorSPX &flywheel;
       frc::AnalogPotentiometer &pot;
       frc::Timer timer;
-      static const int LOW = 120;
-      static const int SPEAR_HEIGHT = 90;
-      static const int HIGH = 30;
-      static const int INSIDE_FRAME_PERIMETER = 0;
+      static const int LOW = 230;
+      static const int SPEAR_HEIGHT = 150;
+      static const int HIGH = 100;
+      static const int INSIDE_FRAME_PERIMETER = 60;
       std::vector<int> armHeights = { INSIDE_FRAME_PERIMETER, HIGH, SPEAR_HEIGHT, LOW };
       static constexpr double JOINT_ANGLE_THRESHOLD = 5.0;
       static constexpr double PROPORTION = 1/300.0;

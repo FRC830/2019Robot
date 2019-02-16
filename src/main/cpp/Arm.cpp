@@ -5,6 +5,7 @@ using namespace frc;
 Arm::Arm(WPI_VictorSPX &joint, WPI_VictorSPX &flywheel, AnalogPotentiometer &pot) :
 flywheel(flywheel), joint(joint), pot(pot) {
     joint.SetNeutralMode(NeutralMode::Brake);
+    flywheel.SetInverted(true);
 }
 
 // Turns the intake flywheels on or off
@@ -28,7 +29,7 @@ void Arm::setAngle(int index) {
     if (std::fabs(difference) < JOINT_ANGLE_THRESHOLD) {
         joint.Set(0.5);
     } else {
-        joint.Set(difference/300); // Switch value after testing
+        joint.Set(difference/100); // Switch value after testing
     }
 
 }

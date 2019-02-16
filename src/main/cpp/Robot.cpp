@@ -84,8 +84,8 @@ void Robot::handleSpear() {
 // Pilot: Handles controller input for movement
 void Robot::handleDrivetrain() {
 
-    // Gearshifter
     if (pilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER)) {
+    // Gearshifter
         gearState = LOW;
     } else if (pilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER)) {
         gearState = HIGH;
@@ -174,7 +174,7 @@ void Robot::handleArm() {
     if (armMode) {
         arm.setManualSpeed(deadzoneLeftY);
     } else if (armDown && currentArmSetpoint < (arm.numSetpoints() - 1)) {
-        currentSetpoint++;
+        currentArmSetpoint++;
     } else if (armUp && currentArmSetpoint > 0) {
         currentArmSetpoint--;
     } else {
@@ -183,6 +183,7 @@ void Robot::handleArm() {
     armUp = false;
     armDown = false;
     SmartDashboard::PutBoolean("Manual Arm", armMode);
+    SmartDashboard::PutNumber("Arm Setpoint", currentArmSetpoint);
 }
 
 void Robot::TestPeriodic() {}
