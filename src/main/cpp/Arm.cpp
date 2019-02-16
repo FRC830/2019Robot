@@ -26,16 +26,16 @@ void Arm::setManualSpeed(double speed){
 void Arm::setAngle(int index) {
     double difference = armHeights[index]-getAngle();
     if (std::fabs(difference) < JOINT_ANGLE_THRESHOLD) {
-        joint.Set(0.1);
+        joint.Set(0.5);
     } else {
-        joint.Set(difference/180); // Switch value after testing
+        joint.Set(difference/300); // Switch value after testing
     }
 
 }
 
 // Returns the current angle of the Arm
 double Arm::getAngle() {
-    return pot.Get() * 180;
+    return pot.Get() * 300;
 }
 // Returns the number of setpoints
 int Arm::numSetpoints() {
