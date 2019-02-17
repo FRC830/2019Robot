@@ -6,7 +6,7 @@ Elevator::Elevator(WPI_TalonSRX &motor) : motor(motor) {
     motor.SetNeutralMode(NeutralMode::Brake);
     motor.SetSensorPhase(true); // flip encoder
     motor.SetInverted(true); // flip motor
-    SmartDashboard::PutNumber("P",.02);
+    SmartDashboard::PutNumber("P", 0.02);
     SmartDashboard::PutNumber("I", 0.0);
     SmartDashboard::PutNumber("D", 0.0);
     SmartDashboard::PutNumber("F", 0.0);
@@ -15,7 +15,7 @@ Elevator::Elevator(WPI_TalonSRX &motor) : motor(motor) {
 
 // Raises the elevator to the specified height
 void Elevator::setSetpoint(int height) {
-    motor.Config_kP(0, SmartDashboard::GetNumber("P",.02));
+    motor.Config_kP(0, SmartDashboard::GetNumber("P",0.02));
     motor.Config_kI(0, SmartDashboard::GetNumber("I",0.0));
     motor.Config_kD(0, SmartDashboard::GetNumber("D",0.0));
     motor.Config_kF(0, SmartDashboard::GetNumber("F",0.0));

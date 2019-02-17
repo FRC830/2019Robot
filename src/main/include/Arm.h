@@ -26,8 +26,8 @@ class Arm {
     double f = 0;
     
     frc::PIDController armPID{p,i,d,f,pot,joint};
-    static const int INTAKE_HEIGHT = 210;
-    static const int SPEAR_HEIGHT = 160;
+    static const int INTAKE_HEIGHT = 190;
+    static const int SPEAR_HEIGHT = 140;
     static const int BALL_HEIGHT = 90;
     static const int INSIDE_FRAME_PERIMETER = 35;
     std::vector<int> armHeights = {INSIDE_FRAME_PERIMETER, BALL_HEIGHT, SPEAR_HEIGHT, INTAKE_HEIGHT};
