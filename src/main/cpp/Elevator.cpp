@@ -4,8 +4,8 @@ using namespace frc;
 // Initialized the Elevator Arm with a motor and encoder
 Elevator::Elevator(WPI_TalonSRX &motor) : motor(motor) {
     motor.SetNeutralMode(NeutralMode::Brake);
-    motor.SetSensorPhase(false);
-    motor.SetInverted(true);
+    motor.SetSensorPhase(true); // flip encoder
+    motor.SetInverted(true); // flip motor
     // PID Controller
     motor.Config_kP(0, 1/5000.0);
     motor.Config_kI(0, 0.0);

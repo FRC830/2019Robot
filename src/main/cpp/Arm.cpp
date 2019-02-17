@@ -6,7 +6,7 @@ Arm::Arm(WPI_VictorSPX &joint, WPI_VictorSPX &flywheel, AnalogPotentiometer &pot
     joint.SetNeutralMode(NeutralMode::Brake);
     flywheel.SetInverted(true);
     armPID.SetInputRange(0, 300);
-    armPID.SetOutputRange(-1.0, 1.0);
+    armPID.SetOutputRange(-MAX_UP_SPEED, MAX_DOWN_SPEED);
     armPID.SetAbsoluteTolerance(JOINT_ANGLE_THRESHOLD);
     armPID.Enable();
 }
@@ -36,7 +36,6 @@ void Arm::setAngle(int index) {
         armPID.Enable();
     }
     armPID.SetSetpoint(armHeights[index]);
-
 }
 
 // Returns the current angle of the Arm

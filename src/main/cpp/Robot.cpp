@@ -68,7 +68,7 @@ void Robot::TeleopPeriodic() {
 void Robot::handleCargoIntake() {
     if (copilot.RightY() > FLYWHEEL_THRESHOLD) {
         arm.setMode(Arm::OUTTAKE);
-    } else if (copilot.RightY() < -(FLYWHEEL_THRESHOLD)) {
+    } else if (copilot.RightY() < -FLYWHEEL_THRESHOLD) {
         arm.setMode(Arm::INTAKE);
     } else {
         arm.setMode(Arm::OFF);
@@ -138,7 +138,7 @@ void Robot::handleElevator() {
     if (elevatorMode == MANUAL){
         // manual lower
         if (std::fabs(copilot.LeftTrigger()) > MANUAL_ELEVATOR_THRESHOLD) {
-            elevator.setManualSpeed(-(copilot.LeftTrigger()));
+            elevator.setManualSpeed(-copilot.LeftTrigger());
         } else if (std::fabs(copilot.RightTrigger()) > MANUAL_ELEVATOR_THRESHOLD) {
             elevator.setManualSpeed(copilot.RightTrigger());
         } else {
@@ -170,7 +170,7 @@ void Robot::handleElevator() {
 void Robot::handleArm() {
     armMode.toggle(copilot.ButtonState(GamepadF310::BUTTON_START));
     armUp.toggle(copilot.LeftY() > ARM_THRESHOLD);
-    armDown.toggle(-(copilot.LeftY()) > ARM_THRESHOLD);
+    armDown.toggle(-copilot.LeftY() > ARM_THRESHOLD);
     
     double deadzoneLeftY = (std::fabs(copilot.LeftY()) > ARM_THRESHOLD ? copilot.LeftY() : 0);
     if (armMode) {
@@ -186,7 +186,7 @@ void Robot::handleArm() {
     armDown = false;
     SmartDashboard::PutBoolean("Manual Arm", armMode);
     SmartDashboard::PutNumber("Arm Setpoint", currentArmSetpoint);
-    SmartDashboard::PutString("Arm Height",armHeightWords[currentElevSetpoint]);
+    SmartDashboard::PutString("Arm Height",armHeightWords[currentArmSetpoint]);
 }
 
 void Robot::TestPeriodic() {}

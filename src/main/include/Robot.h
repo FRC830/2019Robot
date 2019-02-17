@@ -55,13 +55,14 @@ public:
 	static constexpr double MANUAL_ELEVATOR_THRESHOLD = 0.1;
 	static constexpr double ARM_THRESHOLD = 0.1;
 	static constexpr double VISION_TRIGGER_THRESHOLD = 0.3;
-	std::vector<std::string> armHeightWords = {"INSIDE_FRAME", "BALL_HEIGHT", "SPEAR_HEIGHT", "INTAKE_HEIGHT"};
-	std::vector<std::string> elevatorHeightWords = {"FIRST_HATCH_HEIGHT", 
-			"FIRST_BALL_HEIGHT", 
-			"SECOND_HATCH_HEIGHT", 
-			"SECOND_BALL_HEIGHT", 
-			"THIRD_HATCH_HEIGHT", 
-			"THIRD_BALL_HEIGHT"};
+	std::vector<std::string> armHeightWords = {"INSIDE FRAME", "OUTTAKE BALL", "SPEAR HEIGHT", "INTAKE BALL"};
+	std::vector<std::string> elevatorHeightWords = {"CARGO/ROCKET BOTTOM HATCH", 
+			"CARGO/ROCKET BOTTOM BALL", 
+			"ROCKET MID HATCH", 
+			"ROCKET MID BALL", 
+			"ROCKET TOP HATCH", 
+			"ROCKET TOP BALL"};
+
 	// Vision Declarations
 	bool doingAutoAlign = false;
 	double visionSteer = 0.0;

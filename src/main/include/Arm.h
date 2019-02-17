@@ -20,16 +20,18 @@ class Arm {
     WPI_VictorSPX &flywheel;
     frc::AnalogPotentiometer &pot;
 
-    double p = 1/100.0;
+    double p = 0.01;
     double i = 0.0;
     double d = 0.0;
     double f = 0;
     
     frc::PIDController armPID{p,i,d,f,pot,joint};
-    static const int INTAKE_HEIGHT = 190;
-    static const int SPEAR_HEIGHT = 130;
-    static const int BALL_HEIGHT = 100;
-    static const int INSIDE_FRAME_PERIMETER = 40;
+    static const int INTAKE_HEIGHT = 210;
+    static const int SPEAR_HEIGHT = 160;
+    static const int BALL_HEIGHT = 90;
+    static const int INSIDE_FRAME_PERIMETER = 35;
     std::vector<int> armHeights = {INSIDE_FRAME_PERIMETER, BALL_HEIGHT, SPEAR_HEIGHT, INTAKE_HEIGHT};
-    static constexpr double JOINT_ANGLE_THRESHOLD = 5.0;
+    static constexpr double JOINT_ANGLE_THRESHOLD = 10.0;
+    static constexpr double MAX_DOWN_SPEED = 0.25;
+    static constexpr double MAX_UP_SPEED = 1.0;
 };
