@@ -126,7 +126,6 @@ void Robot::handleElevator() {
         elevatorMode = AUTOMATIC;
     }
 
-    //deadzone
     if (copilot.RightTrigger() > MANUAL_ELEVATOR_THRESHOLD || copilot.LeftTrigger() > MANUAL_ELEVATOR_THRESHOLD){
         elevatorMode = MANUAL;
     }
@@ -135,7 +134,7 @@ void Robot::handleElevator() {
     leftBumper.toggle(copilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER));
     rightBumper.toggle(copilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER));
 
-    if (elevatorMode == MANUAL){
+    if (elevatorMode == MANUAL) {
         // manual lower
         if (std::fabs(copilot.LeftTrigger()) > MANUAL_ELEVATOR_THRESHOLD) {
             elevator.setManualSpeed(-copilot.LeftTrigger());
@@ -150,7 +149,7 @@ void Robot::handleElevator() {
             currentElevSetpoint--;
             elevator.setSetpoint(currentElevSetpoint);
         }
-        else if (leftBumper && !rightBumper && currentElevSetpoint < (elevator.numSetpoints() - 1)) {
+        else if (!leftBumper && rightBumper && currentElevSetpoint < (elevator.numSetpoints() - 1)) {
             currentElevSetpoint++;
             elevator.setSetpoint(currentElevSetpoint);
         }
@@ -168,12 +167,12 @@ void Robot::handleElevator() {
 // Copilot: Handles controller input with rotating arm
 // this becomes left stick 
 void Robot::handleArm() {
-    armMode.toggle(copilot.ButtonState(GamepadF310::BUTTON_START));
+    armManualMode.toggle(copilot.ButtonState(GamepadF310::BUTTON_START));
     armUp.toggle(copilot.LeftY() > ARM_THRESHOLD);
     armDown.toggle(-copilot.LeftY() > ARM_THRESHOLD);
     
     double deadzoneLeftY = (std::fabs(copilot.LeftY()) > ARM_THRESHOLD ? copilot.LeftY() : 0);
-    if (armMode) {
+    if (armManualMode) {
         arm.setManualSpeed(deadzoneLeftY);
     } else if (armDown && currentArmSetpoint < (arm.numSetpoints() - 1)) {
         currentArmSetpoint++;
@@ -184,7 +183,7 @@ void Robot::handleArm() {
     }
     armUp = false;
     armDown = false;
-    SmartDashboard::PutBoolean("Manual Arm", armMode);
+    SmartDashboard::PutBoolean("Manual Arm", armManualMode);
     SmartDashboard::PutNumber("Arm Setpoint", currentArmSetpoint);
     SmartDashboard::PutString("Arm Height",armHeightWords[currentArmSetpoint]);
 }

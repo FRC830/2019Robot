@@ -19,7 +19,7 @@ class Elevator {
         // Distance to offset flywheel/spear against center of target
         static constexpr double FLYWHEEL_OFFSET = 0;
         static constexpr double SPEAR_OFFSET = 0;
-        static constexpr double DIVIDER_DISTANCE = 28;
+        static constexpr double DIVIDER_DISTANCE = 14; //28
 
         // Heights of all targets, In inches
         static constexpr double FIRST_HATCH_HEIGHT = 19 + SPEAR_OFFSET;

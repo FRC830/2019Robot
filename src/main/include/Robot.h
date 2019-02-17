@@ -93,7 +93,7 @@ public:
 	// Rotating Arm Declarations
 	WPI_VictorSPX joint{ARM_MOTOR_ID};
 	WPI_VictorSPX flywheel{FLYWHEEL_MOTOR_ID};
-	Toggle armMode{true};
+	Toggle armManualMode{true};
 	Toggle armUp{false};
 	Toggle armDown{false};
 	frc::AnalogPotentiometer pot{POTENTIOMETER_ANALOG_PIN, 300.0};
@@ -108,7 +108,7 @@ public:
 	// Elevator Declarations
 	WPI_TalonSRX elevatorMotor{ELEVATOR_MOTOR_ID};
 	Elevator elevator{elevatorMotor};
-	enum ElevatorMode {MANUAL,AUTOMATIC};
+	enum ElevatorMode {MANUAL = true,AUTOMATIC = false};
 	ElevatorMode elevatorMode = MANUAL;
 	int currentElevSetpoint = 0;
 	Toggle leftBumper;
