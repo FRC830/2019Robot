@@ -55,8 +55,13 @@ public:
 	static constexpr double MANUAL_ELEVATOR_THRESHOLD = 0.1;
 	static constexpr double ARM_THRESHOLD = 0.1;
 	static constexpr double VISION_TRIGGER_THRESHOLD = 0.3;
-
-
+	std::vector<std::string> armHeightWords = {"INSIDE_FRAME", "BALL_HEIGHT", "SPEAR_HEIGHT", "INTAKE_HEIGHT"};
+	std::vector<std::string> elevatorHeightWords = {"FIRST_HATCH_HEIGHT", 
+			"FIRST_BALL_HEIGHT", 
+			"SECOND_HATCH_HEIGHT", 
+			"SECOND_BALL_HEIGHT", 
+			"THIRD_HATCH_HEIGHT", 
+			"THIRD_BALL_HEIGHT"};
 	// Vision Declarations
 	bool doingAutoAlign = false;
 	double visionSteer = 0.0;
@@ -104,7 +109,7 @@ public:
 	Elevator elevator{elevatorMotor};
 	enum ElevatorMode {MANUAL,AUTOMATIC};
 	ElevatorMode elevatorMode = MANUAL;
-	int currentSetpoint = 0;
+	int currentElevSetpoint = 0;
 	Toggle leftBumper;
 	Toggle rightBumper;
 };

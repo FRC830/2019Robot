@@ -5,12 +5,12 @@ using namespace frc;
 Arm::Arm(WPI_VictorSPX &joint, WPI_VictorSPX &flywheel, AnalogPotentiometer &pot) : flywheel(flywheel), joint(joint), pot(pot) {
     joint.SetNeutralMode(NeutralMode::Brake);
     flywheel.SetInverted(true);
-    armPID.SetInputRange(0, 1000);
-    armPID.SetOutputRange(0.0, 1.0);
-    armPID.SetAbsoluteTolerance(5);
+    armPID.SetInputRange(0, 300);
+    armPID.SetOutputRange(-1.0, 1.0);
+    armPID.SetAbsoluteTolerance(JOINT_ANGLE_THRESHOLD);
     armPID.Enable();
-
 }
+
 // Turns the intake flywheels on or off
 void Arm::setMode(FlywheelMode mode) {
     if (mode == OUTTAKE) {

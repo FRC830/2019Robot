@@ -114,7 +114,7 @@ void Robot::handleDrivetrain() {
     }
 
     SmartDashboard::PutNumber("Drivetrain Turn", turn);
-    SmartDashboard::PutBoolean("Gear State", gearState);
+    SmartDashboard::PutBoolean("High Gear State", gearState);
 }
 
 // Copilot: Handles controller input with elevator
@@ -146,13 +146,13 @@ void Robot::handleElevator() {
         }
     } else {
         //automatic setpoints, right bumper is up one, left bumper is down one
-        if ((leftBumper && !rightBumper) && currentSetpoint > 0) {
-            currentSetpoint--;
-            elevator.setSetpoint(currentSetpoint);
+        if ((leftBumper && !rightBumper) && currentElevSetpoint > 0) {
+            currentElevSetpoint--;
+            elevator.setSetpoint(currentElevSetpoint);
         }
-        else if (leftBumper && !rightBumper && currentSetpoint < (elevator.numSetpoints() - 1)) {
-            currentSetpoint++;
-            elevator.setSetpoint(currentSetpoint);
+        else if (leftBumper && !rightBumper && currentElevSetpoint < (elevator.numSetpoints() - 1)) {
+            currentElevSetpoint++;
+            elevator.setSetpoint(currentElevSetpoint);
         }
     }
 
@@ -160,7 +160,8 @@ void Robot::handleElevator() {
     rightBumper = false;
 
     SmartDashboard::PutBoolean("Manual Elevator", elevatorMode);
-    SmartDashboard::PutNumber("Setpoint", currentSetpoint);
+    SmartDashboard::PutNumber("Elevator Setpoint", currentElevSetpoint);
+    SmartDashboard::PutString("Elevator Height",elevatorHeightWords[currentElevSetpoint]);
 }
 
 
@@ -185,6 +186,7 @@ void Robot::handleArm() {
     armDown = false;
     SmartDashboard::PutBoolean("Manual Arm", armMode);
     SmartDashboard::PutNumber("Arm Setpoint", currentArmSetpoint);
+    SmartDashboard::PutString("Arm Height",armHeightWords[currentElevSetpoint]);
 }
 
 void Robot::TestPeriodic() {}
