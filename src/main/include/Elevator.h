@@ -1,7 +1,8 @@
 #include <Lib830.h>
-#include <frc/WPILib.h>
 #include <ctre/Phoenix.h>
-
+#include <frc/WPILib.h>
+#include <frc/shuffleboard/Shuffleboard.h>
+#include <frc/shuffleboard/BuiltInWidgets.h>
 class Elevator {
     public:
         Elevator(WPI_TalonSRX &motor);
@@ -29,6 +30,10 @@ class Elevator {
         static constexpr double FIRST_BALL_HEIGHT = 27.5 + FLYWHEEL_OFFSET;
         static constexpr double SECOND_BALL_HEIGHT = FIRST_BALL_HEIGHT + DIVIDER_DISTANCE;
         static constexpr double THIRD_BALL_HEIGHT = SECOND_BALL_HEIGHT + DIVIDER_DISTANCE;
+
+        double p = 0 ,i = 0 ,d = 0,f = 0.0;
+        bool motorFlipped = false;
+        bool encoderFlipped = false;
 
         std::vector<double> heights = {
             FIRST_HATCH_HEIGHT, 

@@ -1,10 +1,10 @@
 #include <Lib830.h>
-#include <frc/WPILib.h>
 #include <ctre/Phoenix.h>
+#include <frc/WPILib.h>
+#include <frc/shuffleboard/Shuffleboard.h>
 #include <vector>
-
 class Arm {
-  public:
+   public:
     enum FlywheelMode { OFF, OUTTAKE, INTAKE };
     enum ArmMode { MANUAL, AUTO };
     Arm(WPI_VictorSPX &joint, WPI_VictorSPX &flywheel, frc::AnalogPotentiometer &pot);
@@ -23,14 +23,14 @@ class Arm {
     double p = 0.01;
     double i = 0.0;
     double d = 0.0;
-    double f = 0;
+    double f = 0.0;
     
     frc::PIDController armPID{p,i,d,f,pot,joint};
-    static const int INTAKE_HEIGHT = 190;
-    static const int SPEAR_HEIGHT = 140;
-    static const int BALL_HEIGHT = 90;
-    static const int INSIDE_FRAME_PERIMETER = 35;
-    std::vector<int> armHeights = {INSIDE_FRAME_PERIMETER, BALL_HEIGHT, SPEAR_HEIGHT, INTAKE_HEIGHT};
+    double intake_height = 190.0;
+    double spear_height = 140.0;
+    double ball_height = 90.0;
+    double inside_frame_perimeter = 35.0;
+    std::vector<double> armAngles = {inside_frame_perimeter, ball_height, spear_height, intake_height};
     static constexpr double JOINT_ANGLE_THRESHOLD = 10.0;
     static constexpr double MAX_DOWN_SPEED = 0.25;
     static constexpr double MAX_UP_SPEED = 1.0;

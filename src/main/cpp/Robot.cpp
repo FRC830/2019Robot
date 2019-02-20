@@ -23,7 +23,6 @@ void Robot::RobotInit() {
     // Set Victors to follow Talons
     rightBack.Follow(rightFront);
     leftBack.Follow(leftFront);
-
     // For if we need to change it later
     rightFront.SetSensorPhase(false);
     leftFront.SetSensorPhase(false);
@@ -196,8 +195,9 @@ void Robot::DisabledInit(){
     spear.setHatchGrab(false);
 }
 
+// Elevator::Elevator(WPI_TalonSRX &motor) : motor(motor) {
 #ifndef RUNNING_FRC_TESTS
-int main(){
+    int main() {
     frc::StartRobot<Robot>();
 }
 #endif

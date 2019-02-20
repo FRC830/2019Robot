@@ -5,21 +5,26 @@ using namespace frc;
 Elevator::Elevator(WPI_TalonSRX &motor) : motor(motor) {
     motor.SetNeutralMode(NeutralMode::Brake);
     // practice has true for both
-    motor.SetSensorPhase(false); // flip encoder
-    motor.SetInverted(false); // flip motor
-    SmartDashboard::PutNumber("P", 0.02);
-    SmartDashboard::PutNumber("I", 0.0);
-    SmartDashboard::PutNumber("D", 0.0);
-    SmartDashboard::PutNumber("F", 0.0);
+    Shuffleboard::GetTab("robot-specific values").AddPersistent("Encoder Flipped", encoderFlipped)
+    .WithWidget("Toggle Switch").GetEntry().GetBoolean(encoderFlipped);
+    Shuffleboard::GetTab("robot-specific values").AddPersistent("Motor Flipped", motorFlipped)
+    .WithWidget("Toggle Switch").GetEntry().GetBoolean(motorFlipped);
+    
+    Shuffleboard::GetTab("robot-specific values").AddPersistent("P [elev]", p).GetEntry().GetDouble(p);
+    Shuffleboard::GetTab("robot-specific values").AddPersistent("I [elev]", i).GetEntry().GetDouble(i);
+    Shuffleboard::GetTab("robot-specific values").AddPersistent("D [elev]", d).GetEntry().GetDouble(d);
+    Shuffleboard::GetTab("robot-specific values").AddPersistent("F [elev]", f).GetEntry().GetDouble(f);
     // PID Controller
+    motor.SetSensorPhase(SmartDashboard::GetBoolean("Encoder Flipped", encoderFlipped));
+    motor.SetInverted(SmartDashboard::GetBoolean("Motor Flipped", motorFlipped));
 }
 
 // Raises the elevator to the specified height
 void Elevator::setSetpoint(int height) {
-    motor.Config_kP(0, SmartDashboard::GetNumber("P",0.02));
-    motor.Config_kI(0, SmartDashboard::GetNumber("I",0.0));
-    motor.Config_kD(0, SmartDashboard::GetNumber("D",0.0));
-    motor.Config_kF(0, SmartDashboard::GetNumber("F",0.0));
+    motor.Config_kP(0, SmartDashboard::GetNumber("P [elev]", p));
+    motor.Config_kI(0, SmartDashboard::GetNumber("I [elev]", i));
+    motor.Config_kD(0, SmartDashboard::GetNumber("D [elev]", d));
+    motor.Config_kF(0, SmartDashboard::GetNumber("F [elev]", f));
     motor.Set(ControlMode::Position, heights[height] / ENCODER_TICK_DISTANCE);
 }
 

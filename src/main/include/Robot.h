@@ -2,11 +2,11 @@
 
 #include <Lib830.h>
 #include <frc/WPILib.h>
+#include <frc/shuffleboard/Shuffleboard.h>
 #include <ctre/Phoenix.h>
 #include "Elevator.h"
 #include "Arm.h"
 #include "Spear.h"
-
 enum GearState {HIGH = true, LOW = false};
 
 class Robot : public frc::TimedRobot {
@@ -71,7 +71,7 @@ public:
 	static constexpr double TARGET_WIDTH_TO_CAMERA_OFFSET_RATIO = 3.23;
 
 	// Drivetrain declarations
-	WPI_TalonSRX rightFront {RIGHT_FRONT_MOTOR_ID};
+  WPI_TalonSRX rightFront {RIGHT_FRONT_MOTOR_ID};
 	WPI_TalonSRX leftFront {LEFT_FRONT_MOTOR_ID};
 	WPI_VictorSPX rightBack {RIGHT_BACK_MOTOR_ID};
 	WPI_VictorSPX leftBack {LEFT_BACK_MOTOR_ID};
