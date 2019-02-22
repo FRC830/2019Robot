@@ -20,7 +20,18 @@ Arm::Arm(WPI_VictorSPX &joint, WPI_VictorSPX &flywheel, AnalogPotentiometer &pot
     Shuffleboard::GetTab("robot-specific values").AddPersistent("D [arm]", d).GetEntry().GetDouble(d);
     Shuffleboard::GetTab("robot-specific values").AddPersistent("F [arm]", f).GetEntry().GetDouble(f);
 }
+void Arm::update() {
+    armAngles[0] = SmartDashboard::GetNumber("inside_frame_perimeter", inside_frame_perimeter);
+    armAngles[1] = SmartDashboard::GetNumber("ball_height", ball_height);
+    armAngles[2] = SmartDashboard::GetNumber("spear_height", spear_height);
+    armAngles[3] = SmartDashboard::GetNumber("intake_height", intake_height);
 
+    armPID.SetP(SmartDashboard::GetNumber("P [arm]",p));
+    armPID.SetI(SmartDashboard::GetNumber("I [arm]",i));
+    armPID.SetD(SmartDashboard::GetNumber("D [arm]",d));
+    armPID.SetF(SmartDashboard::GetNumber("F [arm]",f));
+    SmartDashboard::PutData(&armPID);
+}
 // Turns the intake flywheels on or off
 void Arm::setMode(FlywheelMode mode) {
     if (mode == OUTTAKE) {
@@ -41,7 +52,6 @@ void Arm::setManualSpeed(double speed) {
 
 // Moves the arm to the specified angle
 void Arm::setAngle(int index) {
-    SmartDashboard::PutData(&armPID);
     if (!armPID.IsEnabled()) {
         armPID.Enable();
     }
@@ -50,16 +60,6 @@ void Arm::setAngle(int index) {
 
 // Returns the current angle of the Arm
 double Arm::getAngle() {
-    armAngles[0] = SmartDashboard::GetNumber("inside_frame_perimeter", inside_frame_perimeter);
-    armAngles[1] = SmartDashboard::GetNumber("ball_height", ball_height);
-    armAngles[2] = SmartDashboard::GetNumber("spear_height", spear_height);
-    armAngles[3] = SmartDashboard::GetNumber("intake_height", intake_height);
-
-    armPID.SetP(SmartDashboard::GetNumber("P [arm]",p));
-    armPID.SetI(SmartDashboard::GetNumber("I [arm]",i));
-    armPID.SetD(SmartDashboard::GetNumber("D [arm]",d));
-    armPID.SetF(SmartDashboard::GetNumber("F [arm]",f));
-    
     return pot.Get();
 }
 // Returns the number of setpoints

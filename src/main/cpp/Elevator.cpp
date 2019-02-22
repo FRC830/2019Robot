@@ -15,22 +15,21 @@ Elevator::Elevator(WPI_TalonSRX &motor) : motor(motor) {
     Shuffleboard::GetTab("robot-specific values").AddPersistent("D [elev]", d).GetEntry().GetDouble(d);
     Shuffleboard::GetTab("robot-specific values").AddPersistent("F [elev]", f).GetEntry().GetDouble(f);
 }
-
-// Raises the elevator to the specified height
-void Elevator::setSetpoint(int height) {
-    // PID Controller
+void Elevator::update() {
     motor.SetSensorPhase(SmartDashboard::GetBoolean("[elev] Encoder Flipped", encoderFlipped));
     motor.SetInverted(SmartDashboard::GetBoolean("[elev] Motor Flipped", motorFlipped));
     motor.Config_kP(0, SmartDashboard::GetNumber("P [elev]", p));
     motor.Config_kI(0, SmartDashboard::GetNumber("I [elev]", i));
     motor.Config_kD(0, SmartDashboard::GetNumber("D [elev]", d));
     motor.Config_kF(0, SmartDashboard::GetNumber("F [elev]", f));
+}
+// Raises the elevator to the specified height
+void Elevator::setSetpoint(int height) {
+    // PID Controller
     motor.Set(ControlMode::Position, heights[height] / ENCODER_TICK_DISTANCE);
 }
 
 void Elevator::setManualSpeed(double speed) {
-    motor.SetSensorPhase(SmartDashboard::GetBoolean("[elev] Encoder Flipped", encoderFlipped));
-    motor.SetInverted(SmartDashboard::GetBoolean("[elev] Motor Flipped", motorFlipped));
     motor.Set(ControlMode::PercentOutput, speed);
 }
 

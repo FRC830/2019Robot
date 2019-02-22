@@ -13,6 +13,7 @@ class Arm {
     void setManualSpeed(double speed);
     double getAngle();
     int numSetpoints();
+    void update();
 
 
   private:

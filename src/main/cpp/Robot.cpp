@@ -120,6 +120,7 @@ void Robot::handleDrivetrain() {
 // manual lower: left trigger
 // manual raise: right trigger
 void Robot::handleElevator() {
+    elevator.update();
 
     if (copilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER) || copilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER)){
         elevatorMode = AUTOMATIC;
@@ -166,6 +167,7 @@ void Robot::handleElevator() {
 // Copilot: Handles controller input with rotating arm
 // this becomes left stick 
 void Robot::handleArm() {
+    arm.update();
     armManualMode.toggle(copilot.ButtonState(GamepadF310::BUTTON_START));
     armUp.toggle(copilot.LeftY() > ARM_THRESHOLD);
     armDown.toggle(-copilot.LeftY() > ARM_THRESHOLD);

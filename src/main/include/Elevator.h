@@ -10,6 +10,7 @@ class Elevator {
         void setSetpoint(int height);
         void setManualSpeed(double speed);
         int numSetpoints();
+        void update();
     private:
         WPI_TalonSRX &motor;
         static const int ENCODER_TICKS = 4096;
