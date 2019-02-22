@@ -170,7 +170,7 @@ void Robot::handleArm() {
     armUp.toggle(copilot.LeftY() > ARM_THRESHOLD);
     armDown.toggle(-copilot.LeftY() > ARM_THRESHOLD);
     
-    double deadzoneLeftY = (std::fabs(copilot.LeftY()) > ARM_THRESHOLD ? copilot.LeftY() : 0);
+    double deadzoneLeftY = -(std::fabs(copilot.LeftY()) > ARM_THRESHOLD ? copilot.LeftY() : 0);
     if (armManualMode) {
         arm.setManualSpeed(deadzoneLeftY);
     } else if (armDown && currentArmSetpoint < (arm.numSetpoints() - 1)) {

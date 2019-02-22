@@ -20,13 +20,13 @@ class Arm {
     WPI_VictorSPX &flywheel;
     frc::AnalogPotentiometer &pot;
 
-    double p = 0.01;
+    double p = 0.03;
     double i = 0.0;
     double d = 0.0;
     double f = 0.0;
     
     frc::PIDController armPID{p,i,d,f,pot,joint};
-    double intake_height = 190.0;
+    double intake_height = 183.0;
     double spear_height = 140.0;
     double ball_height = 90.0;
     double inside_frame_perimeter = 35.0;
