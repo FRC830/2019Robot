@@ -5,23 +5,23 @@ using namespace frc;
 Elevator::Elevator(WPI_TalonSRX &motor) : motor(motor) {
     motor.SetNeutralMode(NeutralMode::Brake);
     // practice has true for both
-    Shuffleboard::GetTab("robot-specific values").AddPersistent("[elev] Encoder Flipped", encoderFlipped)
+    Shuffleboard::GetTab("Robot Specific").AddPersistent("ELEV ENCODER FLIPPED", encoderFlipped)
     .WithWidget("Toggle Switch").GetEntry().GetBoolean(encoderFlipped);
-    Shuffleboard::GetTab("robot-specific values").AddPersistent("[elev] Motor Flipped", motorFlipped)
+    Shuffleboard::GetTab("Robot Specific").AddPersistent("ELEV MOTOR FLIPPED", motorFlipped)
     .WithWidget("Toggle Switch").GetEntry().GetBoolean(motorFlipped);
     
-    Shuffleboard::GetTab("robot-specific values").AddPersistent("P [elev]", p).GetEntry().GetDouble(p);
-    Shuffleboard::GetTab("robot-specific values").AddPersistent("I [elev]", i).GetEntry().GetDouble(i);
-    Shuffleboard::GetTab("robot-specific values").AddPersistent("D [elev]", d).GetEntry().GetDouble(d);
-    Shuffleboard::GetTab("robot-specific values").AddPersistent("F [elev]", f).GetEntry().GetDouble(f);
+    Shuffleboard::GetTab("Robot Specific").AddPersistent("ELEV P", p).GetEntry().GetDouble(p);
+    Shuffleboard::GetTab("Robot Specific").AddPersistent("ELEV I", i).GetEntry().GetDouble(i);
+    Shuffleboard::GetTab("Robot Specific").AddPersistent("ELEV D", d).GetEntry().GetDouble(d);
+    Shuffleboard::GetTab("Robot Specific").AddPersistent("ELEV F", f).GetEntry().GetDouble(f);
 }
 void Elevator::update() {
-    motor.SetSensorPhase(SmartDashboard::GetBoolean("[elev] Encoder Flipped", encoderFlipped));
-    motor.SetInverted(SmartDashboard::GetBoolean("[elev] Motor Flipped", motorFlipped));
-    motor.Config_kP(0, SmartDashboard::GetNumber("P [elev]", p));
-    motor.Config_kI(0, SmartDashboard::GetNumber("I [elev]", i));
-    motor.Config_kD(0, SmartDashboard::GetNumber("D [elev]", d));
-    motor.Config_kF(0, SmartDashboard::GetNumber("F [elev]", f));
+    motor.SetSensorPhase(SmartDashboard::GetBoolean("ELEV ENCODER FLIPPED", encoderFlipped));
+    motor.SetInverted(SmartDashboard::GetBoolean("ELEV MOTOR FLIPPED", motorFlipped));
+    motor.Config_kP(0, SmartDashboard::GetNumber("ELEV P", p));
+    motor.Config_kI(0, SmartDashboard::GetNumber("ELEV I", i));
+    motor.Config_kD(0, SmartDashboard::GetNumber("ELEV D", d));
+    motor.Config_kF(0, SmartDashboard::GetNumber("ELEV F", f));
 }
 // Raises the elevator to the specified height
 void Elevator::setSetpoint(int height) {

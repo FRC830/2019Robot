@@ -10,27 +10,26 @@ Arm::Arm(WPI_VictorSPX &joint, WPI_VictorSPX &flywheel, AnalogPotentiometer &pot
     armPID.SetAbsoluteTolerance(JOINT_ANGLE_THRESHOLD);
     armPID.Enable();
     // Shuffleboard::GetTab("values").AddPersistent("Arm PID", &armPID).GetObject(armPID);
-    Shuffleboard::GetTab("robot-specific values").AddPersistent("inside_frame_perimeter", inside_frame_perimeter).GetEntry().GetDouble(inside_frame_perimeter);
-    Shuffleboard::GetTab("robot-specific values").AddPersistent("ball_height", ball_height).GetEntry().GetDouble(ball_height);
-    Shuffleboard::GetTab("robot-specific values").AddPersistent("spear_height", spear_height).GetEntry().GetDouble(spear_height);
-    Shuffleboard::GetTab("robot-specific values").AddPersistent("intake_height", intake_height).GetEntry().GetDouble(intake_height);
+    Shuffleboard::GetTab("Robot Specific").AddPersistent("INSIDE FRAME", inside_frame_perimeter).GetEntry().GetDouble(inside_frame_perimeter);
+    Shuffleboard::GetTab("Robot Specific").AddPersistent("BALL OUTTAKE", ball_height).GetEntry().GetDouble(ball_height);
+    Shuffleboard::GetTab("Robot Specific").AddPersistent("SPEAR ANGLE", spear_height).GetEntry().GetDouble(spear_height);
+    Shuffleboard::GetTab("Robot Specific").AddPersistent("BALL INTAKE", intake_height).GetEntry().GetDouble(intake_height);
 
-    Shuffleboard::GetTab("robot-specific values").AddPersistent("P [arm]", p).GetEntry().GetDouble(p);
-    Shuffleboard::GetTab("robot-specific values").AddPersistent("I [arm]", i).GetEntry().GetDouble(i);
-    Shuffleboard::GetTab("robot-specific values").AddPersistent("D [arm]", d).GetEntry().GetDouble(d);
-    Shuffleboard::GetTab("robot-specific values").AddPersistent("F [arm]", f).GetEntry().GetDouble(f);
+    Shuffleboard::GetTab("Robot Specific").AddPersistent("ARM P", p).GetEntry().GetDouble(p);
+    Shuffleboard::GetTab("Robot Specific").AddPersistent("ARM I", i).GetEntry().GetDouble(i);
+    Shuffleboard::GetTab("Robot Specific").AddPersistent("ARM D", d).GetEntry().GetDouble(d);
+    Shuffleboard::GetTab("Robot Specific").AddPersistent("ARM F", f).GetEntry().GetDouble(f);
 }
 void Arm::update() {
-    armAngles[0] = SmartDashboard::GetNumber("inside_frame_perimeter", inside_frame_perimeter);
-    armAngles[1] = SmartDashboard::GetNumber("ball_height", ball_height);
-    armAngles[2] = SmartDashboard::GetNumber("spear_height", spear_height);
-    armAngles[3] = SmartDashboard::GetNumber("intake_height", intake_height);
+    armAngles[0] = SmartDashboard::GetNumber("INSIDE FRAME", inside_frame_perimeter);
+    armAngles[1] = SmartDashboard::GetNumber("BALL OUTTAKE", ball_height);
+    armAngles[2] = SmartDashboard::GetNumber("SPEAR ANGLE", spear_height);
+    armAngles[3] = SmartDashboard::GetNumber("BALL INTAKE", intake_height);
 
-    armPID.SetP(SmartDashboard::GetNumber("P [arm]",p));
-    armPID.SetI(SmartDashboard::GetNumber("I [arm]",i));
-    armPID.SetD(SmartDashboard::GetNumber("D [arm]",d));
-    armPID.SetF(SmartDashboard::GetNumber("F [arm]",f));
-    SmartDashboard::PutData(&armPID);
+    armPID.SetP(SmartDashboard::GetNumber("ARM P", p));
+    armPID.SetI(SmartDashboard::GetNumber("ARM I", i));
+    armPID.SetD(SmartDashboard::GetNumber("ARM D", d));
+    armPID.SetF(SmartDashboard::GetNumber("ARM F", f));
 }
 // Turns the intake flywheels on or off
 void Arm::setMode(FlywheelMode mode) {
