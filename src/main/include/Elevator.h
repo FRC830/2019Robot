@@ -31,9 +31,13 @@ class Elevator {
         static constexpr double FIRST_BALL_HEIGHT = 27.5 + FLYWHEEL_OFFSET;
         static constexpr double SECOND_BALL_HEIGHT = FIRST_BALL_HEIGHT + DIVIDER_DISTANCE;
         static constexpr double THIRD_BALL_HEIGHT = SECOND_BALL_HEIGHT + DIVIDER_DISTANCE;
+        // defaults
         double p = 0 ,i = 0 ,d = 0,f = 0.0;
+
         bool motorFlipped = false;
         bool encoderFlipped = false;
+        // network table stuff
+        nt::NetworkTableEntry nt_p, nt_i, nt_d, nt_f, nt_motorFlipped, nt_encoderFlipped;
 
         std::vector<double> heights = {
             FIRST_HATCH_HEIGHT, 
