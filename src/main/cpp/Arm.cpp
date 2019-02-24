@@ -9,15 +9,17 @@ Arm::Arm(WPI_VictorSPX &joint, WPI_VictorSPX &flywheel, AnalogPotentiometer &pot
     armPID.SetOutputRange(-MAX_UP_SPEED, MAX_DOWN_SPEED);
     armPID.SetAbsoluteTolerance(JOINT_ANGLE_THRESHOLD);
     armPID.Enable();
-    nt_inside_frame_perimeter = Shuffleboard::GetTab("Robot Specific").AddPersistent("INSIDE FRAME", inside_frame_perimeter).GetEntry();
-    nt_ball_outtake=Shuffleboard::GetTab("Robot Specific").AddPersistent("BALL OUTTAKE", ball_outtake).GetEntry();
-    nt_spear_angle=Shuffleboard::GetTab("Robot Specific").AddPersistent("SPEAR ANGLE", spear_angle).GetEntry();
-    nt_ball_intake=Shuffleboard::GetTab("Robot Specific").AddPersistent("BALL INTAKE", ball_intake).GetEntry();
 
-    nt_p=Shuffleboard::GetTab("Robot Specific").AddPersistent("ARM P", p).GetEntry();
-    nt_i=Shuffleboard::GetTab("Robot Specific").AddPersistent("ARM I", i).GetEntry();
-    nt_d=Shuffleboard::GetTab("Robot Specific").AddPersistent("ARM D", d).GetEntry();
-    nt_f=Shuffleboard::GetTab("Robot Specific").AddPersistent("ARM F", f).GetEntry();
+    ShuffleboardTab& robotConfigTab = Shuffleboard::GetTab("Robot Specific");
+    nt_inside_frame_perimeter = robotConfigTab.AddPersistent("INSIDE FRAME", inside_frame_perimeter).GetEntry();
+    nt_ball_outtake = robotConfigTab.AddPersistent("BALL OUTTAKE", ball_outtake).GetEntry();
+    nt_spear_angle = robotConfigTab.AddPersistent("SPEAR ANGLE", spear_angle).GetEntry();
+    nt_ball_intake = robotConfigTab.AddPersistent("BALL INTAKE", ball_intake).GetEntry();
+
+    nt_p = robotConfigTab.AddPersistent("ARM P", p).GetEntry();
+    nt_i = robotConfigTab.AddPersistent("ARM I", i).GetEntry();
+    nt_d = robotConfigTab.AddPersistent("ARM D", d).GetEntry();
+    nt_f = robotConfigTab.AddPersistent("ARM F", f).GetEntry();
 }
 void Arm::update() {
     armAngles[0] = nt_inside_frame_perimeter.GetDouble(inside_frame_perimeter);

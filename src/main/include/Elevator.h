@@ -14,8 +14,6 @@ class Elevator {
     private:
         WPI_TalonSRX &motor;
         static const int ENCODER_TICKS = 4096;
-        static constexpr double MAX_DOWN_SPEED = 0.75;
-        static constexpr double MAX_UP_SPEED = 1;
         static constexpr double PI = 3.1415927;
         static constexpr double MOTOR_DIAMETER = 4.0/7.0;
         static constexpr double ENCODER_TICK_DISTANCE = MOTOR_DIAMETER * PI / ENCODER_TICKS;
@@ -25,18 +23,20 @@ class Elevator {
         static constexpr double SPEAR_OFFSET = 0;
         static constexpr double DIVIDER_DISTANCE = 28;
         
-        // Heights of all targets, In inches
-        nt::NetworkTableEntry nt_fhh, nt_shh, nt_thh, nt_fbh, nt_sbh, nt_tbh; // fhh -> (first) (hatch) (height)
+        // fhh -> (first) (hatch) (height)
+        nt::NetworkTableEntry nt_fhh, nt_shh, nt_thh, nt_fbh, nt_sbh, nt_tbh, nt_max_down;
+
+        // Heights of all targets, In inches Defaults
         double first_hatch_height = 19 + SPEAR_OFFSET;
         double second_hatch_height = first_hatch_height + DIVIDER_DISTANCE;
         double third_hatch_height = second_hatch_height + DIVIDER_DISTANCE;
-
         double first_ball_height = 27.5 + FLYWHEEL_OFFSET;
         double second_ball_height = first_ball_height + DIVIDER_DISTANCE;
         double third_ball_height = second_ball_height + DIVIDER_DISTANCE;
-        // defaults
-        double p = 0.02 ,i = 0 ,d = 0,f = 0.0;
 
+        // Motor Configuration Defaults
+        double p = 0.02, i = 0, d = 0, f = 0.0;
+        double max_down_speed = 1.0;
         bool motorFlipped = false;
         bool encoderFlipped = false;
         // network table stuff
