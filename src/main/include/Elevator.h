@@ -14,6 +14,8 @@ class Elevator {
     private:
         WPI_TalonSRX &motor;
         static const int ENCODER_TICKS = 4096;
+        static constexpr double MAX_DOWN_SPEED = 0.75;
+        static constexpr double MAX_UP_SPEED = 1;
         static constexpr double PI = 3.1415927;
         static constexpr double MOTOR_DIAMETER = 4.0/7.0;
         static constexpr double ENCODER_TICK_DISTANCE = MOTOR_DIAMETER * PI / ENCODER_TICKS;
@@ -24,7 +26,7 @@ class Elevator {
         static constexpr double DIVIDER_DISTANCE = 28;
         
         // Heights of all targets, In inches
-        nt::NetworkTableEntry nt_fhh, nt_shh, nt_thh, nt_fbh, nt_sbh, nt_tbh; // have fun deciphering this
+        nt::NetworkTableEntry nt_fhh, nt_shh, nt_thh, nt_fbh, nt_sbh, nt_tbh; // fhh -> (first) (hatch) (height)
         double first_hatch_height = 19 + SPEAR_OFFSET;
         double second_hatch_height = first_hatch_height + DIVIDER_DISTANCE;
         double third_hatch_height = second_hatch_height + DIVIDER_DISTANCE;

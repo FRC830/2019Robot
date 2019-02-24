@@ -4,6 +4,7 @@ using namespace frc;
 // Initialized the Elevator Arm with a motor and encoder
 Elevator::Elevator(WPI_TalonSRX &motor) : motor(motor) {
     motor.SetNeutralMode(NeutralMode::Brake);
+    motor.SetOutputRange(-MAX_UP_SPEED, MAX_DOWN_SPEED);
     // practice has true for both
     nt_encoderFlipped = Shuffleboard::GetTab("Robot Specific").AddPersistent("ELEV ENCODER FLIPPED", encoderFlipped)
     .WithWidget("Toggle Switch").GetEntry();
