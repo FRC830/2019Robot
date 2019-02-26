@@ -22,14 +22,15 @@ class Arm {
     frc::AnalogPotentiometer &pot;
 
     double p = 0.03, i = 0.0, d = 0.0, f = 0.0;
-    nt::NetworkTableEntry nt_p, nt_i, nt_d, nt_f, nt_ball_intake, nt_inside_frame_perimeter, nt_ball_outtake, nt_spear_angle;
+    nt::NetworkTableEntry nt_p, nt_i, nt_d, nt_f, nt_ball_intake, nt_spear_intake, nt_inside_frame_perimeter, nt_ball_outtake, nt_spear_angle;
     frc::PIDController armPID{p,i,d,f,pot,joint};
     double ball_intake = 183.0;
+    double spear_intake = 161.0;
     double spear_angle = 140.0;
     double ball_outtake = 90.0;
     double inside_frame_perimeter = 35.0;
-    std::vector<double> armAngles = {inside_frame_perimeter, ball_outtake, spear_angle, ball_intake};
+    std::vector<double> armAngles = {inside_frame_perimeter, ball_outtake, spear_angle, spear_intake, ball_intake};
     static constexpr double JOINT_ANGLE_THRESHOLD = 10.0;
-    static constexpr double MAX_DOWN_SPEED = 0.25;
+    static constexpr double MAX_DOWN_SPEED = 1.0;
     static constexpr double MAX_UP_SPEED = 1.0;
 };

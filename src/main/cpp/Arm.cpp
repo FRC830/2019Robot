@@ -14,6 +14,7 @@ Arm::Arm(WPI_VictorSPX &joint, WPI_VictorSPX &flywheel, AnalogPotentiometer &pot
     nt_inside_frame_perimeter = robotConfigTab.AddPersistent("INSIDE FRAME", inside_frame_perimeter).GetEntry();
     nt_ball_outtake = robotConfigTab.AddPersistent("BALL OUTTAKE", ball_outtake).GetEntry();
     nt_spear_angle = robotConfigTab.AddPersistent("SPEAR ANGLE", spear_angle).GetEntry();
+    nt_spear_intake = robotConfigTab.AddPersistent("SPEAR INTAKE", spear_intake).GetEntry();
     nt_ball_intake = robotConfigTab.AddPersistent("BALL INTAKE", ball_intake).GetEntry();
 
     nt_p = robotConfigTab.AddPersistent("ARM P", p).GetEntry();
@@ -25,7 +26,8 @@ void Arm::update() {
     armAngles[0] = nt_inside_frame_perimeter.GetDouble(inside_frame_perimeter);
     armAngles[1] = nt_ball_outtake.GetDouble(ball_outtake);
     armAngles[2] = nt_spear_angle.GetDouble(spear_angle);
-    armAngles[3] = nt_ball_intake.GetDouble(ball_intake);
+    armAngles[3] = nt_spear_intake.GetDouble(spear_intake);
+    armAngles[4] = nt_ball_intake.GetDouble(ball_intake);
 
     armPID.SetP(nt_p.GetDouble(p));
     armPID.SetI(nt_i.GetDouble(i));

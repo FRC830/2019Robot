@@ -80,6 +80,7 @@ void Robot::handleSpear() {
     spear.setGrabRoutine(copilot.ButtonState(GamepadF310::BUTTON_Y));
     spear.updateRoutine();
 }
+
 // Pilot: Handles controller input for movement
 void Robot::handleDrivetrain() {
 

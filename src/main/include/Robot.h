@@ -55,7 +55,7 @@ public:
 	static constexpr double MANUAL_ELEVATOR_THRESHOLD = 0.1;
 	static constexpr double ARM_THRESHOLD = 0.1;
 	static constexpr double VISION_TRIGGER_THRESHOLD = 0.3;
-	std::vector<std::string> armHeightWords = {"INSIDE FRAME", "OUTTAKE BALL", "SPEAR HEIGHT", "INTAKE BALL"};
+	std::vector<std::string> armHeightWords = {"INSIDE FRAME", "OUTTAKE BALL", "SPEAR HEIGHT", "INTAKE HATCH", "INTAKE BALL"};
 	std::vector<std::string> elevatorHeightWords = {"CARGO/ROCKET BOTTOM HATCH", 
 			"CARGO/ROCKET BOTTOM BALL", 
 			"ROCKET MID HATCH", 
