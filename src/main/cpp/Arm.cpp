@@ -11,11 +11,10 @@ Arm::Arm(WPI_VictorSPX &joint, WPI_VictorSPX &flywheel, AnalogPotentiometer &pot
     armPID.Enable();
 
     ShuffleboardTab& robotConfigTab = Shuffleboard::GetTab("Robot Specific");
-    nt_inside_frame_perimeter = robotConfigTab.AddPersistent("INSIDE FRAME", inside_frame_perimeter).GetEntry();
-    nt_ball_outtake = robotConfigTab.AddPersistent("BALL OUTTAKE", ball_outtake).GetEntry();
-    nt_spear_angle = robotConfigTab.AddPersistent("SPEAR ANGLE", spear_angle).GetEntry();
-    nt_spear_intake = robotConfigTab.AddPersistent("SPEAR INTAKE", spear_intake).GetEntry();
-    nt_ball_intake = robotConfigTab.AddPersistent("BALL INTAKE", ball_intake).GetEntry();
+
+    for (int i = 0; i < ntAngles.size(); i++) {
+        ntAngles[i] = robotConfigTab.AddPersistent(armHeightWords[i], defaultAngles[i]).GetEntry();
+    }
 
     nt_p = robotConfigTab.AddPersistent("ARM P", p).GetEntry();
     nt_i = robotConfigTab.AddPersistent("ARM I", i).GetEntry();
@@ -23,11 +22,9 @@ Arm::Arm(WPI_VictorSPX &joint, WPI_VictorSPX &flywheel, AnalogPotentiometer &pot
     nt_f = robotConfigTab.AddPersistent("ARM F", f).GetEntry();
 }
 void Arm::update() {
-    armAngles[0] = nt_inside_frame_perimeter.GetDouble(inside_frame_perimeter);
-    armAngles[1] = nt_ball_outtake.GetDouble(ball_outtake);
-    armAngles[2] = nt_spear_angle.GetDouble(spear_angle);
-    armAngles[3] = nt_spear_intake.GetDouble(spear_intake);
-    armAngles[4] = nt_ball_intake.GetDouble(ball_intake);
+    for (int i = 0; i < angles.size(); i++) {
+        angles[i] = ntAngles[i].GetDouble(defaultAngles[i]);
+    }
 
     armPID.SetP(nt_p.GetDouble(p));
     armPID.SetI(nt_i.GetDouble(i));
@@ -36,13 +33,7 @@ void Arm::update() {
 }
 // Turns the intake flywheels on or off
 void Arm::setMode(FlywheelMode mode) {
-    if (mode == OUTTAKE) {
-        flywheel.Set(1);
-    } else if (mode == INTAKE) {
-        flywheel.Set(-1);
-    } else if (mode == OFF) {
-        flywheel.Set(0);
-    }
+    flywheel.Set(mode);
 }
 
 void Arm::setManualSpeed(double speed) {
@@ -53,11 +44,16 @@ void Arm::setManualSpeed(double speed) {
 }
 
 // Moves the arm to the specified angle
-void Arm::setAngle(int index) {
+void Arm::changeSetpoint(int change) {
+    if ((0 <= currentSetpoint + change) && (currentSetpoint + change <= angles.size() - 1)) {
+        currentSetpoint += change;
+    }
+}
+void Arm::setSetpoint() {
     if (!armPID.IsEnabled()) {
         armPID.Enable();
     }
-    armPID.SetSetpoint(armAngles[index]);
+    armPID.SetSetpoint(angles[currentSetpoint]);
 }
 
 // Returns the current angle of the Arm
@@ -65,6 +61,6 @@ double Arm::getAngle() {
     return pot.Get();
 }
 // Returns the number of setpoints
-int Arm::numSetpoints() {
-    return armAngles.size();
+std::string Arm::getSetpoint() {
+    return armHeightWords[currentSetpoint];
 }

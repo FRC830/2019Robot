@@ -136,32 +136,24 @@ void Robot::handleElevator() {
     rightBumper.toggle(copilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER));
 
     if (elevatorMode == MANUAL) {
-        // manual lower
         if (std::fabs(copilot.LeftTrigger()) > MANUAL_ELEVATOR_THRESHOLD) {
             elevator.setManualSpeed(-copilot.LeftTrigger());
         } else if (std::fabs(copilot.RightTrigger()) > MANUAL_ELEVATOR_THRESHOLD) {
             elevator.setManualSpeed(copilot.RightTrigger());
         } else {
-            elevator.setManualSpeed(0); // TUNE THIS
+            elevator.setManualSpeed(0);
         }
-    } else {
-        //automatic setpoints, right bumper is up one, left bumper is down one
-        if ((leftBumper && !rightBumper) && currentElevSetpoint > 0) {
-            currentElevSetpoint--;
-            elevator.setSetpoint(currentElevSetpoint);
-        }
-        else if (!leftBumper && rightBumper && currentElevSetpoint < (elevator.numSetpoints() - 1)) {
-            currentElevSetpoint++;
-            elevator.setSetpoint(currentElevSetpoint);
-        }
+    } else if (leftBumper && !rightBumper) {
+            elevator.changeSetpoint(-1);
+    } else if (!leftBumper && rightBumper) {
+        elevator.changeSetpoint(1);
     }
 
     leftBumper = false;
     rightBumper = false;
 
     SmartDashboard::PutBoolean("Manual Elevator", elevatorMode);
-    SmartDashboard::PutNumber("Elevator Setpoint", currentElevSetpoint);
-    SmartDashboard::PutString("Elevator Height",elevatorHeightWords[currentElevSetpoint]);
+    SmartDashboard::PutString("Elevator Height", elevator.getSetpoint());
 }
 
 
@@ -173,21 +165,20 @@ void Robot::handleArm() {
     armUp.toggle(copilot.LeftY() > ARM_THRESHOLD);
     armDown.toggle(-copilot.LeftY() > ARM_THRESHOLD);
     
-    double deadzoneLeftY = -(std::fabs(copilot.LeftY()) > ARM_THRESHOLD ? copilot.LeftY() : 0);
+    double deadzoneLeftY = std::fabs(copilot.LeftY()) > ARM_THRESHOLD ? -copilot.LeftY() : 0;
     if (armManualMode) {
         arm.setManualSpeed(deadzoneLeftY);
-    } else if (armDown && currentArmSetpoint < (arm.numSetpoints() - 1)) {
-        currentArmSetpoint++;
-    } else if (armUp && currentArmSetpoint > 0) {
-        currentArmSetpoint--;
+    } else if (armDown) {
+        arm.changeSetpoint(1);
+    } else if (armUp) {
+        arm.changeSetpoint(-1);
     } else {
-        arm.setAngle(currentArmSetpoint);
+        arm.setSetpoint();
     }
     armUp = false;
     armDown = false;
     SmartDashboard::PutBoolean("Manual Arm", armManualMode);
-    SmartDashboard::PutNumber("Arm Setpoint", currentArmSetpoint);
-    SmartDashboard::PutString("Arm Height",armHeightWords[currentArmSetpoint]);
+    SmartDashboard::PutString("Arm Height", arm.getSetpoint());
 }
 
 void Robot::TestPeriodic() {}

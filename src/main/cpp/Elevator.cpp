@@ -16,21 +16,14 @@ Elevator::Elevator(WPI_TalonSRX &motor) : motor(motor) {
 
     nt_max_down=robotConfigTab.AddPersistent("ELEV MAX DOWN", max_down_speed).GetEntry();
 
-    // nt_fhh=robotConfigTab.AddPersistent("BOTTOM HATCH", first_hatch_height).GetEntry();
-    // nt_fbh=robotConfigTab.AddPersistent("BOTTOM BALL", first_ball_height).GetEntry();
-    // nt_shh=robotConfigTab.AddPersistent("MIDDLE HATCH", second_hatch_height).GetEntry();
-    // nt_sbh=robotConfigTab.AddPersistent("MIDDLE BALL", second_ball_height).GetEntry();
-    // nt_thh=robotConfigTab.AddPersistent("TOP BALL", third_hatch_height).GetEntry();
-    // nt_tbh=robotConfigTab.AddPersistent("TOP HATCH", third_ball_height).GetEntry();
+    // for (int i = 0; i < ntHeights.size(); i++) {
+    //     ntHeights[i] = robotConfigTab.AddPersistent(elevatorHeightWords[i], defaultHeights[i]).GetEntry();
+    // }
 }
 void Elevator::update() {
-
-    // heights[0] = nt_fhh.GetDouble(first_hatch_height);
-    // heights[1] = nt_fbh.GetDouble(first_ball_height);
-    // heights[2] = nt_shh.GetDouble(second_hatch_height);
-    // heights[3] = nt_sbh.GetDouble(second_ball_height);
-    // heights[4] = nt_thh.GetDouble(third_hatch_height);
-    // heights[5] = nt_tbh.GetDouble(third_ball_height);
+    // for (int i = 0; i < heights.size(); i++) {
+    //     heights[i] = ntHeights[i].GetDouble(defaultHeights[i]);
+    // }
 
     motor.ConfigPeakOutputReverse(nt_max_down.GetDouble(max_down_speed)); // may need to be ConfigPeakOutputForward
     motor.SetSensorPhase(nt_encoderFlipped.GetBoolean(encoderFlipped));
@@ -41,10 +34,12 @@ void Elevator::update() {
     motor.Config_kF(0, nt_f.GetDouble(f));
 }
 // Raises the elevator to the specified height
-void Elevator::setSetpoint(int height) {
-    motor.Set(ControlMode::Position, heights[height] / ENCODER_TICK_DISTANCE);
+void Elevator::changeSetpoint(int change) {
+    if ((0 <= currentSetpoint + change) && (currentSetpoint + change <= heights.size() - 1)) {
+        currentSetpoint += change;
+    }
+    motor.Set(ControlMode::Position, heights[currentSetpoint] / ENCODER_TICK_DISTANCE);
 }
-
 void Elevator::setManualSpeed(double speed) {
     motor.Set(ControlMode::PercentOutput, speed);
 }
@@ -53,6 +48,6 @@ double Elevator::getHeight() {
     return motor.GetSelectedSensorPosition() * ENCODER_TICK_DISTANCE;
 }
 
-int Elevator::numSetpoints() {
-    return heights.size();
+std::string Elevator::getSetpoint() {
+    return elevatorHeightWords[currentSetpoint];
 }

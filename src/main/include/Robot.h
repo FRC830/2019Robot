@@ -55,13 +55,6 @@ public:
 	static constexpr double MANUAL_ELEVATOR_THRESHOLD = 0.1;
 	static constexpr double ARM_THRESHOLD = 0.1;
 	static constexpr double VISION_TRIGGER_THRESHOLD = 0.3;
-	std::vector<std::string> armHeightWords = {"INSIDE FRAME", "OUTTAKE BALL", "SPEAR HEIGHT", "INTAKE HATCH", "INTAKE BALL"};
-	std::vector<std::string> elevatorHeightWords = {"CARGO/ROCKET BOTTOM HATCH", 
-			"CARGO/ROCKET BOTTOM BALL", 
-			"ROCKET MID HATCH", 
-			"ROCKET MID BALL", 
-			"ROCKET TOP HATCH", 
-			"ROCKET TOP BALL"};
 
 	// Vision Declarations
 	bool doingAutoAlign = false;
@@ -98,7 +91,6 @@ public:
 	Toggle armDown{false};
 	frc::AnalogPotentiometer pot{POTENTIOMETER_ANALOG_PIN, 300.0};
 	Arm arm{joint, flywheel, pot};
-	int currentArmSetpoint = 0;
 	
 	// Spear Declarations
 	frc::Solenoid hatchGrabPiston{HATCH_GRAB_SOLENOID_PIN};
@@ -110,7 +102,6 @@ public:
 	Elevator elevator{elevatorMotor};
 	enum ElevatorMode {MANUAL = true,AUTOMATIC = false};
 	ElevatorMode elevatorMode = MANUAL;
-	int currentElevSetpoint = 0;
 	Toggle leftBumper;
 	Toggle rightBumper;
 };
