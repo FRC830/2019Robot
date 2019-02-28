@@ -69,6 +69,7 @@ public:
 	WPI_VictorSPX rightBack {RIGHT_BACK_MOTOR_ID};
 	WPI_VictorSPX leftBack {LEFT_BACK_MOTOR_ID};
 	frc::DifferentialDrive drivetrain {leftFront, rightFront};
+
 	frc::Solenoid gearShifter{GEARSHIFT_SOLENOID_PIN};
 	double prevAngle = 0;
 	double prevSpeed = 0;

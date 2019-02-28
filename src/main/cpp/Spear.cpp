@@ -59,7 +59,7 @@ void Spear::updateRoutine() {
             end_placing = true;
             setHatchGrab(true);
             setExtend(true);
-        } else if (time < 2*FLIP_DELAY) {
+        } else if (time < FLIP_DELAY + AFTER_PLACE_FLIP_DELAY) {
             setHatchGrab(true);
             setExtend(false);
         } else{

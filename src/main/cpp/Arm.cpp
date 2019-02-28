@@ -55,7 +55,6 @@ void Arm::setSetpoint() {
     }
     armPID.SetSetpoint(angles[currentSetpoint]);
 }
-
 // Returns the current angle of the Arm
 double Arm::getAngle() {
     return pot.Get();

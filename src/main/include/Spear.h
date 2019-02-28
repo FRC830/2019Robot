@@ -20,6 +20,7 @@ class Spear {
 
       // Values set the time in-between actions
       static constexpr double FLIP_DELAY = 0.25;
+      static constexpr double AFTER_PLACE_FLIP_DELAY = 3.0;
 
       bool placing = false;
       bool grabbing = false;
