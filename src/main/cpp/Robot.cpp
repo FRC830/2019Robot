@@ -77,7 +77,7 @@ void Robot::handleCargoIntake() {
 // Copilot: Handles controller input with pistons (Spear)
 void Robot::handleSpear() {
     spear.setPlaceRoutine(copilot.ButtonState(GamepadF310::BUTTON_X));
-    spear.setGrabRoutine(copilot.ButtonState(GamepadF310::BUTTON_Y));
+    spear.setGrabRoutine(copilot.ButtonState(GamepadF310::BUTTON_B));
     spear.updateRoutine();
 }
 
@@ -97,8 +97,8 @@ void Robot::handleDrivetrain() {
     double turn = pilot.RightX();
     if (pilot.RightTrigger() > VISION_TRIGGER_THRESHOLD && SmartDashboard::GetBoolean("Target Acquired", false)) {
         int visionMid = SmartDashboard::GetNumber("Vision Mid X", CAMERA_WIDTH/2);
-        int targetX = CAMERA_WIDTH/2 + SmartDashboard::GetNumber("Vision Target Pixel Width", 0)*TARGET_WIDTH_TO_CAMERA_OFFSET_RATIO;
-        turn = sqrt(visionMid - targetX) / TURN_SCALE_FACTOR;
+        int targetX = CAMERA_WIDTH/2 - SmartDashboard::GetNumber("Vision Target Pixel Width", 0)*TARGET_WIDTH_TO_CAMERA_OFFSET_RATIO;
+        turn = (visionMid - targetX)/ TURN_SCALE_FACTOR;
     }
     
     speed = Lib830::accel(prevSpeed, pilot.LeftY(), TICKS_TO_ACCEL);

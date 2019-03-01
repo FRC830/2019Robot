@@ -46,7 +46,7 @@ public:
 
 
 	// Misc
-	static const int TICKS_TO_ACCEL = 10;
+	static const int TICKS_TO_ACCEL = 20;
 	static constexpr double FLYWHEEL_THRESHOLD = 0.05;
 	static constexpr double JOINT_MOVEMENT_SPEED = 0.5;
 	static constexpr double CONTROLLER_GYRO_THRESHOLD = 0.1;
@@ -60,8 +60,8 @@ public:
 	bool doingAutoAlign = false;
 	double visionSteer = 0.0;
 	static constexpr double CAMERA_WIDTH = 320;
-	static constexpr double TURN_SCALE_FACTOR = 15.0;
-	static constexpr double TARGET_WIDTH_TO_CAMERA_OFFSET_RATIO = 3.23;
+	static constexpr double TURN_SCALE_FACTOR = 100.0;
+	static constexpr double TARGET_WIDTH_TO_CAMERA_OFFSET_RATIO = 1.8;
 
 	// Drivetrain declarations
   WPI_TalonSRX rightFront {RIGHT_FRONT_MOTOR_ID};
