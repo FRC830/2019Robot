@@ -1,22 +1,23 @@
 #include "Spear.h"
 using namespace frc;
 
- 
+
 // Initializes an Spear
 Spear::Spear(Solenoid &hatchGrabPiston, Solenoid &extensionPiston) : hatchGrabPiston(hatchGrabPiston), extensionPiston(extensionPiston) {
 
 }
 
-//true is extended, false is retracted
+// Set the extension piston position (true is extended, false is retracted)
 void Spear::setExtend (bool state) {
     extensionPiston.Set(state);
 }
 
-//true is down, false is up
+// Set the grab piston position (true is down, false is up)
 void Spear::setHatchGrab(bool state) {
     hatchGrabPiston.Set(state);
 }
 
+// Toggle the place routine
 void Spear::setPlaceRoutine(bool placing) {
     this->placing = placing;
     if (placing) {
@@ -24,12 +25,15 @@ void Spear::setPlaceRoutine(bool placing) {
     }
 }
 
+// Toggle the grab routine
 void Spear::setGrabRoutine(bool grabbing) {
     this->grabbing = grabbing;
     if (grabbing) {
         timer.Start();
     }
 }
+
+// Update the placing & grabbing routine
 void Spear::updateRoutine() {
     //stops both routines running at same time or when neither is running
     if (placing && grabbing) {
@@ -67,7 +71,7 @@ void Spear::updateRoutine() {
             setExtend(false);
             end_placing = false;
         }
-    }                                 
+    }
 
     /* Grabbing Routine
     (1) Flip Down
@@ -91,8 +95,8 @@ void Spear::updateRoutine() {
         } else {
             setHatchGrab(false);
             setExtend(false);
-            end_grabbing = false;     
-        }  
+            end_grabbing = false;
+        }
     }
     previous_grabbing = grabbing;
     previous_placing = placing;

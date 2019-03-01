@@ -21,6 +21,8 @@ Arm::Arm(WPI_VictorSPX &joint, WPI_VictorSPX &flywheel, AnalogPotentiometer &pot
     nt_d = robotConfigTab.AddPersistent("ARM D", d).GetEntry();
     nt_f = robotConfigTab.AddPersistent("ARM F", f).GetEntry();
 }
+
+// Refresh configuration
 void Arm::update() {
     for (int i = 0; i < angles.size(); i++) {
         angles[i] = ntAngles[i].GetDouble(defaultAngles[i]);
@@ -31,11 +33,13 @@ void Arm::update() {
     armPID.SetD(nt_d.GetDouble(d));
     armPID.SetF(nt_f.GetDouble(f));
 }
+
 // Turns the intake flywheels on or off
 void Arm::setMode(FlywheelMode mode) {
     flywheel.Set(mode);
 }
 
+// Set the arm motor speed manually
 void Arm::setManualSpeed(double speed) {
     if (armPID.IsEnabled()) {
         armPID.Disable();

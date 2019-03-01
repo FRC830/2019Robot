@@ -84,13 +84,12 @@ void Robot::handleSpear() {
 // Pilot: Handles controller input for movement
 void Robot::handleDrivetrain() {
 
-    if (pilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER)) {
     // Gearshifter
+    if (pilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER)) {
         gearState = LOW;
     } else if (pilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER)) {
         gearState = HIGH;
-    }           
-    
+    }
     gearShifter.Set(gearState);
 
     // Vision Autocorrect
@@ -100,16 +99,16 @@ void Robot::handleDrivetrain() {
         int targetX = CAMERA_WIDTH/2 + SmartDashboard::GetNumber("Vision Target Pixel Width", 0)*TARGET_WIDTH_TO_CAMERA_OFFSET_RATIO;
         turn = sqrt(visionMid - targetX) / TURN_SCALE_FACTOR;
     }
-    
+
     speed = Lib830::accel(prevSpeed, pilot.LeftY(), TICKS_TO_ACCEL);
     prevSpeed = speed;
 
     // Activates gyro correct on straight driving
-    if (gyroCorrectState.toggle(pilot.ButtonState(GamepadF310::BUTTON_RIGHT_STICK))
-        && (std::fabs(pilot.RightX()) < CONTROLLER_GYRO_THRESHOLD) && speed > SPEED_GYRO_THRESHOLD) {
-        drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), std::fabs(speed)<DRIVETRAIN_DEADZONE_THRESHOLD);
+    gyroCorrectOn.toggle(pilot.ButtonState(GamepadF310::BUTTON_RIGHT_STICK);
+    if (gyroCorrectOn && std::fabs(pilot.RightX()) < CONTROLLER_GYRO_THRESHOLD && speed > SPEED_GYRO_THRESHOLD) {
+        drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), std::fabs(speed) < DRIVETRAIN_DEADZONE_THRESHOLD);
     } else {
-        drivetrain.CurvatureDrive(speed, turn, std::fabs(speed)<DRIVETRAIN_DEADZONE_THRESHOLD);
+        drivetrain.CurvatureDrive(speed, turn, std::fabs(speed) < DRIVETRAIN_DEADZONE_THRESHOLD);
         prevAngle = gyro.GetAngle();
     }
 
@@ -118,8 +117,6 @@ void Robot::handleDrivetrain() {
 }
 
 // Copilot: Handles controller input with elevator
-// manual lower: left trigger
-// manual raise: right trigger
 void Robot::handleElevator() {
     elevator.update();
 
@@ -156,15 +153,12 @@ void Robot::handleElevator() {
     SmartDashboard::PutString("Elevator Height", elevator.getSetpoint());
 }
 
-
 // Copilot: Handles controller input with rotating arm
-// this becomes left stick 
 void Robot::handleArm() {
     arm.update();
     armManualMode.toggle(copilot.ButtonState(GamepadF310::BUTTON_START));
     armUp.toggle(copilot.LeftY() > ARM_THRESHOLD);
     armDown.toggle(-copilot.LeftY() > ARM_THRESHOLD);
-    
     double deadzoneLeftY = std::fabs(copilot.LeftY()) > ARM_THRESHOLD ? -copilot.LeftY() : 0;
     if (armManualMode) {
         arm.setManualSpeed(deadzoneLeftY);
@@ -181,15 +175,15 @@ void Robot::handleArm() {
     SmartDashboard::PutString("Arm Height", arm.getSetpoint());
 }
 
+//Called During Test
 void Robot::TestPeriodic() {}
-        //Called During Test
 
+// Disable the Robot
 void Robot::DisabledInit(){
-    spear.setExtend(false); 
+    spear.setExtend(false);
     spear.setHatchGrab(false);
 }
 
-// Elevator::Elevator(WPI_TalonSRX &motor) : motor(motor) {
 #ifndef RUNNING_FRC_TESTS
     int main() {
     frc::StartRobot<Robot>();

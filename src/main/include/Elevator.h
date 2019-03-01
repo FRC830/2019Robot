@@ -22,7 +22,7 @@ class Elevator {
         static constexpr double FLYWHEEL_OFFSET = 0;
         static constexpr double SPEAR_OFFSET = 0;
         static constexpr double DIVIDER_DISTANCE = 28;
-        
+
         // fhh -> (first) (hatch) (height)
         nt::NetworkTableEntry nt_fhh, nt_shh, nt_thh, nt_fbh, nt_sbh, nt_tbh, nt_max_down;
 

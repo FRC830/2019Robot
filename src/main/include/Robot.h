@@ -29,8 +29,8 @@ public:
 
   private:
 	// Motor IDs
-	static const int RIGHT_FRONT_MOTOR_ID = 1; 
-	static const int LEFT_FRONT_MOTOR_ID = 2; 
+	static const int RIGHT_FRONT_MOTOR_ID = 1;
+	static const int LEFT_FRONT_MOTOR_ID = 2;
 	static const int RIGHT_BACK_MOTOR_ID = 3;
 	static const int LEFT_BACK_MOTOR_ID = 4;
 	static const int ARM_MOTOR_ID = 5;
@@ -43,7 +43,6 @@ public:
 	static const int GEARSHIFT_SOLENOID_PIN = 4;
 	static const int HATCH_GRAB_SOLENOID_PIN = 6;
 	static const int EXTENSION_SOLENOID_PIN = 7;
-
 
 	// Misc
 	static const int TICKS_TO_ACCEL = 10;
@@ -69,12 +68,11 @@ public:
 	WPI_VictorSPX rightBack {RIGHT_BACK_MOTOR_ID};
 	WPI_VictorSPX leftBack {LEFT_BACK_MOTOR_ID};
 	frc::DifferentialDrive drivetrain {leftFront, rightFront};
-
 	frc::Solenoid gearShifter{GEARSHIFT_SOLENOID_PIN};
 	double prevAngle = 0;
 	double prevSpeed = 0;
 	double speed = 0;
-	Toggle gyroCorrectState{true};
+	Toggle gyroCorrectOn{true};
 	GearState gearState = LOW;
 
 	// Controller declarations
@@ -92,10 +90,10 @@ public:
 	Toggle armDown{false};
 	frc::AnalogPotentiometer pot{POTENTIOMETER_ANALOG_PIN, 300.0};
 	Arm arm{joint, flywheel, pot};
-	
+
 	// Spear Declarations
 	frc::Solenoid hatchGrabPiston{HATCH_GRAB_SOLENOID_PIN};
-    frc::Solenoid extensionPiston{EXTENSION_SOLENOID_PIN};
+  frc::Solenoid extensionPiston{EXTENSION_SOLENOID_PIN};
 	Spear spear{hatchGrabPiston, extensionPiston};
 
 	// Elevator Declarations
