@@ -49,7 +49,9 @@ void Robot::RobotPeriodic() {
 void Robot::AutonomousInit() {}
 
 //Called During Autonomous
-void Robot::AutonomousPeriodic() {}
+void Robot::AutonomousPeriodic() {
+    TeleopPeriodic();
+}
 
 //Called Initially on Teleop Start
 void Robot::TeleopInit() {}
