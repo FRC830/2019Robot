@@ -104,7 +104,7 @@ void Robot::handleDrivetrain() {
     prevSpeed = speed;
 
     // Activates gyro correct on straight driving
-    gyroCorrectOn.toggle(pilot.ButtonState(GamepadF310::BUTTON_RIGHT_STICK);
+    gyroCorrectOn.toggle(pilot.ButtonState(GamepadF310::BUTTON_RIGHT_STICK));
     if (gyroCorrectOn && std::fabs(pilot.RightX()) < CONTROLLER_GYRO_THRESHOLD && speed > SPEED_GYRO_THRESHOLD) {
         drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), std::fabs(speed) < DRIVETRAIN_DEADZONE_THRESHOLD);
     } else {

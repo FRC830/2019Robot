@@ -2,7 +2,7 @@
 using namespace frc;
 
 // Initialize the Elevator Arm with a motor and encoder
-Elevator::Elevator(WPI_TalonSRX &motor) : motor(motor) {
+Elevator::Elevator(WPI_TalonSRX &motor, frc::DigitalInput &upperLimitSwitch, frc::DigitalInput &lowerLimitSwitch) : motor(motor), upperLimitSwitch(upperLimitSwitch), lowerLimitSwitch(lowerLimitSwitch) {
     motor.SetNeutralMode(NeutralMode::Brake);
     ShuffleboardTab& robotConfigTab = Shuffleboard::GetTab("Robot Specific");
 
@@ -26,14 +26,27 @@ void Elevator::update() {
     //     heights[i] = ntHeights[i].GetDouble(defaultHeights[i]);
     // }
 
-    motor.ConfigPeakOutputReverse(nt_max_down.GetDouble(max_down_speed)); // may need to be ConfigPeakOutputForward
+    SmartDashboard::PutBoolean("Upper Limit Switch", upperLimitSwitch.Get());
+    SmartDashboard::PutBoolean("Lower Limit Switch", lowerLimitSwitch.Get());
     motor.SetSensorPhase(nt_encoderFlipped.GetBoolean(encoderFlipped));
     motor.SetInverted(nt_motorFlipped.GetBoolean(motorFlipped));
     motor.Config_kP(0, nt_p.GetDouble(p));
     motor.Config_kI(0, nt_i.GetDouble(i));
     motor.Config_kD(0, nt_d.GetDouble(d));
     motor.Config_kF(0, nt_f.GetDouble(f));
-}
+
+    double motorOutputMax = 1;
+    double motorOutputMin = nt_max_down.GetDouble(max_down_speed);
+
+    if(upperLimitSwitch.Get()){
+        motorOutputMax = 0;
+    } else if (lowerLimitSwitch.Get()) {
+        motorOutputMin = 0;
+    }
+    
+    motor.ConfigPeakOutputForward(motorOutputMax);
+    motor.ConfigPeakOutputReverse(motorOutputMin);
+}           
 
 // Change the setpoint of the elevator
 void Elevator::changeSetpoint(int change) {
@@ -45,6 +58,7 @@ void Elevator::changeSetpoint(int change) {
 
 // Set the elevator's manual speed
 void Elevator::setManualSpeed(double speed) {
+    //limit switch control to stop motor from continuing in that direction after 3rd stage hits them
     motor.Set(ControlMode::PercentOutput, speed);
 }
 

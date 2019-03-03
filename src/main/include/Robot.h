@@ -39,6 +39,9 @@ public:
 
 	static const int GYRO_ANALOG_PIN = 0;
 	static const int POTENTIOMETER_ANALOG_PIN = 3;
+	
+	static const int UPPER_LIMIT_SWITCH_DIO = 0;
+	static const int LOWER_LIMIT_SWITCH_DIO = 1;
 
 	static const int GEARSHIFT_SOLENOID_PIN = 4;
 	static const int HATCH_GRAB_SOLENOID_PIN = 6;
@@ -97,10 +100,13 @@ public:
 	Spear spear{hatchGrabPiston, extensionPiston};
 
 	// Elevator Declarations
+	frc::DigitalInput upperLimitSwitch{0};
+	frc::DigitalInput lowerLimitSwitch{1};
 	WPI_TalonSRX elevatorMotor{ELEVATOR_MOTOR_ID};
-	Elevator elevator{elevatorMotor};
+	Elevator elevator{elevatorMotor,upperLimitSwitch,lowerLimitSwitch};
 	enum ElevatorMode {MANUAL = true,AUTOMATIC = false};
 	ElevatorMode elevatorMode = MANUAL;
 	Toggle leftBumper;
 	Toggle rightBumper;
+
 };

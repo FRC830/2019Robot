@@ -3,9 +3,10 @@
 #include <frc/WPILib.h>
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/shuffleboard/BuiltInWidgets.h>
+
 class Elevator {
     public:
-        Elevator(WPI_TalonSRX &motor);
+        Elevator(WPI_TalonSRX &motor, frc::DigitalInput &upperLimitSwitch, frc::DigitalInput &lowerLimitSwitch);
         double getHeight();
         void changeSetpoint(int change);
         void setManualSpeed(double speed);
@@ -13,6 +14,8 @@ class Elevator {
         void update();
     private:
         WPI_TalonSRX &motor;
+        frc::DigitalInput &upperLimitSwitch;
+        frc::DigitalInput &lowerLimitSwitch;
         static const int ENCODER_TICKS = 4096;
         static constexpr double PI = 3.1415927;
         static constexpr double MOTOR_DIAMETER = 4.0/7.0;
