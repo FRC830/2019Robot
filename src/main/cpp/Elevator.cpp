@@ -38,9 +38,9 @@ void Elevator::update() {
     double motorOutputMax = 1;
     double motorOutputMin = nt_max_down.GetDouble(max_down_speed);
 
-    if(upperLimitSwitch.Get()){
+    if(!upperLimitSwitch.Get()){
         motorOutputMax = 0;
-    } else if (lowerLimitSwitch.Get()) {
+    } else if (!lowerLimitSwitch.Get()) {
         motorOutputMin = 0;
     }
     
