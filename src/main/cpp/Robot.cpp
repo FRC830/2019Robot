@@ -36,6 +36,8 @@ void Robot::RobotInit() {
     gyro.Calibrate();
     gyro.Reset();
     prevAngle = gyro.GetAngle();
+
+    elevator.zeroEncoder();
 }
 
 //Called While Robot is on
@@ -46,7 +48,9 @@ void Robot::RobotPeriodic() {
 }
 
 //Called Initially on Autonomous Start
-void Robot::AutonomousInit() {}
+void Robot::AutonomousInit() {
+    TeleopInit();
+}
 
 //Called During Autonomous
 void Robot::AutonomousPeriodic() {
@@ -68,9 +72,9 @@ void Robot::TeleopPeriodic() {
 // Copilot: Handles controller input use with flywheel
 void Robot::handleCargoIntake() {
     if (copilot.RightY() > FLYWHEEL_THRESHOLD) {
-        arm.setMode(Arm::OUTTAKE);
-    } else if (copilot.RightY() < -FLYWHEEL_THRESHOLD) {
         arm.setMode(Arm::INTAKE);
+    } else if (copilot.RightY() < -FLYWHEEL_THRESHOLD) {
+        arm.setMode(Arm::OUTTAKE);
     } else {
         arm.setMode(Arm::OFF);
     }
@@ -81,6 +85,13 @@ void Robot::handleSpear() {
     spear.setPlaceRoutine(copilot.ButtonState(GamepadF310::BUTTON_X));
     spear.setGrabRoutine(copilot.ButtonState(GamepadF310::BUTTON_B));
     spear.updateRoutine();
+}
+
+double Robot::drivetrainDeadzone(double value){
+    if (std::fabs(value) < DRIVETRAIN_DEADZONE_THRESHOLD) {
+        return 0;
+    } 
+    return value;
 }
 
 // Pilot: Handles controller input for movement
@@ -101,18 +112,18 @@ void Robot::handleDrivetrain() {
         int targetX = CAMERA_WIDTH/2 - SmartDashboard::GetNumber("Vision Target Pixel Width", 0)*TARGET_WIDTH_TO_CAMERA_OFFSET_RATIO;
         turn = (visionMid - targetX)/ TURN_SCALE_FACTOR;
     }
-
-    speed = Lib830::accel(prevSpeed, pilot.LeftY(), TICKS_TO_ACCEL);
+    
+    speed = Lib830::accel(prevSpeed, drivetrainDeadzone(pilot.LeftY()), TICKS_TO_ACCEL);
     prevSpeed = speed;
 
     // Activates gyro correct on straight driving
-    gyroCorrectOn.toggle(pilot.ButtonState(GamepadF310::BUTTON_RIGHT_STICK));
-    if (gyroCorrectOn && std::fabs(pilot.RightX()) < CONTROLLER_GYRO_THRESHOLD && speed > SPEED_GYRO_THRESHOLD) {
-        drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), std::fabs(speed) < DRIVETRAIN_DEADZONE_THRESHOLD);
-    } else {
-        drivetrain.CurvatureDrive(speed, turn, std::fabs(speed) < DRIVETRAIN_DEADZONE_THRESHOLD);
-        prevAngle = gyro.GetAngle();
-    }
+    // gyroCorrectOn.toggle(pilot.ButtonState(GamepadF310::BUTTON_RIGHT_STICK));
+    // if (gyroCorrectOn && std::fabs(pilot.RightX()) < CONTROLLER_GYRO_THRESHOLD && speed > SPEED_GYRO_THRESHOLD) {
+    //     drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), std::fabs(speed) < DRIVETRAIN_DEADZONE_THRESHOLD);
+    // } else {
+    drivetrain.ArcadeDrive(speed, turn, true);
+    prevAngle = gyro.GetAngle();
+    // }
 
     SmartDashboard::PutNumber("Drivetrain Turn", turn);
     SmartDashboard::PutBoolean("High Gear State", gearState);
@@ -183,7 +194,7 @@ void Robot::TestPeriodic() {}
 // Disable the Robot
 void Robot::DisabledInit(){
     spear.setExtend(false);
-    spear.setHatchGrab(false);
+    spear.setHatchGrab(true);
 }
 
 #ifndef RUNNING_FRC_TESTS

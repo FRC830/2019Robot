@@ -16,15 +16,15 @@ Elevator::Elevator(WPI_TalonSRX &motor, frc::DigitalInput &upperLimitSwitch, frc
 
     nt_max_down=robotConfigTab.AddPersistent("ELEV MAX DOWN", max_down_speed).GetEntry();
 
-    // for (int i = 0; i < ntHeights.size(); i++) {
-    //     ntHeights[i] = robotConfigTab.AddPersistent(elevatorHeightWords[i], defaultHeights[i]).GetEntry();
-    // }
+    for (int i = 0; i < ntHeights.size(); i++) {
+        ntHeights[i] = robotConfigTab.AddPersistent(elevatorHeightWords[i], defaultHeights[i]).GetEntry();
+    }
 }
 // Refresh the Elevator Configs
 void Elevator::update() {
-    // for (int i = 0; i < heights.size(); i++) {
-    //     heights[i] = ntHeights[i].GetDouble(defaultHeights[i]);
-    // }
+    for (int i = 0; i < heights.size(); i++) {
+        heights[i] = ntHeights[i].GetDouble(defaultHeights[i]);
+    }
 
     SmartDashboard::PutBoolean("Upper Limit Switch", upperLimitSwitch.Get());
     SmartDashboard::PutBoolean("Lower Limit Switch", lowerLimitSwitch.Get());
@@ -48,12 +48,16 @@ void Elevator::update() {
     motor.ConfigPeakOutputReverse(motorOutputMin);
 }           
 
+void Elevator::zeroEncoder(){
+    motor.SetSelectedSensorPosition(0);
+}
+
 // Change the setpoint of the elevator
 void Elevator::changeSetpoint(int change) {
     if ((0 <= currentSetpoint + change) && (currentSetpoint + change <= heights.size() - 1)) {
         currentSetpoint += change;
     }
-    motor.Set(ControlMode::Position, heights[currentSetpoint] / ENCODER_TICK_DISTANCE);
+    motor.Set(ControlMode::Position, (heights[currentSetpoint]) / ENCODER_TICK_DISTANCE);
 }
 
 // Set the elevator's manual speed

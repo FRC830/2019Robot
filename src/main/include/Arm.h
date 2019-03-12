@@ -28,13 +28,13 @@ class Arm {
 
     frc::PIDController armPID{p,i,d,f,pot,joint};
 
-    std::vector<nt::NetworkTableEntry> ntAngles = {nt_inside_frame_perimeter, nt_ball_outtake, nt_spear_angle, nt_spear_intake, nt_ball_intake};
-    std::vector<double> defaultAngles = {inside_frame_perimeter, ball_outtake, spear_angle, spear_intake, ball_intake};
+    std::vector<nt::NetworkTableEntry> ntAngles = {nt_inside_frame_perimeter, nt_ball_outtake, nt_spear_angle, nt_spear_intake};
+    std::vector<double> defaultAngles = {inside_frame_perimeter, ball_outtake, spear_angle, spear_angle};
     std::vector<double> angles = defaultAngles; // shouldn't be a pointer b/c vector
-    std::vector<std::string> armHeightWords = {"INSIDE FRAME", "OUTTAKE BALL", "SPEAR HEIGHT", "INTAKE HATCH", "INTAKE BALL"};
+    std::vector<std::string> armHeightWords = {"INSIDE FRAME", "OUTTAKE BALL", "SPEAR PLACE HEIGHT", "BALL INTAKE"};
     int currentSetpoint = 0;
 
-    static constexpr double JOINT_ANGLE_THRESHOLD = 10.0;
+    static constexpr double JOINT_ANGLE_THRESHOLD = 15.0;
     static constexpr double MAX_DOWN_SPEED = 1.0;
     static constexpr double MAX_UP_SPEED = 1.0;
 };

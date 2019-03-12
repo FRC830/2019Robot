@@ -56,18 +56,18 @@ void Spear::updateRoutine() {
     (3) Retract Down
     (4) Flip Up*/
     if (placing) {
-        setHatchGrab(false);
+        setHatchGrab(true);
         setExtend(true);
     } else if (previous_placing || end_placing) {
         if (time < FLIP_DELAY) {
             end_placing = true;
-            setHatchGrab(true);
+            setHatchGrab(false);
             setExtend(true);
         } else if (time < FLIP_DELAY + AFTER_PLACE_FLIP_DELAY) {
-            setHatchGrab(true);
+            setHatchGrab(false);
             setExtend(false);
         } else{
-            setHatchGrab(false);
+            setHatchGrab(true);
             setExtend(false);
             end_placing = false;
         }
@@ -81,19 +81,19 @@ void Spear::updateRoutine() {
 
     if (grabbing) {
         if (time < FLIP_DELAY) {
-            setHatchGrab(true);
+            setHatchGrab(false);
             setExtend(false);
         } else {
-            setHatchGrab(true);
+            setHatchGrab(false);
             setExtend(true);
         }
     } else if (previous_grabbing || end_grabbing) {
         if (time < FLIP_DELAY) {
             end_grabbing = true;
-            setHatchGrab(false);
+            setHatchGrab(true);
             setExtend(true);
         } else {
-            setHatchGrab(false);
+            setHatchGrab(true);
             setExtend(false);
             end_grabbing = false;
         }

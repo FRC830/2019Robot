@@ -10,6 +10,7 @@ class Elevator {
         double getHeight();
         void changeSetpoint(int change);
         void setManualSpeed(double speed);
+        void zeroEncoder();
         std::string getSetpoint();
         void update();
     private:
@@ -27,10 +28,11 @@ class Elevator {
         static constexpr double DIVIDER_DISTANCE = 28;
 
         // fhh -> (first) (hatch) (height)
-        nt::NetworkTableEntry nt_fhh, nt_shh, nt_thh, nt_fbh, nt_sbh, nt_tbh, nt_max_down;
+        nt::NetworkTableEntry nt_bph, nt_fhh, nt_shh, nt_thh, nt_fbh, nt_sbh/*, nt_tbh*/, nt_max_down;
 
         // Heights of all targets, In inches Defaults
         double first_hatch = 19 + SPEAR_OFFSET, first_ball = 27.5 + FLYWHEEL_OFFSET;
+        double ball_pickup = -20;
 
         int currentSetpoint = 0;
         // Motor Configuration Defaults
@@ -41,8 +43,8 @@ class Elevator {
 
         // value arrays
         nt::NetworkTableEntry nt_p, nt_i, nt_d, nt_f, nt_motorFlipped, nt_encoderFlipped;
-        std::vector<nt::NetworkTableEntry> ntHeights = {nt_fhh, nt_fbh, nt_shh, nt_sbh, nt_thh, nt_tbh};
-        std::vector<double> defaultHeights = { first_hatch, first_ball, first_hatch + DIVIDER_DISTANCE, first_ball + DIVIDER_DISTANCE, first_hatch + DIVIDER_DISTANCE * 2, first_ball + DIVIDER_DISTANCE * 2};
+        std::vector<nt::NetworkTableEntry> ntHeights = {nt_bph, nt_fhh, nt_fbh, nt_shh, nt_sbh, nt_thh};
+        std::vector<double> defaultHeights = { ball_pickup, first_hatch, first_ball, first_hatch + DIVIDER_DISTANCE, first_ball + DIVIDER_DISTANCE, first_hatch + DIVIDER_DISTANCE * 2};
         std::vector<double> heights = defaultHeights;
-        std::vector<std::string> elevatorHeightWords = {"BOTTOM HATCH","BOTTOM BALL","MID HATCH","MID BALL","TOP HATCH","TOP BALL"};
+        std::vector<std::string> elevatorHeightWords = {"BALL PICKUP", "BOTTOM HATCH","BOTTOM BALL","MID HATCH","MID BALL", "TOP HATCH"};
 };
