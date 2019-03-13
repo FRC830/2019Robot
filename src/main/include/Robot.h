@@ -7,7 +7,7 @@
 #include "Elevator.h"
 #include "Arm.h"
 #include "Spear.h"
-enum GearState {HIGH = true, LOW = false};
+enum GearState {HIGH = false, LOW = true};
 
 class Robot : public frc::TimedRobot {
 public:

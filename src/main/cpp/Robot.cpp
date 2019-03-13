@@ -97,13 +97,13 @@ double Robot::drivetrainDeadzone(double value){
 // Pilot: Handles controller input for movement
 void Robot::handleDrivetrain() {
 
-    // Gearshifter
-    if (pilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER)) {
-        gearState = LOW;
-    } else if (pilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER)) {
-        gearState = HIGH;
-    }
-    gearShifter.Set(gearState);
+    // // Gearshifter
+    // if (pilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER)) {
+    //     gearState = LOW;
+    // } else if (pilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER)) {
+    //     gearState = HIGH;
+    // }
+    gearShifter.Set(LOW);
 
     // Vision Autocorrect
     double turn = pilot.RightX();
@@ -122,11 +122,16 @@ void Robot::handleDrivetrain() {
     //     drivetrain.CurvatureDrive(speed, (prevAngle - gyro.GetAngle()) / (-90.0), std::fabs(speed) < DRIVETRAIN_DEADZONE_THRESHOLD);
     // } else {
     drivetrain.ArcadeDrive(speed, turn, true);
+    // drivetrain.TankDrive(pilot.LeftY(), pilot.RightY());
     prevAngle = gyro.GetAngle();
     // }
 
     SmartDashboard::PutNumber("Drivetrain Turn", turn);
     SmartDashboard::PutBoolean("High Gear State", gearState);
+    SmartDashboard::PutNumber("Right X", pilot.RightX());
+    SmartDashboard::PutNumber("Right Y", pilot.RightY());
+    SmartDashboard::PutNumber("Left X", pilot.LeftX());
+    SmartDashboard::PutNumber("Left Y", pilot.LeftY());
 }
 
 // Copilot: Handles controller input with elevator
