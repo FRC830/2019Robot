@@ -49,13 +49,13 @@ public:
 
 	// Misc
 	static const int TICKS_TO_ACCEL = 20;
-	static constexpr double FLYWHEEL_THRESHOLD = 0.05;
+	static constexpr double FLYWHEEL_THRESHOLD = 0.2;
 	static constexpr double JOINT_MOVEMENT_SPEED = 0.5;
-	static constexpr double CONTROLLER_GYRO_THRESHOLD = 0.1;
+	static constexpr double CONTROLLER_GYRO_THRESHOLD = 0.2;
 	static constexpr double SPEED_GYRO_THRESHOLD = 0.1;
-	static constexpr double DRIVETRAIN_DEADZONE_THRESHOLD = 0.1;
-	static constexpr double MANUAL_ELEVATOR_THRESHOLD = 0.1;
-	static constexpr double ARM_THRESHOLD = 0.1;
+	static constexpr double DRIVETRAIN_DEADZONE_THRESHOLD = 0.2;
+	static constexpr double MANUAL_ELEVATOR_THRESHOLD = 0.2;
+	static constexpr double ARM_THRESHOLD = 0.2;
 	static constexpr double VISION_TRIGGER_THRESHOLD = 0.3;
 
 	// Vision Declarations
@@ -66,7 +66,7 @@ public:
 	static constexpr double TARGET_WIDTH_TO_CAMERA_OFFSET_RATIO = 1.8;
 
 	// Drivetrain declarations
-  WPI_TalonSRX rightFront {RIGHT_FRONT_MOTOR_ID};
+  	WPI_TalonSRX rightFront {RIGHT_FRONT_MOTOR_ID};
 	WPI_TalonSRX leftFront {LEFT_FRONT_MOTOR_ID};
 	WPI_VictorSPX rightBack {RIGHT_BACK_MOTOR_ID};
 	WPI_VictorSPX leftBack {LEFT_BACK_MOTOR_ID};

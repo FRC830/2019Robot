@@ -28,7 +28,7 @@ class Elevator {
         static constexpr double DIVIDER_DISTANCE = 28;
 
         // fhh -> (first) (hatch) (height)
-        nt::NetworkTableEntry nt_bph, nt_fhh, nt_shh, nt_thh, nt_fbh, nt_sbh/*, nt_tbh*/, nt_max_down;
+        nt::NetworkTableEntry nt_bph, nt_fhh, nt_shh, nt_thh, nt_fbh, nt_sbh, nt_max_down;
 
         // Heights of all targets, In inches Defaults
         double first_hatch = 19 + SPEAR_OFFSET, first_ball = 27.5 + FLYWHEEL_OFFSET;
