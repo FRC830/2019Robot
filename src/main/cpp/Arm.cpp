@@ -57,7 +57,11 @@ void Arm::setSetpoint() {
     if (!armPID.IsEnabled()) {
         armPID.Enable();
     }
-    armPID.SetSetpoint(angles[currentSetpoint]);
+    setAngle(angles[currentSetpoint]);
+}
+double Arm::setAngle(double angle) {
+    armPID.SetSetpoint(angle);
+    
 }
 // Returns the current angle of the Arm
 double Arm::getAngle() {

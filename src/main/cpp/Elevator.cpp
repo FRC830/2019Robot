@@ -48,7 +48,7 @@ void Elevator::update() {
     motor.ConfigPeakOutputReverse(motorOutputMin);
 }           
 
-void Elevator::zeroEncoder(){
+void Elevator::zeroEncoder() {
     motor.SetSelectedSensorPosition(0);
 }
 
@@ -57,9 +57,14 @@ void Elevator::changeSetpoint(int change) {
     if ((0 <= currentSetpoint + change) && (currentSetpoint + change <= heights.size() - 1)) {
         currentSetpoint += change;
     }
-    motor.Set(ControlMode::Position, (heights[currentSetpoint]) / ENCODER_TICK_DISTANCE);
+    setPosition(heights[currentSetpoint]);
 }
-
+void Elevator::setPosition(double height) {
+    motor.Set(ControlMode::Position, height / ENCODER_TICK_DISTANCE);
+}
+void Elevator::setVelocity(double velocity) {
+    motor.Set(ControlMode::Velocity, velocity);
+}
 // Set the elevator's manual speed
 void Elevator::setManualSpeed(double speed) {
     //limit switch control to stop motor from continuing in that direction after 3rd stage hits them

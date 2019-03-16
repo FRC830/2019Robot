@@ -38,6 +38,9 @@ void Robot::RobotInit() {
     prevAngle = gyro.GetAngle();
 
     elevator.zeroEncoder();
+    gearShifter.Set(LOW);
+    ShuffleboardTab& robotConfigTab = Shuffleboard::GetTab("Robot Specific");
+    nt_climberAngle = robotConfigTab.AddPersistent("Climber Angle", climberAngle).GetEntry();
 }
 
 //Called While Robot is on
@@ -45,6 +48,9 @@ void Robot::RobotPeriodic() {
     SmartDashboard::PutNumber("Arm Angle", arm.getAngle());
     SmartDashboard::PutNumber("Gyro Angle", gyro.GetAngle());
     SmartDashboard::PutNumber("Elevator Height (in)", elevator.getHeight());
+
+    climberAngle = nt_climberAngle.GetDouble(climberAngle);
+    climberHeight = nt_climberHeight.GetDouble(climberHeight);
 }
 
 //Called Initially on Autonomous Start
@@ -62,11 +68,26 @@ void Robot::TeleopInit() {}
 
 // Called During Teleop
 void Robot::TeleopPeriodic() {
-    handleDrivetrain();
-    handleElevator();
-    handleSpear();
-    handleArm();
-    handleCargoIntake();
+    if (pilot.ButtonState(GamepadF310::BUTTON_START) && copilot.ButtonState(GamepadF310::BUTTON_START)) {
+        //engage launch sequence
+        climbing = true;
+    }
+    if (pilot.ButtonState(GamepadF310::BUTTON_BACK) || copilot.ButtonState(GamepadF310::BUTTON_BACK)) {
+        climbing = false;
+    }
+    
+    if (climbing) {
+        climberTimer.Start();
+        handleClimb();
+    } else {
+        climberTimer.Stop();
+        climberTimer.Reset();
+        handleDrivetrain();
+        handleElevator();
+        handleSpear();
+        handleArm();
+        handleCargoIntake();
+    }
 }
 
 // Copilot: Handles controller input use with flywheel
@@ -79,7 +100,36 @@ void Robot::handleCargoIntake() {
         arm.setMode(Arm::OFF);
     }
 }
-
+// Copilot: handle robot climb
+void Robot::handleClimb() {
+    double climbTimer = climberTimer.Get();
+    /*
+    (1) Lower Arm to a setpoint
+    (2) Lower Elevator so it touches platform setpoint
+    (3/4) Extend Linear Actuator while lowering elevator
+    (5) wait until hitting the limit switch
+    (6) Spin Arm Wheels to go forward
+    (7) drive forward
+    (8) Raise actuator like 0.1 inches*/
+    if (climbTimer < 3) {
+        arm.setAngle(climberAngle);
+        elevator.setPosition(climberHeight);
+    } else if (climbTimer < 10) {
+        if (!climberSwitch.Get()) {
+            climberActuator.Set(0.2);
+            elevator.setVelocity(-0.2);
+        } else {
+            climberActuator.Set(0);
+            elevator.setVelocity(0);
+        }
+    } else if (climbTimer < 13) {
+        arm.setMode(Arm::INTAKE);
+    } else if (climbTimer < 16) {
+        drivetrain.ArcadeDrive(0.5, 0, true); //really 0.25
+    } else if (climbTimer < 20) {
+        climberActuator.Set(-0.1);
+    }
+}
 // Copilot: Handles controller input with pistons (Spear)
 void Robot::handleSpear() {
     spear.setPlaceRoutine(copilot.ButtonState(GamepadF310::BUTTON_X));
@@ -97,13 +147,7 @@ double Robot::drivetrainDeadzone(double value){
 // Pilot: Handles controller input for movement
 void Robot::handleDrivetrain() {
 
-    // // Gearshifter
-    // if (pilot.ButtonState(GamepadF310::BUTTON_LEFT_BUMPER)) {
-    //     gearState = LOW;
-    // } else if (pilot.ButtonState(GamepadF310::BUTTON_RIGHT_BUMPER)) {
-    //     gearState = HIGH;
-    // }
-    gearShifter.Set(LOW);
+
 
     // Vision Autocorrect
     double turn = pilot.RightX();

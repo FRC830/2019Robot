@@ -23,6 +23,7 @@ public:
 	void handleArm();
 	void handleDrivetrain();
 	void handleCargoIntake();
+	void handleClimb();
 	void handleSpear();
 	void handleElevator();
 	double drivetrainDeadzone(double);
@@ -36,12 +37,15 @@ public:
 	static const int ARM_MOTOR_ID = 5;
 	static const int ELEVATOR_MOTOR_ID = 6;
 	static const int FLYWHEEL_MOTOR_ID = 7;
+	static const int CLIMBER_ACTUATOR_MOTOR_ID = 8;
+	
 
 	static const int GYRO_ANALOG_PIN = 0;
 	static const int POTENTIOMETER_ANALOG_PIN = 3;
 	
 	static const int UPPER_LIMIT_SWITCH_DIO = 0;
 	static const int LOWER_LIMIT_SWITCH_DIO = 1;
+	static const int CLIMBER_LIMIT_SWITCH_DIO = 2;
 
 	static const int GEARSHIFT_SOLENOID_PIN = 4;
 	static const int HATCH_GRAB_SOLENOID_PIN = 6;
@@ -96,7 +100,7 @@ public:
 
 	// Spear Declarations
 	frc::Solenoid hatchGrabPiston{HATCH_GRAB_SOLENOID_PIN};
-  frc::Solenoid extensionPiston{EXTENSION_SOLENOID_PIN};
+  	frc::Solenoid extensionPiston{EXTENSION_SOLENOID_PIN};
 	Spear spear{hatchGrabPiston, extensionPiston};
 
 	// Elevator Declarations
@@ -109,4 +113,12 @@ public:
 	Toggle leftBumper;
 	Toggle rightBumper;
 
+	//climber declarations
+	bool climbing = false;
+	nt::NetworkTableEntry nt_climberAngle, nt_climberHeight;
+	double climberAngle = 140;
+	double climberHeight = 100;
+	frc::DigitalInput climberSwitch{CLIMBER_LIMIT_SWITCH_DIO};
+	WPI_TalonSRX climberActuator{CLIMBER_ACTUATOR_MOTOR_ID};
+	frc::Timer climberTimer; 
 };

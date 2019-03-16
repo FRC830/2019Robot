@@ -12,6 +12,7 @@ class Arm {
     void changeSetpoint(int change);
     void setManualSpeed(double speed);
     double getAngle();
+    double setAngle(double angle);
     std::string getSetpoint();
     void setSetpoint();
     void update();

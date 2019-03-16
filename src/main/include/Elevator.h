@@ -10,6 +10,8 @@ class Elevator {
         double getHeight();
         void changeSetpoint(int change);
         void setManualSpeed(double speed);
+        void setPosition(double ticks);
+        void setVelocity(double velocity);
         void zeroEncoder();
         std::string getSetpoint();
         void update();
