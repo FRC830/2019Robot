@@ -48,6 +48,8 @@ void Robot::RobotPeriodic() {
     SmartDashboard::PutNumber("Arm Angle", arm.getAngle());
     SmartDashboard::PutNumber("Gyro Angle", gyro.GetAngle());
     SmartDashboard::PutNumber("Elevator Height (in)", elevator.getHeight());
+    SmartDashboard::PutNumber("Vision Turn Factor", VISION_TURN_FACTOR);
+    SmartDashboard::PutNumber("Cargo Turn Factor", CARGO_TURN_FACTOR);
 
     climberAngle = nt_climberAngle.GetDouble(climberAngle);
     climberHeight = nt_climberHeight.GetDouble(climberHeight);
@@ -68,26 +70,37 @@ void Robot::TeleopInit() {}
 
 // Called During Teleop
 void Robot::TeleopPeriodic() {
-    if (pilot.ButtonState(GamepadF310::BUTTON_START) && copilot.ButtonState(GamepadF310::BUTTON_START)) {
-        //engage launch sequence
-        climbing = true;
-    }
-    if (pilot.ButtonState(GamepadF310::BUTTON_BACK) || copilot.ButtonState(GamepadF310::BUTTON_BACK)) {
-        climbing = false;
-    }
+    // if (pilot.ButtonState(GamepadF310::BUTTON_START) && copilot.ButtonState(GamepadF310::BUTTON_START)) {
+    //     //engage launch sequence
+    //     climbing = true;
+    // }
+    // if (pilot.ButtonState(GamepadF310::BUTTON_BACK) || copilot.ButtonState(GamepadF310::BUTTON_BACK)) {
+    //     climbing = false;
+    // }
+
+    // if (pilot.DPadUp()) {
+    //     climberActuator1.Set(1);
+    //     climberActuator2.Set(1);
+    // } else if (pilot.DPadDown()){
+    //     climberActuator1.Set(-1);
+    //     climberActuator2.Set(-1);
+    // } else {
+    //     climberActuator1.Set(0);
+    //     climberActuator2.Set(0);
+    // }
     
-    if (climbing) {
-        climberTimer.Start();
-        handleClimb();
-    } else {
-        climberTimer.Stop();
-        climberTimer.Reset();
+    // if (climbing) {
+    //     climberTimer.Start();
+    //     handleClimb();
+    // } else {
+        // climberTimer.Stop();
+        // climberTimer.Reset();
         handleDrivetrain();
         handleElevator();
         handleSpear();
         handleArm();
         handleCargoIntake();
-    }
+    // }
 }
 
 // Copilot: Handles controller input use with flywheel
@@ -102,33 +115,33 @@ void Robot::handleCargoIntake() {
 }
 // Copilot: handle robot climb
 void Robot::handleClimb() {
-    double climbTimer = climberTimer.Get();
-    /*
-    (1) Lower Arm to a setpoint
-    (2) Lower Elevator so it touches platform setpoint
-    (3/4) Extend Linear Actuator while lowering elevator
-    (5) wait until hitting the limit switch
-    (6) Spin Arm Wheels to go forward
-    (7) drive forward
-    (8) Raise actuator like 0.1 inches*/
-    if (climbTimer < 3) {
-        arm.setAngle(climberAngle);
-        elevator.setPosition(climberHeight);
-    } else if (climbTimer < 10) {
-        if (!climberSwitch.Get()) {
-            climberActuator.Set(0.2);
-            elevator.setVelocity(-0.2);
-        } else {
-            climberActuator.Set(0);
-            elevator.setVelocity(0);
-        }
-    } else if (climbTimer < 13) {
-        arm.setMode(Arm::INTAKE);
-    } else if (climbTimer < 16) {
-        drivetrain.ArcadeDrive(0.5, 0, true); //really 0.25
-    } else if (climbTimer < 20) {
-        climberActuator.Set(-0.1);
-    }
+    // double climbTimer = climberTimer.Get();
+    // /*
+    // (1) Lower Arm to a setpoint
+    // (2) Lower Elevator so it touches platform setpoint
+    // (3/4) Extend Linear Actuator while lowering elevator
+    // (5) wait until hitting the limit switch
+    // (6) Spin Arm Wheels to go forward
+    // (7) drive forward
+    // (8) Raise actuator like 0.1 inches*/
+    // if (climbTimer < 3) {
+    //     arm.setAngle(climberAngle);
+    //     elevator.setPosition(climberHeight);
+    // } else if (climbTimer < 10) {
+    //     if (!climberSwitch.Get()) {
+    //         climberActuator.Set(0.2);
+    //         elevator.setVelocity(-0.2);
+    //     } else {
+    //         climberActuator.Set(0);
+    //         elevator.setVelocity(0);
+    //     }
+    // } else if (climbTimer < 13) {
+    //     arm.setMode(Arm::INTAKE);
+    // } else if (climbTimer < 16) {
+    //     drivetrain.ArcadeDrive(0.5, 0, true); //really 0.25
+    // } else if (climbTimer < 20) {
+    //     climberActuator.Set(-0.1);
+    // }
 }
 // Copilot: Handles controller input with pistons (Spear)
 void Robot::handleSpear() {
@@ -154,9 +167,16 @@ void Robot::handleDrivetrain() {
     if (pilot.RightTrigger() > VISION_TRIGGER_THRESHOLD && SmartDashboard::GetBoolean("Target Acquired", false)) {
         int visionMid = SmartDashboard::GetNumber("Vision Mid X", CAMERA_WIDTH/2);
         int targetX = CAMERA_WIDTH/2 - SmartDashboard::GetNumber("Vision Target Pixel Width", 0)*TARGET_WIDTH_TO_CAMERA_OFFSET_RATIO;
-        turn = (visionMid - targetX)/ TURN_SCALE_FACTOR;
+        turn = (visionMid - targetX)/ SmartDashboard::GetNumber("Vision Turn Factor", VISION_TURN_FACTOR);
     }
     
+    //Center on cargo
+    if (pilot.LeftTrigger() > VISION_TRIGGER_THRESHOLD && SmartDashboard::GetBoolean("Cargo Sighted",false)){
+        int cargoMid = SmartDashboard::GetNumber("Cargo Mid X", CAMERA_WIDTH/2);
+        int targetX = CAMERA_WIDTH/2;
+        turn = (cargoMid - targetX)/ SmartDashboard::GetNumber("Cargo Turn Factor", CARGO_TURN_FACTOR);
+    }
+
     speed = Lib830::accel(prevSpeed, drivetrainDeadzone(pilot.LeftY()), TICKS_TO_ACCEL);
     prevSpeed = speed;
 

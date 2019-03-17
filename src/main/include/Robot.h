@@ -37,7 +37,8 @@ public:
 	static const int ARM_MOTOR_ID = 5;
 	static const int ELEVATOR_MOTOR_ID = 6;
 	static const int FLYWHEEL_MOTOR_ID = 7;
-	static const int CLIMBER_ACTUATOR_MOTOR_ID = 8;
+	static const int CLIMBER_ACTUATOR_MOTOR1_ID = 8;
+	static const int CLIMBER_ACTUATOR_MOTOR2_ID = 9;
 	
 
 	static const int GYRO_ANALOG_PIN = 0;
@@ -56,7 +57,7 @@ public:
 	static constexpr double FLYWHEEL_THRESHOLD = 0.2;
 	static constexpr double JOINT_MOVEMENT_SPEED = 0.5;
 	static constexpr double CONTROLLER_GYRO_THRESHOLD = 0.2;
-	static constexpr double SPEED_GYRO_THRESHOLD = 0.1;
+	static constexpr double SPEED_GYRO_THRESHOLD =0.1;
 	static constexpr double DRIVETRAIN_DEADZONE_THRESHOLD = 0.2;
 	static constexpr double MANUAL_ELEVATOR_THRESHOLD = 0.2;
 	static constexpr double ARM_THRESHOLD = 0.2;
@@ -66,8 +67,9 @@ public:
 	bool doingAutoAlign = false;
 	double visionSteer = 0.0;
 	static constexpr double CAMERA_WIDTH = 320;
-	static constexpr double TURN_SCALE_FACTOR = 100.0;
-	static constexpr double TARGET_WIDTH_TO_CAMERA_OFFSET_RATIO = 1.8;
+	static constexpr double VISION_TURN_FACTOR = 100.0;
+	static constexpr double CARGO_TURN_FACTOR = 100.0;
+	static constexpr double TARGET_WIDTH_TO_CAMERA_OFFSET_RATIO = 0.3;
 
 	// Drivetrain declarations
   	WPI_TalonSRX rightFront {RIGHT_FRONT_MOTOR_ID};
@@ -92,7 +94,7 @@ public:
 	// Rotating Arm Declarations
 	WPI_VictorSPX joint{ARM_MOTOR_ID};
 	WPI_VictorSPX flywheel{FLYWHEEL_MOTOR_ID};
-	Toggle armManualMode{true};
+	Toggle armManualMode{false};
 	Toggle armUp{false};
 	Toggle armDown{false};
 	frc::AnalogPotentiometer pot{POTENTIOMETER_ANALOG_PIN, 300.0};
@@ -109,7 +111,7 @@ public:
 	WPI_TalonSRX elevatorMotor{ELEVATOR_MOTOR_ID};
 	Elevator elevator{elevatorMotor,upperLimitSwitch,lowerLimitSwitch};
 	enum ElevatorMode {MANUAL = true,AUTOMATIC = false};
-	ElevatorMode elevatorMode = MANUAL;
+	ElevatorMode elevatorMode = AUTOMATIC;
 	Toggle leftBumper;
 	Toggle rightBumper;
 
@@ -119,6 +121,7 @@ public:
 	double climberAngle = 140;
 	double climberHeight = 100;
 	frc::DigitalInput climberSwitch{CLIMBER_LIMIT_SWITCH_DIO};
-	WPI_TalonSRX climberActuator{CLIMBER_ACTUATOR_MOTOR_ID};
+	WPI_TalonSRX climberActuator1{CLIMBER_ACTUATOR_MOTOR1_ID};
+	WPI_TalonSRX climberActuator2{CLIMBER_ACTUATOR_MOTOR2_ID};
 	frc::Timer climberTimer; 
 };
