@@ -159,19 +159,18 @@ double Robot::drivetrainDeadzone(double value){
 
 // Pilot: Handles controller input for movement
 void Robot::handleDrivetrain() {
-
-
+    //pilot controls were changed because of new controllers, was right x, LeftTrigger is really zaxis
+    double turn = pilot.LeftTrigger();
 
     // Vision Autocorrect
-    double turn = pilot.RightX();
-    if (pilot.RightTrigger() > VISION_TRIGGER_THRESHOLD && SmartDashboard::GetBoolean("Target Acquired", false)) {
+    if (pilot.ButtonState(GamepadF310::BUTTON_X) && SmartDashboard::GetBoolean("Target Acquired", false)) {
         int visionMid = SmartDashboard::GetNumber("Vision Mid X", CAMERA_WIDTH/2);
         int targetX = CAMERA_WIDTH/2 - SmartDashboard::GetNumber("Vision Target Pixel Width", 0)*TARGET_WIDTH_TO_CAMERA_OFFSET_RATIO;
         turn = (visionMid - targetX)/ SmartDashboard::GetNumber("Vision Turn Factor", VISION_TURN_FACTOR);
     }
     
     //Center on cargo
-    if (pilot.LeftTrigger() > VISION_TRIGGER_THRESHOLD && SmartDashboard::GetBoolean("Cargo Sighted",false)){
+    if (pilot.ButtonState(GamepadF310::BUTTON_B) && SmartDashboard::GetBoolean("Cargo Sighted",false)){
         int cargoMid = SmartDashboard::GetNumber("Cargo Mid X", CAMERA_WIDTH/2);
         int targetX = CAMERA_WIDTH/2;
         turn = (cargoMid - targetX)/ SmartDashboard::GetNumber("Cargo Turn Factor", CARGO_TURN_FACTOR);
